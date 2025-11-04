@@ -75,7 +75,7 @@
     "cross-env": "^10.1.0",
     "defu": "^6.1.4",
     "es-toolkit": "^1.41.0",
-    "eslint": "^9.39.0",
+    "eslint": "^9.39.1",
     "eslint-flat-config-utils": "^2.1.4",
     "execa": "^9.6.0",
     "fast-glob": "^3.3.3",
