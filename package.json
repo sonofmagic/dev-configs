@@ -70,7 +70,7 @@
     "@types/node": "^24.10.0",
     "@types/semver": "^7.7.1",
     "@types/set-value": "^4.0.3",
-    "@vitest/coverage-v8": "~4.0.6",
+    "@vitest/coverage-v8": "~4.0.7",
     "ci-info": "^4.3.1",
     "cross-env": "^10.1.0",
     "defu": "^6.1.4",
@@ -94,7 +94,7 @@
     "rimraf": "^6.1.0",
     "set-value": "^4.1.0",
     "stylelint": "^16.25.0",
-    "tsdown": "^0.15.11",
+    "tsdown": "^0.16.0",
     "tslib": "^2.8.1",
     "tsup": "^8.5.0",
     "tsx": "^4.20.6",
@@ -102,7 +102,7 @@
     "type-fest": "^5.2.0",
     "typescript": "^5.9.3",
     "unbuild": "^3.6.1",
-    "vitest": "~4.0.6",
+    "vitest": "~4.0.7",
     "yaml": "^2.8.1"
   },
   "publishConfig": {
