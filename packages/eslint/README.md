@@ -46,6 +46,7 @@ import { icebreaker } from '@icebreakers/eslint-config'
 export default icebreaker({
   vue: true, // or { vueVersion: 2 }
   react: true,
+  query: true,
   typescript: true,
   test: true,
   tailwindcss: {
@@ -62,6 +63,7 @@ export default icebreaker({
 
 - `vue` – enables Vue + optionally version specific overrides (Vue 2/3) and ionic/weapp adjustments.
 - `react` – defers to the upstream React preset and unlocks accessibility helpers when `a11y` is enabled.
+- `query` – toggles the TanStack Query plugin (`@tanstack/eslint-plugin-query`) and its recommended lint rules.
 - `tailwindcss` – pass `true` to use the built-in Tailwind flat config or provide `{ entryPoint, tailwindConfig }` for Tailwind v4/v3 projects.
 - `mdx` – activates MDX linting via `eslint-plugin-mdx`.
 - `a11y` – wires in JSX (React) and Vue accessibility plugins.

@@ -41,6 +41,11 @@ export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
    */
   nestjs?: boolean
   /**
+   * Enable TanStack Query support
+   * @default false
+   */
+  query?: boolean
+  /**
    * Enable Ionic support
    * @default false
    */

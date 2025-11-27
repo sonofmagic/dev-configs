@@ -44,6 +44,7 @@ import { icebreaker } from '@icebreakers/eslint-config'
 export default icebreaker({
   vue: true, // 或 { vueVersion: 2 }
   react: true,
+  query: true,
   typescript: true,
   test: true,
   tailwindcss: {
@@ -60,6 +61,7 @@ export default icebreaker({
 
 - `vue`：启用 Vue 规则，可根据 Vue 2/3 自动切换，并在 `ionic`、`weapp` 选项开启时追加对应覆盖。
 - `react`：复用上游 React 预设，配合 `a11y` 注入无障碍插件。
+- `query`：按需启用 TanStack Query 插件（`@tanstack/eslint-plugin-query`）及其推荐规则。
 - `tailwindcss`：传入 `true` 使用内置 Tailwind flat 配置，或通过对象指定 Tailwind v4 的入口文件 / v3 的配置文件路径。
 - `mdx`：激活 `eslint-plugin-mdx` 处理 `.mdx` 文件。
 - `a11y`：按需引入 JSX 与 Vue 的无障碍规则。

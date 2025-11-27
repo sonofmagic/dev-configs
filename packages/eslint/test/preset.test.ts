@@ -43,6 +43,9 @@ describe('presets', () => {
       },
     })).toMatchSnapshot()
   })
+  it('query', async () => {
+    expect(await materializePresets({ query: true })).toMatchSnapshot()
+  })
   it('nestjs', async () => {
     expect(await materializePresets({ nestjs: true, typescript: true })).toMatchSnapshot()
   })

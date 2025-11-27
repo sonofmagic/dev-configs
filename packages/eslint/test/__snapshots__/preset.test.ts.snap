@@ -475,3 +475,225 @@ exports[`presets > nestjs 1`] = `
   },
 ]
 `;
+
+exports[`presets > query 1`] = `
+[
+  {
+    "formatters": true,
+    "javascript": {
+      "overrides": {
+        "curly": [
+          "error",
+          "all",
+        ],
+        "no-console": [
+          "warn",
+        ],
+      },
+    },
+    "query": true,
+    "test": {
+      "overrides": {
+        "test/prefer-lowercase-title": [
+          "off",
+        ],
+      },
+    },
+    "typescript": {
+      "overrides": {
+        "ts/ban-ts-comment": "off",
+        "ts/no-unused-expressions": [
+          "error",
+          {
+            "allowShortCircuit": true,
+            "allowTernary": true,
+          },
+        ],
+        "ts/no-unused-vars": [
+          "error",
+          {
+            "args": "all",
+            "argsIgnorePattern": "^_",
+            "caughtErrors": "all",
+            "caughtErrorsIgnorePattern": "^_",
+            "destructuredArrayIgnorePattern": "^_",
+            "ignoreRestSiblings": true,
+            "varsIgnorePattern": "^_",
+          },
+        ],
+        "ts/no-use-before-define": "warn",
+        "ts/prefer-ts-expect-error": "off",
+      },
+    },
+  },
+  {
+    "rules": {
+      "unicorn/prefer-number-properties": "warn",
+      "unused-imports/no-unused-vars": "off",
+    },
+  },
+  [
+    {
+      "name": "tanstack/query/flat/recommended",
+      "plugins": {
+        "@tanstack/query": {
+          "configs": {
+            "flat/recommended": [Circular],
+            "recommended": {
+              "plugins": [
+                "@tanstack/query",
+              ],
+              "rules": {
+                "@tanstack/query/exhaustive-deps": "error",
+                "@tanstack/query/infinite-query-property-order": "error",
+                "@tanstack/query/mutation-property-order": "error",
+                "@tanstack/query/no-rest-destructuring": "warn",
+                "@tanstack/query/no-unstable-deps": "error",
+                "@tanstack/query/no-void-query-fn": "error",
+                "@tanstack/query/stable-query-client": "error",
+              },
+            },
+          },
+          "meta": {
+            "name": "@tanstack/eslint-plugin-query",
+          },
+          "rules": {
+            "exhaustive-deps": {
+              "create": [Function],
+              "defaultOptions": [],
+              "meta": {
+                "docs": {
+                  "description": "Exhaustive deps rule for useQuery",
+                  "recommended": "error",
+                  "url": "https://tanstack.com/query/latest/docs/eslint/exhaustive-deps",
+                },
+                "fixable": "code",
+                "hasSuggestions": true,
+                "messages": {
+                  "fixTo": "Fix to {{result}}",
+                  "missingDeps": "The following dependencies are missing in your queryKey: {{deps}}",
+                },
+                "schema": [],
+                "type": "problem",
+              },
+            },
+            "infinite-query-property-order": {
+              "create": [Function],
+              "defaultOptions": [],
+              "meta": {
+                "docs": {
+                  "description": "Ensure correct order of inference sensitive properties for infinite queries",
+                  "recommended": "error",
+                  "url": "https://tanstack.com/query/latest/docs/eslint/infinite-query-property-order",
+                },
+                "fixable": "code",
+                "hasSuggestions": true,
+                "messages": {
+                  "invalidOrder": "Invalid order of properties for \`{{function}}\`.",
+                },
+                "schema": [],
+                "type": "problem",
+              },
+            },
+            "mutation-property-order": {
+              "create": [Function],
+              "defaultOptions": [],
+              "meta": {
+                "docs": {
+                  "description": "Ensure correct order of inference-sensitive properties in useMutation()",
+                  "recommended": "error",
+                  "url": "https://tanstack.com/query/latest/docs/eslint/mutation-property-order",
+                },
+                "fixable": "code",
+                "hasSuggestions": true,
+                "messages": {
+                  "invalidOrder": "Invalid order of properties for \`{{function}}\`.",
+                },
+                "schema": [],
+                "type": "problem",
+              },
+            },
+            "no-rest-destructuring": {
+              "create": [Function],
+              "defaultOptions": [],
+              "meta": {
+                "docs": {
+                  "description": "Disallows rest destructuring in queries",
+                  "recommended": "warn",
+                  "url": "https://tanstack.com/query/latest/docs/eslint/no-rest-destructuring",
+                },
+                "messages": {
+                  "objectRestDestructure": "Object rest destructuring on a query will observe all changes to the query, leading to excessive re-renders.",
+                },
+                "schema": [],
+                "type": "problem",
+              },
+            },
+            "no-unstable-deps": {
+              "create": [Function],
+              "defaultOptions": [],
+              "meta": {
+                "docs": {
+                  "description": "Disallow putting the result of query hooks directly in a React hook dependency array",
+                  "recommended": "error",
+                  "url": "https://tanstack.com/query/latest/docs/eslint/no-unstable-deps",
+                },
+                "messages": {
+                  "noUnstableDeps": "The result of {{queryHook}} is not referentially stable, so don't pass it directly into the dependencies array of {{reactHook}}. Instead, destructure the return value of {{queryHook}} and pass the destructured values into the dependency array of {{reactHook}}.",
+                },
+                "schema": [],
+                "type": "problem",
+              },
+            },
+            "no-void-query-fn": {
+              "create": [Function],
+              "defaultOptions": [],
+              "meta": {
+                "docs": {
+                  "description": "Ensures queryFn returns a non-undefined value",
+                  "recommended": "error",
+                  "url": "https://tanstack.com/query/latest/docs/eslint/no-void-query-fn",
+                },
+                "messages": {
+                  "noVoidReturn": "queryFn must return a non-undefined value",
+                },
+                "schema": [],
+                "type": "problem",
+              },
+            },
+            "stable-query-client": {
+              "create": [Function],
+              "defaultOptions": [],
+              "meta": {
+                "docs": {
+                  "description": "Makes sure that QueryClient is stable",
+                  "recommended": "error",
+                  "url": "https://tanstack.com/query/latest/docs/eslint/stable-query-client",
+                },
+                "fixable": "code",
+                "hasSuggestions": true,
+                "messages": {
+                  "fixTo": "Fix to {{result}}",
+                  "unstable": "QueryClient is not stable. It should be either extracted from the component or wrapped in React.useState.
+See https://tkdodo.eu/blog/react-query-fa-qs#2-the-queryclient-is-not-stable",
+                },
+                "schema": [],
+                "type": "problem",
+              },
+            },
+          },
+        },
+      },
+      "rules": {
+        "@tanstack/query/exhaustive-deps": "error",
+        "@tanstack/query/infinite-query-property-order": "error",
+        "@tanstack/query/mutation-property-order": "error",
+        "@tanstack/query/no-rest-destructuring": "warn",
+        "@tanstack/query/no-unstable-deps": "error",
+        "@tanstack/query/no-void-query-fn": "error",
+        "@tanstack/query/stable-query-client": "error",
+      },
+    },
+  ],
+]
+`;

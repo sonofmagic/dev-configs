@@ -117,3 +117,15 @@ export function resolveNestPresets(isEnabled: UserDefinedOptions['nestjs']): Use
     rules: nestjsTypeScriptRules,
   }]
 }
+
+export function resolveQueryPresets(isEnabled: UserDefinedOptions['query']): UserConfigItem[] {
+  if (!isEnabled) {
+    return []
+  }
+
+  return [
+    interopDefault(
+      import('@tanstack/eslint-plugin-query'),
+    ).then(pluginQuery => pluginQuery.configs['flat/recommended']),
+  ]
+}
