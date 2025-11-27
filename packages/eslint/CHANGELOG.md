@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 1.6.0
+
+### Minor Changes
+
+- ✨ **Add a `query` option to turn on the TanStack Query flat preset only when requested.** — [`485de0e`](https://github.com/sonofmagic/dev-configs/commit/485de0e32d0ad03c99b4859521f8d3870a7f445f) · Thanks [@sonofmagic](https://github.com/sonofmagic) · Minor release
+
 ## 1.5.10
 
 ### Patch Changes
