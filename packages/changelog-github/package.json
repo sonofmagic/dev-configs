@@ -45,11 +45,11 @@
   },
   "publishConfig": {},
   "dependencies": {
-    "@changesets/get-github-info": "^0.6.0",
+    "@changesets/get-github-info": "^0.7.0",
     "@changesets/types": "^6.1.0",
     "dotenv": "^17.2.3"
   },
   "devDependencies": {
-    "@changesets/parse": "^0.4.1"
+    "@changesets/parse": "^0.4.2"
   }
 }
