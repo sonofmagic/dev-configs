@@ -21,6 +21,8 @@ const BASE_DEFAULTS: Pick<UserDefinedOptions, 'formatters' | 'javascript' | 'tes
 }
 
 const BASE_RULES: Partial<Linter.RulesRecord> = {
+  'pnpm/json-enforce-catalog': 'off',
+  // allow plain specifiers when pnpm catalogs aren't used by default
   'unused-imports/no-unused-vars': 'off',
   'unicorn/prefer-number-properties': 'warn',
 }
@@ -92,3 +94,5 @@ export function createBaseRuleSet(isLegacy: boolean): Partial<Linter.RulesRecord
     'perfectionist/sort-imports': 'off',
   }
 }
+
+export { applyVueVersionSpecificRules as __applyVueVersionSpecificRules }
