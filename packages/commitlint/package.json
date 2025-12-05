@@ -44,8 +44,8 @@
   },
   "publishConfig": {},
   "dependencies": {
-    "@commitlint/config-conventional": "^20.0.0",
-    "@commitlint/types": "^20.0.0",
+    "@commitlint/config-conventional": "^20.2.0",
+    "@commitlint/types": "^20.2.0",
     "conventional-changelog-conventionalcommits": "^9.1.0"
   }
 }
