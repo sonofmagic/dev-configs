@@ -1,5 +1,13 @@
 # @icebreakers/eslint-config
 
+## 1.6.3
+
+### Patch Changes
+
+- 🐛 **chore(deps): upgrade** — [`97c2c01`](https://github.com/sonofmagic/dev-configs/commit/97c2c01f2c9d273097d180576a0b0c389a530aa7) · Thanks [@sonofmagic](https://github.com/sonofmagic) · Patch release
+
+- 🐛 **默认关闭 better-tailwindcss/no-unregistered-classes，并同步修正相关类型定义。** — [`6c6d6c1`](https://github.com/sonofmagic/dev-configs/commit/6c6d6c137eb131d87a6d5ed247b09db3f27cf04d) · Thanks [@sonofmagic](https://github.com/sonofmagic) · Patch release
+
 ## 1.6.2
 
 ### Patch Changes
