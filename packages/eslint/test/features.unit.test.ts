@@ -1,3 +1,4 @@
+import type { TypedFlatConfigItem } from '@/types'
 import { nestjsTypeScriptRules } from '@/defaults'
 import {
   resolveAccessibilityPresets,
@@ -115,11 +116,12 @@ describe('resolveTailwindPresets', () => {
       tailwindConfig: 'tailwind.config.js',
     })
 
-    const config = await configPromise
+    const config = await configPromise as TypedFlatConfigItem
     expect(config.plugins?.['better-tailwindcss']).toBeDefined()
     expect(config.rules).toMatchObject({
       'better/warn': 'warn',
       'better/error': 'error',
+      'better-tailwindcss/no-unregistered-classes': 'off',
     })
     expect(config.settings?.['better-tailwindcss']).toEqual({
       entryPoint: 'src/main.css',
@@ -146,7 +148,7 @@ describe('resolveMdxPresets', () => {
 
   it('returns the mdx flat presets with a remark processor', async () => {
     const [mdxPromise] = resolveMdxPresets(true)
-    const [lintConfig, blockConfig] = await mdxPromise
+    const [lintConfig, blockConfig] = await mdxPromise as TypedFlatConfigItem[]
 
     expect(mockRemarkProcessor).toHaveBeenCalledWith({
       lintCodeBlocks: true,

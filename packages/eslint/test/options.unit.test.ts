@@ -6,8 +6,11 @@ describe('defaults helpers', () => {
   it('enables ionic and weapp tweaks for vue projects', () => {
     const vueOptions = getDefaultVueOptions({ ionic: true, weapp: true })
 
-    expect(vueOptions.overrides['vue/no-deprecated-slot-attribute']).toBe('off')
-    expect(vueOptions.overrides['vue/singleline-html-element-content-newline']).toMatchObject([
+    expect(vueOptions.overrides).toBeDefined()
+
+    const vueOverrides = vueOptions.overrides!
+    expect(vueOverrides['vue/no-deprecated-slot-attribute']).toBe('off')
+    expect(vueOverrides['vue/singleline-html-element-content-newline']).toMatchObject([
       'warn',
       {
         ignoreWhenNoAttributes: true,
@@ -20,8 +23,10 @@ describe('defaults helpers', () => {
   it('merges nest specific typescript rules', () => {
     const typescriptOptions = getDefaultTypescriptOptions({ nestjs: true })
 
-    expect(typescriptOptions.overrides['ts/explicit-function-return-type']).toBe('off')
-    expect(typescriptOptions.overrides['ts/no-unused-vars']).toBeDefined()
+    expect(typescriptOptions.overrides).toBeDefined()
+    const typescriptOverrides = typescriptOptions.overrides!
+    expect(typescriptOverrides['ts/explicit-function-return-type']).toBe('off')
+    expect(typescriptOverrides['ts/no-unused-vars']).toBeDefined()
   })
 })
 
@@ -29,9 +34,20 @@ describe('resolveUserOptions', () => {
   it('expands boolean feature flags into config objects', () => {
     const resolved = resolveUserOptions({ vue: true, typescript: true })
 
-    expect(isObject(resolved.vue)).toBe(true)
-    expect(resolved.vue?.overrides?.['vue/no-useless-v-bind']).toBeDefined()
-    expect(resolved.typescript?.overrides?.['ts/no-unused-vars']).toBeDefined()
+    const resolvedVue = resolved.vue
+    const resolvedTypescript = resolved.typescript
+
+    if (!resolvedVue || typeof resolvedVue === 'boolean') {
+      throw new Error('Expected vue options to resolve to an object')
+    }
+
+    if (!resolvedTypescript || typeof resolvedTypescript === 'boolean') {
+      throw new Error('Expected typescript options to resolve to an object')
+    }
+
+    expect(isObject(resolvedVue)).toBe(true)
+    expect(resolvedVue.overrides?.['vue/no-useless-v-bind']).toBeDefined()
+    expect(resolvedTypescript.overrides?.['ts/no-unused-vars']).toBeDefined()
     expect(resolved.formatters).toBe(true)
   })
 
@@ -43,8 +59,13 @@ describe('resolveUserOptions', () => {
       },
     })
 
-    expect(resolved.vue?.overrides?.['vue/no-v-for-template-key-on-child']).toBe('off')
-    expect(resolved.vue?.overrides?.['vue/no-deprecated-v-bind-sync']).toBe('off')
+    const resolvedVue = resolved.vue
+    if (!resolvedVue || typeof resolvedVue === 'boolean') {
+      throw new Error('Expected vue options to resolve to an object')
+    }
+
+    expect(resolvedVue.overrides?.['vue/no-v-for-template-key-on-child']).toBe('off')
+    expect(resolvedVue.overrides?.['vue/no-deprecated-v-bind-sync']).toBe('off')
   })
 
   it('merges custom typescript overrides with the defaults', () => {
@@ -56,8 +77,13 @@ describe('resolveUserOptions', () => {
       },
     })
 
-    expect(resolved.typescript?.overrides?.['ts/custom-rule']).toBe('error')
-    expect(resolved.typescript?.overrides?.['ts/no-unused-expressions']).toBeDefined()
+    const resolvedTypescript = resolved.typescript
+    if (!resolvedTypescript || typeof resolvedTypescript === 'boolean') {
+      throw new Error('Expected typescript options to resolve to an object')
+    }
+
+    expect(resolvedTypescript.overrides?.['ts/custom-rule']).toBe('error')
+    expect(resolvedTypescript.overrides?.['ts/no-unused-expressions']).toBeDefined()
   })
 })
 

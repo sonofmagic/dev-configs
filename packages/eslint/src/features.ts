@@ -1,4 +1,5 @@
-import type { UserConfigItem, UserDefinedOptions } from './types'
+import type { Linter } from 'eslint'
+import type { TypedFlatConfigItem, UserConfigItem, UserDefinedOptions } from './types'
 import { interopDefault } from './antfu'
 import { nestjsTypeScriptRules } from './defaults'
 
@@ -12,21 +13,25 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
       interopDefault(
         import('eslint-plugin-better-tailwindcss'),
       ).then((eslintPluginBetterTailwindcss) => {
+        const betterTailwindcssRules: Linter.RulesRecord = {
+          ...eslintPluginBetterTailwindcss.configs['recommended-warn'].rules,
+          ...eslintPluginBetterTailwindcss.configs['recommended-error'].rules,
+          'better-tailwindcss/no-unregistered-classes': 'off',
+        }
+
         return {
+          name: 'icebreaker/better-tailwindcss',
           plugins: {
             'better-tailwindcss': eslintPluginBetterTailwindcss,
           },
-          rules: {
-            ...eslintPluginBetterTailwindcss.configs['recommended-warn'].rules,
-            ...eslintPluginBetterTailwindcss.configs['recommended-error'].rules,
-          },
+          rules: betterTailwindcssRules,
           settings: {
             'better-tailwindcss': {
               entryPoint: option.entryPoint,
               tailwindConfig: option.tailwindConfig,
             },
           },
-        }
+        } satisfies TypedFlatConfigItem
       }),
     ]
   }
