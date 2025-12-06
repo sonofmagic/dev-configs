@@ -15,6 +15,7 @@ exports[`presets > c 1`] = `
         ],
       },
     },
+    "pnpm": false,
     "test": {
       "overrides": {
         "test/prefer-lowercase-title": [
@@ -75,6 +76,7 @@ exports[`presets > c0 1`] = `
         ],
       },
     },
+    "pnpm": false,
     "test": {
       "overrides": {
         "test/prefer-lowercase-title": [
@@ -134,6 +136,7 @@ exports[`presets > c1 1`] = `
         ],
       },
     },
+    "pnpm": false,
     "test": {
       "overrides": {
         "test/prefer-lowercase-title": [
@@ -211,6 +214,7 @@ exports[`presets > c2 1`] = `
         ],
       },
     },
+    "pnpm": false,
     "test": {
       "overrides": {
         "test/prefer-lowercase-title": [
@@ -289,6 +293,7 @@ exports[`presets > c3 1`] = `
         ],
       },
     },
+    "pnpm": false,
     "test": {
       "overrides": {
         "test/prefer-lowercase-title": [
@@ -369,6 +374,7 @@ exports[`presets > nestjs 1`] = `
       },
     },
     "nestjs": true,
+    "pnpm": false,
     "test": {
       "overrides": {
         "test/prefer-lowercase-title": [
@@ -497,6 +503,7 @@ exports[`presets > query 1`] = `
         ],
       },
     },
+    "pnpm": false,
     "query": true,
     "test": {
       "overrides": {

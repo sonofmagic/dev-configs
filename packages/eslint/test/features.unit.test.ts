@@ -121,7 +121,6 @@ describe('resolveTailwindPresets', () => {
     expect(config.rules).toMatchObject({
       'better/warn': 'warn',
       'better/error': 'error',
-      'better-tailwindcss/no-unregistered-classes': 'off',
     })
     expect(config.settings?.['better-tailwindcss']).toEqual({
       entryPoint: 'src/main.css',
