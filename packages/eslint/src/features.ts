@@ -16,7 +16,6 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
         const betterTailwindcssRules: Linter.RulesRecord = {
           ...eslintPluginBetterTailwindcss.configs['recommended-warn'].rules,
           ...eslintPluginBetterTailwindcss.configs['recommended-error'].rules,
-          'better-tailwindcss/no-unregistered-classes': 'off',
         }
 
         return {

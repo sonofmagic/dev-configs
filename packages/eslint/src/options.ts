@@ -5,8 +5,9 @@ import { defu } from 'defu'
 import { getDefaultTypescriptOptions, getDefaultVueOptions } from './defaults'
 import { isObject } from './utils'
 
-const BASE_DEFAULTS: Pick<UserDefinedOptions, 'formatters' | 'javascript' | 'test'> = {
+const BASE_DEFAULTS: Pick<UserDefinedOptions, 'formatters' | 'javascript' | 'test' | 'pnpm'> = {
   formatters: true,
+  pnpm: false,
   javascript: {
     overrides: {
       'curly': ['error', 'all'],
