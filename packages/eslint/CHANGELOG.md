@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 1.6.4
+
+### Patch Changes
+
+- 🐛 **Remove the opt-out for better-tailwindcss unregistered class checks and keep pnpm integration disabled by default.** — [`a870144`](https://github.com/sonofmagic/dev-configs/commit/a870144d5f141e55d85e4e7e546884459f58c387) · Thanks [@sonofmagic](https://github.com/sonofmagic) · Patch release
+
 ## 1.6.3
 
 ### Patch Changes
