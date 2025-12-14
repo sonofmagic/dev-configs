@@ -47,6 +47,13 @@ exports[`index > common 1`] = `
       },
     ],
     "scss/selector-no-redundant-nesting-selector": true,
+    "selector-class-pattern": [
+      /\\^\\[a-z\\]\\[a-z0-9\\]\\*\\(\\?:-\\[a-z0-9\\]\\+\\)\\*\\(\\?:__\\[a-z0-9\\]\\+\\(\\?:-\\[a-z0-9\\]\\+\\)\\*\\)\\*\\(\\?:--\\[a-z0-9\\]\\+\\(\\?:-\\[a-z0-9\\]\\+\\)\\*\\)\\*\\$/,
+      {
+        "message": "Use BEM/OOCSS-friendly class names",
+        "resolveNestedSelectors": true,
+      },
+    ],
     "selector-type-no-unknown": [
       true,
       {

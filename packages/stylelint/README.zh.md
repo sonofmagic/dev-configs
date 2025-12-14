@@ -77,6 +77,7 @@ export default createStylelintConfig({
 
 默认行为包括：
 
+- 允许 BEM / OOCSS 风格的类名（如 `block__element--modifier`、`object--state`）
 - 允许 `rpx` 单位，兼容小程序
 - 忽略 Tailwind / UnoCSS 常见指令（如 `apply`、`screen`）
 - 忽略多端平台常见的 `page` 选择器

@@ -6,6 +6,8 @@ import { normalizeExtends, resolveIgnoreList, toArray, unique } from './utils'
 
 const requireFromConfig = createRequire(import.meta.url)
 
+const BEM_OOCSS_CLASS_NAME_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:__[a-z0-9]+(?:-[a-z0-9]+)*)*(?:--[a-z0-9]+(?:-[a-z0-9]+)*)*$/
+
 const PRESET_PATH_STANDARD_SCSS = requireFromConfig.resolve(PRESET_STANDARD_SCSS)
 const PRESET_PATH_VUE_SCSS = requireFromConfig.resolve(PRESET_VUE_SCSS)
 const PRESET_PATH_RECESS_ORDER = requireFromConfig.resolve(PRESET_RECESS_ORDER)
@@ -47,6 +49,13 @@ function resolveRules(options: IcebreakerStylelintOptions | undefined): Config['
 
   const rules: Config['rules'] = {
     'function-name-case': null,
+    'selector-class-pattern': [
+      new RegExp(BEM_OOCSS_CLASS_NAME_PATTERN),
+      {
+        message: 'Use BEM/OOCSS-friendly class names',
+        resolveNestedSelectors: true,
+      },
+    ],
     'unit-no-unknown': [
       true,
       {

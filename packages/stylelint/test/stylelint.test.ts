@@ -29,6 +29,27 @@ const correctOrder = `
 		background-color: slategray;
 		transition: opacity 300ms ease;
 	}`
+
+const bemSelectors = `
+	.hero__meta {
+		color: red;
+	}
+
+	.section__header--sticky {
+		position: sticky;
+		background: white;
+	}
+
+	.grid--two {
+		gap: 1rem;
+	}
+`
+
+const invalidBemSelectors = `
+	.Hero__meta {
+		color: red;
+	}
+`
 describe('stylelint', () => {
   it('lint', async () => {
     const result = await stylelint.lint({
@@ -70,5 +91,23 @@ describe('stylelint', () => {
     expect(result.results.length).toBe(1)
     expect(result.results[0].warnings.length).toBe(1)
     expect(result.results[0].warnings[0].text.trim()).toBe(`Expected "grid-gap" to be "gap" (property-no-deprecated)`)
+  })
+
+  it('allows BEM/OOCSS class selectors', async () => {
+    const result = await stylelint.lint({
+      config: icebreaker(),
+      code: bemSelectors,
+    })
+
+    expect(result.results[0]?.warnings.length).toBe(0)
+  })
+
+  it('rejects non-BEM/OOCSS class selectors', async () => {
+    const result = await stylelint.lint({
+      config: icebreaker(),
+      code: invalidBemSelectors,
+    })
+
+    expect(result.results[0]?.warnings[0].rule).toBe('selector-class-pattern')
   })
 })

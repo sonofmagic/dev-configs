@@ -49,7 +49,7 @@
     "sync": "cnpm sync @icebreakers/stylelint-config"
   },
   "dependencies": {
-    "comment-json": "^4.4.1",
+    "comment-json": "^4.5.0",
     "postcss-html": "^1.8.0",
     "stylelint-config-recess-order": "^7.4.0",
     "stylelint-config-recommended-scss": "^16.0.2",

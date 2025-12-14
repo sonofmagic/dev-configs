@@ -79,6 +79,7 @@ export default createStylelintConfig({
 
 Defaults include:
 
+- Allowing BEM/OOCSS class selectors (e.g. `block__element--modifier`, `object--state`)
 - Allowing the `rpx` unit for mini-program compatibility
 - Ignoring Tailwind/UnoCSS style at-rules (`apply`, `screen`, etc.)
 - Ignoring the `page` selector used by various platforms
