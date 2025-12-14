@@ -1,5 +1,11 @@
 # @icebreakers/mock
 
+## 0.0.16
+
+### Patch Changes
+
+- 📦 Updated dependencies: `@icebreakers/stylelint-config` @ 1.2.4 · [`65e9e74`](https://github.com/sonofmagic/dev-configs/commit/65e9e741315315c180e11ea51f9f2a6573d010ea) · [`65e9e74`](https://github.com/sonofmagic/dev-configs/commit/65e9e741315315c180e11ea51f9f2a6573d010ea)
+
 ## 0.0.15
 
 ### Patch Changes
