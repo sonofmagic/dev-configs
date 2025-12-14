@@ -1,5 +1,13 @@
 # @icebreakers/stylelint-config
 
+## 1.2.4
+
+### Patch Changes
+
+- 🐛 **Allow BEM/OOCSS class naming by default via selector-class-pattern and document/test the behavior.** — [`65e9e74`](https://github.com/sonofmagic/dev-configs/commit/65e9e741315315c180e11ea51f9f2a6573d010ea) · Thanks [@sonofmagic](https://github.com/sonofmagic) · Patch release
+
+- 🐛 **chore(deps): upgrade** — [`65e9e74`](https://github.com/sonofmagic/dev-configs/commit/65e9e741315315c180e11ea51f9f2a6573d010ea) · Thanks [@sonofmagic](https://github.com/sonofmagic) · Patch release
+
 ## 1.2.3
 
 ### Patch Changes
