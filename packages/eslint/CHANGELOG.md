@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 1.6.8
+
+### Patch Changes
+
+- 🐛 **chore(deps): upgrade** — [`f4f7a44`](https://github.com/sonofmagic/dev-configs/commit/f4f7a4442b346b030224a31fffc9a35708f1d9e0) · Thanks [@sonofmagic](https://github.com/sonofmagic) · Patch release
+
 ## 1.6.7
 
 ### Patch Changes
