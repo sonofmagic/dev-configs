@@ -67,25 +67,25 @@ function formatDependencyLine(
     ChangelogFunctions['getDependencyReleaseLine']
   >[1],
 ): string {
-  const dependencySummaries = dependenciesUpdated.map(
-    dependency => `\`${dependency.name}\` @ ${dependency.newVersion}`,
-  )
+  const count = dependenciesUpdated.length
+  const firstCommit = references[0] || ''
 
-  const segments: string[] = []
-
-  if (dependencySummaries.length > 0) {
-    segments.push(dependencySummaries.join(', '))
+  if (count === 0) {
+    return firstCommit ? `- 📦 **Dependencies** ${firstCommit}` : '- 📦 **Dependencies**'
   }
 
-  if (references.length > 0) {
-    segments.push(references.join(' · '))
+  if (count <= 3) {
+    const dependencySummaries = dependenciesUpdated.map(
+      dependency => `\`${dependency.name}@${dependency.newVersion}\``,
+    )
+    const header = firstCommit ? `- 📦 **Dependencies** ${firstCommit}` : '- 📦 **Dependencies**'
+    const details = `  → ${dependencySummaries.join(', ')}`
+    return `${header}\n${details}`
   }
 
-  const details = segments.join(' · ')
-
-  return details.length > 0
-    ? `- 📦 Updated dependencies: ${details}`
-    : '- 📦 Updated dependencies'
+  return firstCommit
+    ? `- 📦 Updated ${count} dependencies ${firstCommit}`
+    : `- 📦 Updated ${count} dependencies`
 }
 
 interface ParsedSummary {
@@ -178,12 +178,15 @@ function buildUserMentions(
   fallbackUser: string | null,
 ): string {
   if (users.length > 0) {
-    return users
-      .map(username => `[@${username}](https://github.com/${username})`)
-      .join(', ')
+    return users.map(username => `@${username}`).join(', ')
   }
 
-  return fallbackUser ?? ''
+  if (fallbackUser) {
+    const match = fallbackUser.match(/@([^\]]+)/)
+    return match ? `@${match[1]}` : ''
+  }
+
+  return ''
 }
 
 const changelogFunctions: ChangelogFunctions = {
@@ -222,36 +225,36 @@ const changelogFunctions: ChangelogFunctions = {
     )
 
     const headlineText = parsedSummary.headline || 'Miscellaneous improvements'
-    const detailText = parsedSummary.detailLines.join(' · ')
 
-    const metaSegments: string[] = []
+    // Build main line components
+    const mainLineParts: string[] = [
+      `- ${releaseTypeMap[resolvedType].icon}`,
+      `**${headlineText}**`,
+    ]
 
+    // Add PR link or commit link (PR preferred)
     if (links.pull) {
-      metaSegments.push(links.pull)
+      mainLineParts.push(links.pull)
+    }
+    else if (links.commit) {
+      mainLineParts.push(links.commit)
     }
 
-    if (links.commit) {
-      metaSegments.push(links.commit)
-    }
-
+    // Add author info
     if (userMentions) {
-      metaSegments.push(`Thanks ${userMentions}`)
+      mainLineParts.push(`by ${userMentions}`)
     }
 
-    if (resolvedType !== 'none') {
-      metaSegments.push(`${releaseTypeMap[resolvedType].label} release`)
-    }
+    const mainLine = mainLineParts.join(' ')
 
-    const trailingSegments = [
-      detailText,
-      metaSegments.join(' · '),
-    ].filter(segment => segment.length > 0)
+    // Build detail lines (if any)
+    const detailLines = parsedSummary.detailLines
+      .map(line => `  - ${line}`)
+      .join('\n')
 
-    const suffix = trailingSegments.length
-      ? ` — ${trailingSegments.join(' · ')}`
-      : ''
-
-    return `\n\n- ${releaseTypeMap[resolvedType].icon} **${headlineText}**${suffix}`
+    return detailLines.length > 0
+      ? `\n\n${mainLine}\n${detailLines}`
+      : `\n\n${mainLine}`
   },
 }
 

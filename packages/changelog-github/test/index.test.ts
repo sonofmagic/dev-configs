@@ -58,11 +58,8 @@ describe('getReleaseLine', () => {
       { repo },
     )
 
-    expect(result).toContain('- ✨ **Add new lint rule** — ensure coverage for edge cases')
-    expect(result).toContain('[#123](https://github.com/sonofmagic/dev-configs/pull/123)')
-    expect(result).toContain('[`abcdef1`](https://github.com/sonofmagic/dev-configs/commit/abcdef1234567890)')
-    expect(result).toContain('Thanks [@lint-bot](https://github.com/lint-bot)')
-    expect(result).toContain('Minor release')
+    expect(result).toContain('- ✨ **Add new lint rule** [#123](https://github.com/sonofmagic/dev-configs/pull/123) by @lint-bot')
+    expect(result).toContain('  - ensure coverage for edge cases')
     expect(getInfoFromPullRequestMock).toHaveBeenCalledWith({
       repo,
       pull: 123,
@@ -113,8 +110,8 @@ describe('getDependencyReleaseLine', () => {
       { repo },
     )
 
-    expect(line).toContain('- 📦 Updated dependencies: `@icebreakers/eslint-config` @ 1.2.3, `vitest` @ 1.0.0')
-    expect(line).toContain('[`abcdef1`](https://github.com/sonofmagic/dev-configs/commit/abcdef1234567890)')
+    expect(line).toContain('- 📦 **Dependencies** [`abcdef1`](https://github.com/sonofmagic/dev-configs/commit/abcdef1234567890)')
+    expect(line).toContain('  → `@icebreakers/eslint-config@1.2.3`, `vitest@1.0.0`')
     expect(getInfoMock).toHaveBeenCalledWith({
       repo,
       commit: 'abcdef1234567890',
