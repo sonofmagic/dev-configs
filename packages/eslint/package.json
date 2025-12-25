@@ -48,10 +48,18 @@
     "release": "pnpm publish",
     "sync": "cnpm sync @icebreakers/eslint-config"
   },
+  "peerDependencies": {
+    "eslint-plugin-pnpm": "^1.4.3"
+  },
+  "peerDependenciesMeta": {
+    "eslint-plugin-pnpm": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@antfu/eslint-config": "6.7.3",
-    "@eslint-react/eslint-plugin": "^2.3.13",
-    "@next/eslint-plugin-next": "^16.1.0",
+    "@eslint-react/eslint-plugin": "^2.4.0",
+    "@next/eslint-plugin-next": "^16.1.1",
     "@tanstack/eslint-plugin-query": "^5.91.2",
     "eslint-plugin-better-tailwindcss": "^3.8.0",
     "eslint-plugin-format": "1.1.0",

@@ -22,8 +22,15 @@ const BASE_DEFAULTS: Pick<UserDefinedOptions, 'formatters' | 'javascript' | 'tes
 }
 
 const BASE_RULES: Partial<Linter.RulesRecord> = {
+  // Disable all pnpm rules by default
+  // @antfu/eslint-config auto-enables pnpm plugin when pnpm-workspace.yaml exists
+  // but we want it opt-in instead of auto-enabled
   'pnpm/json-enforce-catalog': 'off',
-  // allow plain specifiers when pnpm catalogs aren't used by default
+  'pnpm/json-prefer-workspace-settings': 'off',
+  'pnpm/json-valid-catalog': 'off',
+  'pnpm/yaml-enforce-settings': 'off',
+  'pnpm/yaml-no-duplicate-catalog-item': 'off',
+  'pnpm/yaml-no-unused-catalog-item': 'off',
   'unused-imports/no-unused-vars': 'off',
   'unicorn/prefer-number-properties': 'warn',
 }

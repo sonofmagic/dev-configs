@@ -53,6 +53,11 @@ exports[`presets > c 1`] = `
   {
     "rules": {
       "pnpm/json-enforce-catalog": "off",
+      "pnpm/json-prefer-workspace-settings": "off",
+      "pnpm/json-valid-catalog": "off",
+      "pnpm/yaml-enforce-settings": "off",
+      "pnpm/yaml-no-duplicate-catalog-item": "off",
+      "pnpm/yaml-no-unused-catalog-item": "off",
       "unicorn/prefer-number-properties": "warn",
       "unused-imports/no-unused-vars": "off",
     },
@@ -114,6 +119,11 @@ exports[`presets > c0 1`] = `
   {
     "rules": {
       "pnpm/json-enforce-catalog": "off",
+      "pnpm/json-prefer-workspace-settings": "off",
+      "pnpm/json-valid-catalog": "off",
+      "pnpm/yaml-enforce-settings": "off",
+      "pnpm/yaml-no-duplicate-catalog-item": "off",
+      "pnpm/yaml-no-unused-catalog-item": "off",
       "unicorn/prefer-number-properties": "warn",
       "unused-imports/no-unused-vars": "off",
     },
@@ -192,6 +202,11 @@ exports[`presets > c1 1`] = `
   {
     "rules": {
       "pnpm/json-enforce-catalog": "off",
+      "pnpm/json-prefer-workspace-settings": "off",
+      "pnpm/json-valid-catalog": "off",
+      "pnpm/yaml-enforce-settings": "off",
+      "pnpm/yaml-no-duplicate-catalog-item": "off",
+      "pnpm/yaml-no-unused-catalog-item": "off",
       "unicorn/prefer-number-properties": "warn",
       "unused-imports/no-unused-vars": "off",
     },
@@ -271,6 +286,11 @@ exports[`presets > c2 1`] = `
   {
     "rules": {
       "pnpm/json-enforce-catalog": "off",
+      "pnpm/json-prefer-workspace-settings": "off",
+      "pnpm/json-valid-catalog": "off",
+      "pnpm/yaml-enforce-settings": "off",
+      "pnpm/yaml-no-duplicate-catalog-item": "off",
+      "pnpm/yaml-no-unused-catalog-item": "off",
       "unicorn/prefer-number-properties": "warn",
       "unused-imports/no-unused-vars": "off",
     },
@@ -351,6 +371,11 @@ exports[`presets > c3 1`] = `
   {
     "rules": {
       "pnpm/json-enforce-catalog": "off",
+      "pnpm/json-prefer-workspace-settings": "off",
+      "pnpm/json-valid-catalog": "off",
+      "pnpm/yaml-enforce-settings": "off",
+      "pnpm/yaml-no-duplicate-catalog-item": "off",
+      "pnpm/yaml-no-unused-catalog-item": "off",
       "unicorn/prefer-number-properties": "warn",
       "unused-imports/no-unused-vars": "off",
     },
@@ -444,6 +469,11 @@ exports[`presets > nestjs 1`] = `
   {
     "rules": {
       "pnpm/json-enforce-catalog": "off",
+      "pnpm/json-prefer-workspace-settings": "off",
+      "pnpm/json-valid-catalog": "off",
+      "pnpm/yaml-enforce-settings": "off",
+      "pnpm/yaml-no-duplicate-catalog-item": "off",
+      "pnpm/yaml-no-unused-catalog-item": "off",
       "unicorn/prefer-number-properties": "warn",
       "unused-imports/no-unused-vars": "off",
     },
@@ -542,6 +572,11 @@ exports[`presets > query 1`] = `
   {
     "rules": {
       "pnpm/json-enforce-catalog": "off",
+      "pnpm/json-prefer-workspace-settings": "off",
+      "pnpm/json-valid-catalog": "off",
+      "pnpm/yaml-enforce-settings": "off",
+      "pnpm/yaml-no-duplicate-catalog-item": "off",
+      "pnpm/yaml-no-unused-catalog-item": "off",
       "unicorn/prefer-number-properties": "warn",
       "unused-imports/no-unused-vars": "off",
     },
