@@ -2,12 +2,18 @@
 '@icebreakers/changelog-github': minor
 ---
 
-Optimize changelog formatting for better GitHub readability
+pr: #5
+Commit: 1d5f8910823e330f331d5ee30cc518d3392f27cd
 
-- Simplify metadata presentation by removing redundant separators and labels
-- Move detailed descriptions to indented sub-lists for better hierarchy
-- Shorten contributor mentions to "by @username" format
-- Remove "release type" text labels (emoji icons are sufficient)
-- Prioritize PR links over commit SHA (show commit only when PR is unavailable)
-- Optimize dependency update format: show full list for ≤3 deps, summary for more
-- Reduce main line length by 60% while preserving essential information
+feat(changelog): repo-aware GitHub formatting + summary directives
+
+- Recognize summary directives (case-insensitive): `pr:`, `pull request:`,
+  `commit:`, `author:` / `user:`
+- Prefer PR links over commit links; fall back to short SHA when no PR exists
+- Normalize detail lines from `-` / `*` / plain text into a single indented list
+- Keep inline Markdown intact: `code`, [links](https://example.com), issue refs
+  like #123, and monorepo paths such as `packages/changelog-github/src/index.ts`
+- Drop redundant separators and release-type labels so entries stay scannable
+- Dependency section stays compact:
+  - ≤3 bumps: show `📦 Dependencies` + first commit + an inline list
+  - >3 bumps: collapse to `📦 Updated N dependencies` + first commit
