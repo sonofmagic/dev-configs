@@ -1,5 +1,17 @@
 # @icebreakers/changelog-github
 
+## 0.1.0
+
+### Minor Changes
+
+- ✨ **Improve GitHub release note readability for Changesets** [#5](https://github.com/sonofmagic/dev-configs/pull/5) by @github-actions
+  - Support summary directives: `pr:` / `pull request:`, `commit:`, `author:` / `user:` (case-insensitive)
+  - Prefer PR links over commit links; fall back to short SHA when no PR exists
+  - Render details as an indented list and keep inline Markdown (`code`, [links](https://example.com), #123, `packages/changelog-github/src/index.ts`)
+  - Auto-load `.env` via `dotenv/config` so local CLI runs behave like CI
+  - Drop redundant separators + release-type labels so entries stay scannable
+  - Format dependency bumps as `📦 Dependencies` (≤3) or `📦 Updated N dependencies` (>3)
+
 ## 0.0.2
 
 ### Patch Changes
