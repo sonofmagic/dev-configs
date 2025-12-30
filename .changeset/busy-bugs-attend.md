@@ -4,7 +4,6 @@
 
 COMMIT: bb9cbce84c2980c7545c2dfcfe391be8a9f48299
 AUTHOR: @sonofmagic
-user: @icebreaker
 
 Fix deterministic preset resolution in pnpm monorepos
 
