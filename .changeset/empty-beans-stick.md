@@ -3,17 +3,12 @@
 ---
 
 pr: #5
-Commit: 1d5f8910823e330f331d5ee30cc518d3392f27cd
 
-feat(changelog): repo-aware GitHub formatting + summary directives
+Improve GitHub release note readability for Changesets
 
-- Recognize summary directives (case-insensitive): `pr:`, `pull request:`,
-  `commit:`, `author:` / `user:`
+- Support summary directives: `pr:` / `pull request:`, `commit:`, `author:` / `user:` (case-insensitive)
 - Prefer PR links over commit links; fall back to short SHA when no PR exists
-- Normalize detail lines from `-` / `*` / plain text into a single indented list
-- Keep inline Markdown intact: `code`, [links](https://example.com), issue refs
-  like #123, and monorepo paths such as `packages/changelog-github/src/index.ts`
-- Drop redundant separators and release-type labels so entries stay scannable
-- Dependency section stays compact:
-  - ≤3 bumps: show `📦 Dependencies` + first commit + an inline list
-  - >3 bumps: collapse to `📦 Updated N dependencies` + first commit
+- Render details as an indented list and keep inline Markdown (`code`, [links](https://example.com), #123, `packages/changelog-github/src/index.ts`)
+- Auto-load `.env` via `dotenv/config` so local CLI runs behave like CI
+- Drop redundant separators + release-type labels so entries stay scannable
+- Format dependency bumps as `📦 Dependencies` (≤3) or `📦 Updated N dependencies` (>3)

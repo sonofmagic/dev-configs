@@ -33,7 +33,7 @@ pnpm add -D @changesets/cli @icebreakers/changelog-github
 ## 与 `@changesets/changelog-github` 的差异
 
 - **摘要指令**：额外识别位于摘要首部的 `pr:`、`commit:`、`author:` / `user:`（不区分大小写），用于覆盖 GitHub 拉取的元数据，同时保留正文内容。
-- **短哈希链接**：当提供 `commit:` 指令时，会以短 SHA 生成链接，而不是仅展示完整 URL，阅读体验更好。
+- **短哈希链接**：当提供 `commit:` 指令时，会以短 SHA 生成链接（若同时提供 `pr:`，会与 PR 链接并列展示），阅读体验更好。
 - **优化的格式**：采用简洁的多行布局，仅保留核心元数据，移除冗余的分隔符和标签，提升 GitHub 上的可读性。
 - **自动加载 dotenv**：在访问 GitHub API 前调用 `dotenv`，本地 CLI 与 CI 行为保持一致，无需额外手动引入。
 - **依赖更新板块**：列出依赖升级时，会根据变更集补全提交链接，并统一 Markdown 缩进，便于对齐阅读。
@@ -58,7 +58,7 @@ author: @octocat
 最终 changelog 会渲染为：
 
 ```
-- ✨ **为 lint preset 新增可选的 `tailwind-config` 配置项** [#42] by @octocat
+- ✨ **为 lint preset 新增可选的 `tailwind-config` 配置项** [#42] [`1234567`](https://github.com/org/repo/commit/1234567890abcdef1234567890abcdef12345678) by @octocat
   - 接受相对路径指向 `tailwind.config.ts`
   - 未设置时默认读取工作区根目录
 ```

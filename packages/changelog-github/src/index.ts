@@ -96,37 +96,106 @@ interface ParsedSummary {
   users: string[]
 }
 
-function parseSummary(summary: string): ParsedSummary {
+function normalizeUserMentions(users: string[]): string {
+  const normalized = users
+    .map(user => user.trim())
+    .filter(Boolean)
+    .map(user => (user.startsWith('@') ? user : `@${user}`))
+
+  if (normalized.length === 0) {
+    return ''
+  }
+
+  if (normalized.length === 1) {
+    return normalized[0]
+  }
+
+  if (normalized.length === 2) {
+    return `${normalized[0]} and ${normalized[1]}`
+  }
+
+  return `${normalized.slice(0, -1).join(', ')}, and ${normalized.at(-1)}`
+}
+
+function extractSummaryMeta(summary: string): {
+  prNumber?: number
+  commitRef?: string
+  users: string[]
+  contentLines: string[]
+} {
   let prNumber: number | undefined
   let commitRef: string | undefined
   const users: string[] = []
 
-  const cleanedSummary = summary
-    .replace(/^\s*(?:pr|pull|pull\s+request):\s*#?(\d+)/im, (_, pr) => {
-      const num = Number(pr)
-      if (!Number.isNaN(num)) {
-        prNumber = num
-      }
-      return ''
-    })
-    .replace(/^\s*commit:\s*(\S+)/im, (_, commit) => {
-      commitRef = commit
-      return ''
-    })
-    .replace(/^\s*(?:author|user):\s*@?(\S+)/gim, (_, user) => {
-      users.push(user)
-      return ''
-    })
-    .trim()
+  const contentLines = summary
+    .split(/\r?\n/)
+    .filter((line) => {
+      const trimmed = line.trim()
+      const withoutListMarker = trimmed.replace(/^[-*+]\s+/, '')
 
-  const [headline = '', ...restLines] = cleanedSummary
-    .split('\n')
+      const prMatch = withoutListMarker.match(
+        /^(?:pr|pull|pull\s*request):\s*#?(\d+)\s*$/i,
+      )
+      if (prMatch) {
+        const num = Number(prMatch[1])
+        if (!Number.isNaN(num)) {
+          prNumber = num
+        }
+        return false
+      }
+
+      const commitMatch = withoutListMarker.match(/^commit:\s*(\S+)\s*$/i)
+      if (commitMatch) {
+        commitRef = commitMatch[1]
+        return false
+      }
+
+      const userMatch = withoutListMarker.match(/^(?:author|user):\s*(\S+)\s*$/i)
+      if (userMatch) {
+        users.push(userMatch[1].replace(/^@/, ''))
+        return false
+      }
+
+      return true
+    })
     .map(line => line.trimRight())
 
+  return {
+    prNumber,
+    commitRef,
+    users,
+    contentLines,
+  }
+}
+
+function parseSummary(summary: string): ParsedSummary {
+  const {
+    prNumber,
+    commitRef,
+    users,
+    contentLines,
+  } = extractSummaryMeta(summary)
+
+  const nonEmptyIndex = contentLines.findIndex(line => line.trim().length > 0)
+  if (nonEmptyIndex === -1) {
+    return {
+      headline: '',
+      detailLines: [],
+      prNumber,
+      commitRef,
+      users,
+    }
+  }
+
+  const firstContentLine = contentLines[nonEmptyIndex].trim()
+  const startsWithList = /^(?:[-*+]\s+|\d+[.)]\s+)/.test(firstContentLine)
+
+  const headline = startsWithList ? '' : firstContentLine
+  const restLines = startsWithList
+    ? contentLines.slice(nonEmptyIndex)
+    : contentLines.slice(nonEmptyIndex + 1)
+
   const detailLines = restLines
-    .map(line => line.trim())
-    .map(line => line.replace(/^\s*[-*]\s*/, ''))
-    .filter(line => line.length > 0)
 
   return {
     headline,
@@ -178,15 +247,54 @@ function buildUserMentions(
   fallbackUser: string | null,
 ): string {
   if (users.length > 0) {
-    return users.map(username => `@${username}`).join(', ')
+    return normalizeUserMentions(users)
   }
 
   if (fallbackUser) {
     const match = fallbackUser.match(/@([^\]]+)/)
-    return match ? `@${match[1]}` : ''
+    return match ? normalizeUserMentions([match[1]]) : ''
   }
 
   return ''
+}
+
+function indentMarkdownBlock(lines: string[], spaces: number): string {
+  const prefix = ' '.repeat(spaces)
+  return lines
+    .map((line) => {
+      if (line.trim().length === 0) {
+        return ''
+      }
+      return `${prefix}${line}`
+    })
+    .join('\n')
+}
+
+function formatDetailBlock(detailLines: string[]): string {
+  const trimmed = detailLines
+    .join('\n')
+    .trim()
+    .split('\n')
+    .map(line => line.trimRight())
+
+  const hasFence = trimmed.some(line => /^\s*```/.test(line))
+  const isListLike = trimmed.some(line => /^\s*(?:[-*+]\s+|\d+[.)]\s+)/.test(line))
+
+  if (trimmed.length === 0) {
+    return ''
+  }
+
+  if (hasFence || isListLike) {
+    return indentMarkdownBlock(trimmed, 2)
+  }
+
+  const paragraphs = trimmed
+    .join('\n')
+    .split(/\n\s*\n/)
+    .map(chunk => chunk.replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+
+  return paragraphs.map(text => `  - ${text}`).join('\n')
 }
 
 const changelogFunctions: ChangelogFunctions = {
@@ -240,6 +348,11 @@ const changelogFunctions: ChangelogFunctions = {
       mainLineParts.push(links.commit)
     }
 
+    // If a commit override is explicitly provided, show it even when PR exists.
+    if (links.pull && parsedSummary.commitRef && links.commit) {
+      mainLineParts.push(links.commit)
+    }
+
     // Add author info
     if (userMentions) {
       mainLineParts.push(`by ${userMentions}`)
@@ -248,12 +361,10 @@ const changelogFunctions: ChangelogFunctions = {
     const mainLine = mainLineParts.join(' ')
 
     // Build detail lines (if any)
-    const detailLines = parsedSummary.detailLines
-      .map(line => `  - ${line}`)
-      .join('\n')
+    const detailBlock = formatDetailBlock(parsedSummary.detailLines)
 
-    return detailLines.length > 0
-      ? `\n\n${mainLine}\n${detailLines}`
+    return detailBlock.length > 0
+      ? `\n\n${mainLine}\n${detailBlock}`
       : `\n\n${mainLine}`
   },
 }

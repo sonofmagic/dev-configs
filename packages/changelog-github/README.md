@@ -35,7 +35,7 @@ Run `pnpm changeset` as usual—generated changelogs will now use the enhanced f
 ## Key Differences from `@changesets/changelog-github`
 
 - **Summary tags** – recognises leading `pr:`, `commit:`, and `author:` / `user:` directives (case-insensitive) to override GitHub metadata while keeping the rest of the summary intact.
-- **Short commit links** – when you supply a `commit:` tag, the formatter renders the shortened SHA as a hyperlink rather than just the full URL.
+- **Short commit links** – when you supply a `commit:` tag, the formatter renders the shortened SHA as a hyperlink (and shows it alongside the PR link when both are provided).
 - **Optimized formatting** – uses a clean, multi-line layout with essential metadata only. Removes redundant separators and labels for better readability on GitHub.
 - **Dotenv bootstrapping** – automatically loads `.env` before hitting the GitHub API, matching local development to CI without extra wiring.
 - **Dependency section** – lists dependency bumps with consistent Markdown indentation and links any backing commits for extra context.
@@ -60,7 +60,7 @@ Add optional `tailwind-config` flag to the lint preset
 The rendered changelog entry becomes:
 
 ```
-- ✨ **Add optional `tailwind-config` flag** [#42] by @octocat
+- ✨ **Add optional `tailwind-config` flag** [#42] [`1234567`](https://github.com/org/repo/commit/1234567890abcdef1234567890abcdef12345678) by @octocat
   - accepts a relative path to `tailwind.config.ts`
   - falls back to the workspace root when unset
 ```

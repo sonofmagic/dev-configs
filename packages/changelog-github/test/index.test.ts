@@ -58,7 +58,7 @@ describe('getReleaseLine', () => {
       { repo },
     )
 
-    expect(result).toContain('- ✨ **Add new lint rule** [#123](https://github.com/sonofmagic/dev-configs/pull/123) by @lint-bot')
+    expect(result).toContain('- ✨ **Add new lint rule** [#123](https://github.com/sonofmagic/dev-configs/pull/123) [`abcdef1`](https://github.com/sonofmagic/dev-configs/commit/abcdef1234567890) by @lint-bot')
     expect(result).toContain('  - ensure coverage for edge cases')
     expect(getInfoFromPullRequestMock).toHaveBeenCalledWith({
       repo,
