@@ -1,5 +1,12 @@
 # @icebreakers/mock
 
+## 0.0.17
+
+### Patch Changes
+
+- 📦 **Dependencies** [`461103c`](https://github.com/sonofmagic/dev-configs/commit/461103ce0671ea6fdae12b065c218ae0a4d7e4e5)
+  → `@icebreakers/stylelint-config@1.2.5`
+
 ## 0.0.16
 
 ### Patch Changes
