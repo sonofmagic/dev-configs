@@ -1,6 +1,46 @@
 import type { OptionsTypescript, OptionsVue } from './antfu'
 import type { UserDefinedOptions } from './types'
-import INLINE_ELEMENTS from 'eslint-plugin-vue/lib/utils/inline-non-void-elements.json'
+
+const INLINE_ELEMENTS = [
+  'a',
+  'abbr',
+  'audio',
+  'b',
+  'bdi',
+  'bdo',
+  'canvas',
+  'cite',
+  'code',
+  'data',
+  'del',
+  'dfn',
+  'em',
+  'i',
+  'iframe',
+  'ins',
+  'kbd',
+  'label',
+  'map',
+  'mark',
+  'noscript',
+  'object',
+  'output',
+  'picture',
+  'q',
+  'ruby',
+  's',
+  'samp',
+  'small',
+  'span',
+  'strong',
+  'sub',
+  'sup',
+  'svg',
+  'time',
+  'u',
+  'var',
+  'video',
+]
 
 export const nestjsTypeScriptRules: NonNullable<OptionsTypescript['overrides']> = {
   'ts/explicit-function-return-type': 'off',
