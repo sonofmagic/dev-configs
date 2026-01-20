@@ -110,6 +110,10 @@ describe('resolveTailwindPresets', () => {
     expect(resolveTailwindPresets(false)).toEqual([])
   })
 
+  it('returns empty array when undefined', () => {
+    expect(resolveTailwindPresets(undefined)).toEqual([])
+  })
+
   it('wires up better-tailwindcss when an object config is provided', async () => {
     const [configPromise] = resolveTailwindPresets({
       entryPoint: 'src/main.css',
@@ -177,6 +181,10 @@ describe('resolveAccessibilityPresets', () => {
     expect(resolveAccessibilityPresets(false, false, false)).toEqual([])
   })
 
+  it('returns empty array when enabled without frameworks', () => {
+    expect(resolveAccessibilityPresets(true, false, false)).toEqual([])
+  })
+
   it('includes vue accessibility presets when vue is enabled', async () => {
     const [preset] = resolveAccessibilityPresets(true, true, false)
     await expect(preset).resolves.toMatchObject({ name: 'vue-a11y-flat' })
@@ -185,6 +193,12 @@ describe('resolveAccessibilityPresets', () => {
   it('includes react accessibility presets when react is enabled', async () => {
     const [preset] = resolveAccessibilityPresets(true, false, true)
     await expect(preset).resolves.toMatchObject({ name: 'jsx-a11y-flat' })
+  })
+
+  it('returns both vue and react presets when enabled', async () => {
+    const [vuePreset, reactPreset] = resolveAccessibilityPresets(true, true, true)
+    await expect(vuePreset).resolves.toMatchObject({ name: 'vue-a11y-flat' })
+    await expect(reactPreset).resolves.toMatchObject({ name: 'jsx-a11y-flat' })
   })
 })
 
