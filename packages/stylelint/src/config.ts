@@ -1,6 +1,7 @@
 import type { Config } from 'stylelint'
 import type { IcebreakerStylelintOptions, PresetToggles } from './types'
 import { createRequire } from 'node:module'
+import { fileURLToPath } from 'node:url'
 import { PRESET_RECESS_ORDER, PRESET_STANDARD_SCSS, PRESET_VUE_SCSS } from './constants'
 import { normalizeExtends, resolveIgnoreList, toArray, unique } from './utils'
 
@@ -8,9 +9,35 @@ const requireFromConfig = createRequire(import.meta.url)
 
 const BEM_OOCSS_CLASS_NAME_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:__[a-z0-9]+(?:-[a-z0-9]+)*)*(?:--[a-z0-9]+(?:-[a-z0-9]+)*)*$/
 
-const PRESET_PATH_STANDARD_SCSS = requireFromConfig.resolve(PRESET_STANDARD_SCSS)
-const PRESET_PATH_VUE_SCSS = requireFromConfig.resolve(PRESET_VUE_SCSS)
-const PRESET_PATH_RECESS_ORDER = requireFromConfig.resolve(PRESET_RECESS_ORDER)
+function metaResolve(specifier: string): string | null {
+  const resolver = (import.meta as { resolve?: (specifier: string) => string }).resolve
+  if (typeof resolver !== 'function') {
+    return null
+  }
+
+  try {
+    const resolved = resolver(specifier)
+    return resolved.startsWith('file:')
+      ? fileURLToPath(resolved)
+      : resolved
+  }
+  catch {
+    return null
+  }
+}
+
+function resolvePresetPath(specifier: string): string {
+  try {
+    return requireFromConfig.resolve(specifier)
+  }
+  catch {
+    return metaResolve(specifier) ?? specifier
+  }
+}
+
+const PRESET_PATH_STANDARD_SCSS = resolvePresetPath(PRESET_STANDARD_SCSS)
+const PRESET_PATH_VUE_SCSS = resolvePresetPath(PRESET_VUE_SCSS)
+const PRESET_PATH_RECESS_ORDER = resolvePresetPath(PRESET_RECESS_ORDER)
 
 function resolvePresetExtends(presets: PresetToggles | undefined): string[] {
   const entries: string[] = []

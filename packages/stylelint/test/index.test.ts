@@ -1,12 +1,19 @@
-import { createRequire } from 'node:module'
+import { PRESET_RECESS_ORDER, PRESET_STANDARD_SCSS, PRESET_VUE_SCSS } from '@/constants'
 import { createStylelintConfig, icebreaker } from '@/index'
 import { setVscodeSettingsJson } from '@/shared'
 
-const testRequire = createRequire(import.meta.url)
-
-const PRESET_PATH_STANDARD_SCSS = testRequire.resolve('stylelint-config-standard-scss')
-const PRESET_PATH_VUE_SCSS = testRequire.resolve('stylelint-config-recommended-vue/scss')
-const PRESET_PATH_RECESS_ORDER = testRequire.resolve('stylelint-config-recess-order')
+function normalizePresetPath(value: string) {
+  if (value.includes(PRESET_STANDARD_SCSS)) {
+    return PRESET_STANDARD_SCSS
+  }
+  if (value.includes(PRESET_VUE_SCSS)) {
+    return PRESET_VUE_SCSS
+  }
+  if (value.includes(PRESET_RECESS_ORDER)) {
+    return PRESET_RECESS_ORDER
+  }
+  return value
+}
 
 describe('index', () => {
   it('setVscodeSettingsJson case 0', () => {
@@ -27,18 +34,16 @@ describe('index', () => {
     const config = icebreaker()
 
     expect(config.extends).toEqual([
-      PRESET_PATH_STANDARD_SCSS,
-      PRESET_PATH_VUE_SCSS,
-      PRESET_PATH_RECESS_ORDER,
+      expect.stringContaining(PRESET_STANDARD_SCSS),
+      expect.stringContaining(PRESET_VUE_SCSS),
+      expect.stringContaining(PRESET_RECESS_ORDER),
     ])
 
     expect({
       ...config,
-      extends: [
-        'stylelint-config-standard-scss',
-        'stylelint-config-recommended-vue/scss',
-        'stylelint-config-recess-order',
-      ],
+      extends: (config.extends ?? []).map((item) => {
+        return typeof item === 'string' ? normalizePresetPath(item) : item
+      }),
     }).toMatchSnapshot()
   })
 
@@ -52,7 +57,7 @@ describe('index', () => {
     })
 
     expect(config.extends).toEqual([
-      PRESET_PATH_STANDARD_SCSS,
+      expect.stringContaining(PRESET_STANDARD_SCSS),
       'my-custom-config',
     ])
   })
@@ -83,5 +88,15 @@ describe('index', () => {
         ],
       },
     ])
+  })
+
+  it('merges overrides in icebreaker configs', () => {
+    const config = icebreaker({
+      rules: {
+        'selector-class-pattern': null,
+      },
+    })
+
+    expect(config.rules?.['selector-class-pattern']).toBeNull()
   })
 })
