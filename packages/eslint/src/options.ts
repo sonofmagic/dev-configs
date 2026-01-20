@@ -39,6 +39,31 @@ export type ResolvedUserOptions = UserDefinedOptions & {
   tailwindcss?: TailwindcssOption | boolean
 }
 
+function mergeOptionWithDefaults<T extends object>(
+  input: T | boolean | undefined,
+  defaults: T,
+  options: {
+    postProcess?: (merged: T) => void
+    useDefaultWhenUndefined?: boolean
+  } = {},
+): T | boolean | undefined {
+  const { postProcess, useDefaultWhenUndefined = false } = options
+  const shouldUseDefaults = input === true || (useDefaultWhenUndefined && input === undefined)
+
+  if (shouldUseDefaults) {
+    postProcess?.(defaults)
+    return defaults
+  }
+
+  if (isObject(input)) {
+    const merged = defu(input, defaults)
+    postProcess?.(merged)
+    return merged
+  }
+
+  return input
+}
+
 function applyVueVersionSpecificRules(option: OptionsVue | boolean | undefined): void {
   if (!option || typeof option !== 'object') {
     return
@@ -71,23 +96,20 @@ export function resolveUserOptions(options?: UserDefinedOptions): ResolvedUserOp
     BASE_DEFAULTS,
   ) as ResolvedUserOptions
 
-  const vueOptions = getDefaultVueOptions(options)
-  if (resolved.vue === true) {
-    resolved.vue = vueOptions
-  }
-  else if (isObject(resolved.vue)) {
-    resolved.vue = defu(resolved.vue, vueOptions)
-  }
-
-  applyVueVersionSpecificRules(resolved.vue)
-
-  const typescriptOptions = getDefaultTypescriptOptions(options)
-  if (resolved.typescript === undefined || resolved.typescript === true) {
-    resolved.typescript = typescriptOptions
-  }
-  else if (isObject(resolved.typescript)) {
-    resolved.typescript = defu(resolved.typescript, typescriptOptions)
-  }
+  resolved.vue = mergeOptionWithDefaults(
+    resolved.vue,
+    getDefaultVueOptions(options),
+    {
+      postProcess: applyVueVersionSpecificRules,
+    },
+  )
+  resolved.typescript = mergeOptionWithDefaults(
+    resolved.typescript,
+    getDefaultTypescriptOptions(options),
+    {
+      useDefaultWhenUndefined: true,
+    },
+  )
 
   return resolved
 }

@@ -20,6 +20,15 @@ describe('defaults helpers', () => {
     ])
   })
 
+  it('does not enable ionic or weapp overrides by default', () => {
+    const vueOptions = getDefaultVueOptions()
+
+    expect(vueOptions.overrides).toBeDefined()
+    const vueOverrides = vueOptions.overrides!
+    expect(vueOverrides['vue/no-deprecated-slot-attribute']).toBeUndefined()
+    expect(vueOverrides['vue/singleline-html-element-content-newline']).toBeUndefined()
+  })
+
   it('merges nest specific typescript rules', () => {
     const typescriptOptions = getDefaultTypescriptOptions({ nestjs: true })
 
@@ -27,6 +36,14 @@ describe('defaults helpers', () => {
     const typescriptOverrides = typescriptOptions.overrides!
     expect(typescriptOverrides['ts/explicit-function-return-type']).toBe('off')
     expect(typescriptOverrides['ts/no-unused-vars']).toBeDefined()
+  })
+
+  it('keeps nest rules disabled when nestjs is false', () => {
+    const typescriptOptions = getDefaultTypescriptOptions()
+
+    expect(typescriptOptions.overrides).toBeDefined()
+    const typescriptOverrides = typescriptOptions.overrides!
+    expect(typescriptOverrides['ts/explicit-function-return-type']).toBeUndefined()
   })
 })
 
@@ -47,8 +64,29 @@ describe('resolveUserOptions', () => {
 
     expect(isObject(resolvedVue)).toBe(true)
     expect(resolvedVue.overrides?.['vue/no-useless-v-bind']).toBeDefined()
+    expect(resolvedVue.overrides?.['vue/no-v-for-template-key-on-child']).toBe('error')
+    expect(resolvedVue.overrides?.['vue/no-v-for-template-key']).toBe('off')
     expect(resolvedTypescript.overrides?.['ts/no-unused-vars']).toBeDefined()
     expect(resolved.formatters).toBe(true)
+  })
+
+  it('keeps vue disabled when not configured', () => {
+    const resolved = resolveUserOptions()
+
+    expect(resolved.vue).toBeUndefined()
+
+    const resolvedTypescript = resolved.typescript
+    if (!resolvedTypescript || typeof resolvedTypescript === 'boolean') {
+      throw new Error('Expected typescript options to resolve to an object')
+    }
+    expect(resolvedTypescript.overrides?.['ts/no-unused-vars']).toBeDefined()
+  })
+
+  it('keeps disabled feature flags as false', () => {
+    const resolved = resolveUserOptions({ vue: false, typescript: false })
+
+    expect(resolved.vue).toBe(false)
+    expect(resolved.typescript).toBe(false)
   })
 
   it('applies vue2 specific overrides when requested', () => {
@@ -106,6 +144,10 @@ describe('isObject', () => {
 })
 
 describe('applyVueVersionSpecificRules', () => {
+  it('skips processing when option is not an object', () => {
+    expect(() => __applyVueVersionSpecificRules(false)).not.toThrow()
+  })
+
   it('skips processing when overrides are missing', () => {
     const option = { overrides: undefined } as any
     __applyVueVersionSpecificRules(option)

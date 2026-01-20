@@ -5,8 +5,8 @@ function isPromise<T = unknown>(value: unknown): value is PromiseLike<T> {
   return typeof value === 'object' && value !== null && typeof (value as PromiseLike<T>).then === 'function'
 }
 
-async function materializePresets(options?: UserDefinedOptions) {
-  const [resolvedOptions, ...rest] = getPresets(options)
+async function materializePresets(options?: UserDefinedOptions, mode?: 'legacy') {
+  const [resolvedOptions, ...rest] = getPresets(options, mode)
   const resolvedConfigs = []
 
   for (const item of rest) {
@@ -48,5 +48,9 @@ describe('presets', () => {
   })
   it('nestjs', async () => {
     expect(await materializePresets({ nestjs: true, typescript: true })).toMatchSnapshot()
+  })
+  it('legacy mode', async () => {
+    const [, baseConfig] = await materializePresets(undefined, 'legacy')
+    expect(baseConfig.rules?.['perfectionist/sort-imports']).toBe('off')
   })
 })
