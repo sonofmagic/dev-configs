@@ -10,7 +10,12 @@ const requireFromConfig = createRequire(import.meta.url)
 const BEM_OOCSS_CLASS_NAME_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:__[a-z0-9]+(?:-[a-z0-9]+)*)*(?:--[a-z0-9]+(?:-[a-z0-9]+)*)*$/
 
 function metaResolve(specifier: string): string | null {
-  const resolver = (import.meta as { resolve?: (specifier: string) => string }).resolve
+  const resolverOverride = (globalThis as {
+    __icebreakerImportMetaResolve?: ((specifier: string) => string) | null
+  }).__icebreakerImportMetaResolve
+  const resolver = resolverOverride !== undefined
+    ? resolverOverride
+    : (import.meta as { resolve?: (specifier: string) => string }).resolve
   if (typeof resolver !== 'function') {
     return null
   }

@@ -14,6 +14,9 @@ describe('createIcebreakerStylelintConfig', () => {
     vi.clearAllMocks()
     vi.unmock('node:module')
     vi.unmock('node:url')
+    delete (globalThis as {
+      __icebreakerImportMetaResolve?: ((specifier: string) => string) | null
+    }).__icebreakerImportMetaResolve
   })
 
   it('returns defaults with presets enabled', async () => {
@@ -141,6 +144,33 @@ describe('createIcebreakerStylelintConfig', () => {
       expect.stringContaining(PRESET_STANDARD_SCSS),
       expect.stringContaining(PRESET_VUE_SCSS),
       expect.stringContaining(PRESET_RECESS_ORDER),
+    ])
+  })
+
+  it('falls back when import.meta.resolve is unavailable', async () => {
+    vi.doMock('node:module', () => {
+      return {
+        createRequire: () => {
+          return {
+            resolve: () => {
+              throw new Error('resolve failed')
+            },
+          }
+        },
+      }
+    })
+
+    ;(globalThis as {
+      __icebreakerImportMetaResolve?: ((specifier: string) => string) | null
+    }).__icebreakerImportMetaResolve = null
+
+    const { createIcebreakerStylelintConfig } = await loadConfig()
+    const config = createIcebreakerStylelintConfig()
+
+    expect(config.extends).toEqual([
+      PRESET_STANDARD_SCSS,
+      PRESET_VUE_SCSS,
+      PRESET_RECESS_ORDER,
     ])
   })
 })
