@@ -1,5 +1,12 @@
 # @icebreakers/eslint-config
 
+## 1.6.14
+
+### Patch Changes
+
+- 🐛 **Improve eslint config option handling and unit coverage.** [`c0e39e3`](https://github.com/sonofmagic/dev-configs/commit/c0e39e3e5c813d7214fd106dabb4818f772a0bd4) by @sonofmagic
+  - Harden stylelint preset resolution for ESM-only configs.
+
 ## 1.6.13
 
 ### Patch Changes
