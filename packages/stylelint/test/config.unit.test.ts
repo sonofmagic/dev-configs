@@ -1,3 +1,4 @@
+import { isAbsolute } from 'node:path'
 import {
   PRESET_RECESS_ORDER,
   PRESET_STANDARD_SCSS,
@@ -89,7 +90,7 @@ describe('createIcebreakerStylelintConfig', () => {
     ])
   })
 
-  it('falls back to module specifiers when resolution fails', async () => {
+  it('resolves presets when require.resolve fails', async () => {
     vi.doMock('node:module', () => {
       return {
         createRequire: () => {
@@ -105,10 +106,31 @@ describe('createIcebreakerStylelintConfig', () => {
     const { createIcebreakerStylelintConfig } = await loadConfig()
     const config = createIcebreakerStylelintConfig()
 
-    expect(config.extends).toEqual([
-      PRESET_STANDARD_SCSS,
-      PRESET_VUE_SCSS,
-      PRESET_RECESS_ORDER,
-    ])
+    const extendsList = Array.isArray(config.extends)
+      ? config.extends
+      : config.extends
+        ? [config.extends]
+        : []
+
+    const isPresetSpecifierList = extendsList.every(entry =>
+      [
+        PRESET_STANDARD_SCSS,
+        PRESET_VUE_SCSS,
+        PRESET_RECESS_ORDER,
+      ].includes(entry),
+    )
+
+    if (isPresetSpecifierList) {
+      expect(extendsList).toEqual([
+        PRESET_STANDARD_SCSS,
+        PRESET_VUE_SCSS,
+        PRESET_RECESS_ORDER,
+      ])
+      return
+    }
+
+    for (const entry of extendsList) {
+      expect(isAbsolute(entry)).toBe(true)
+    }
   })
 })
