@@ -22,17 +22,15 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "default": "./dist/index.js"
     },
     "./cli": {
       "types": "./dist/cli.d.ts",
-      "import": "./dist/cli.js",
-      "require": "./dist/cli.cjs"
+      "default": "./dist/cli.js"
     },
     "./package.json": "./package.json"
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": "./bin/init.js",
@@ -51,7 +49,7 @@
   "dependencies": {
     "comment-json": "^4.5.1",
     "postcss-html": "^1.8.1",
-    "stylelint-config-recess-order": "^7.5.0",
+    "stylelint-config-recess-order": "^7.6.0",
     "stylelint-config-recommended-scss": "^17.0.0",
     "stylelint-config-recommended-vue": "^1.6.1",
     "stylelint-config-standard-scss": "^17.0.0"

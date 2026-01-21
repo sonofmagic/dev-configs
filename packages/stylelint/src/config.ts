@@ -1,7 +1,6 @@
 import type { Config } from 'stylelint'
 import type { IcebreakerStylelintOptions, PresetToggles } from './types'
 import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url'
 import { PRESET_RECESS_ORDER, PRESET_STANDARD_SCSS, PRESET_VUE_SCSS } from './constants'
 import { normalizeExtends, resolveIgnoreList, toArray, unique } from './utils'
 
@@ -9,34 +8,12 @@ const requireFromConfig = createRequire(import.meta.url)
 
 const BEM_OOCSS_CLASS_NAME_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:__[a-z0-9]+(?:-[a-z0-9]+)*)*(?:--[a-z0-9]+(?:-[a-z0-9]+)*)*$/
 
-function metaResolve(specifier: string): string | null {
-  const resolverOverride = (globalThis as {
-    __icebreakerImportMetaResolve?: ((specifier: string) => string) | null
-  }).__icebreakerImportMetaResolve
-  const resolver = resolverOverride !== undefined
-    ? resolverOverride
-    : (import.meta as { resolve?: (specifier: string) => string }).resolve
-  if (typeof resolver !== 'function') {
-    return null
-  }
-
-  try {
-    const resolved = resolver(specifier)
-    return resolved.startsWith('file:')
-      ? fileURLToPath(resolved)
-      : resolved
-  }
-  catch {
-    return null
-  }
-}
-
 function resolvePresetPath(specifier: string): string {
   try {
     return requireFromConfig.resolve(specifier)
   }
   catch {
-    return metaResolve(specifier) ?? specifier
+    return specifier
   }
 }
 
