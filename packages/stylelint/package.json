@@ -1,7 +1,7 @@
 {
   "name": "@icebreakers/stylelint-config",
   "type": "module",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Stylelint preset from Icebreaker's dev-configs",
   "author": "ice breaker <1324318532@qq.com>",
   "license": "MIT",
