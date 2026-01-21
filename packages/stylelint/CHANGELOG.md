@@ -1,5 +1,11 @@
 # @icebreakers/stylelint-config
 
+## 2.0.0
+
+### Major Changes
+
+- 🚀 **Switch to ESM-only builds and remove CJS exports.** [`227a310`](https://github.com/sonofmagic/dev-configs/commit/227a3100526300876c7c0b44810d04a69a4e2860) by @sonofmagic
+
 ## 1.2.6
 
 ### Patch Changes

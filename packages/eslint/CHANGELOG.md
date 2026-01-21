@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 1.6.15
+
+### Patch Changes
+
+- 🐛 **Update @antfu/eslint-config to 7.2.0.** [`227a310`](https://github.com/sonofmagic/dev-configs/commit/227a3100526300876c7c0b44810d04a69a4e2860) by @sonofmagic
+
 ## 1.6.14
 
 ### Patch Changes
