@@ -1,5 +1,11 @@
 # @icebreakers/stylelint-config
 
+## 2.0.1
+
+### Patch Changes
+
+- 🐛 **Fix preset resolution for ESM-only stylelint configs.** [`4b67efc`](https://github.com/sonofmagic/dev-configs/commit/4b67efcc651371e2fd14024454d2478c09cfde0c) by @sonofmagic
+
 ## 2.0.0
 
 ### Major Changes
