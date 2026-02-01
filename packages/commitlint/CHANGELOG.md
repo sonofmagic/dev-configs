@@ -1,5 +1,11 @@
 # @icebreakers/commitlint-config
 
+## 1.2.6
+
+### Patch Changes
+
+- 🐛 **chore(deps): upgrade** [`bc9c23f`](https://github.com/sonofmagic/dev-configs/commit/bc9c23f87bde886a20c6b01c2d880fe6a4fde806) by @sonofmagic
+
 ## 1.2.5
 
 ### Patch Changes
