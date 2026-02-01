@@ -14,6 +14,20 @@ function incrementCounter() {
 const _zero = doubled.value + counter.value
 </script>
 
+<script>
+export default {
+	name: "Counter",
+	props: {
+		msg: String,
+	},
+	data() {
+		return {
+			aaa,
+		}
+	},
+}
+</script>
+
 <template>
 	<div>
 		<h1>

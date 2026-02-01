@@ -3,6 +3,7 @@
 // eslint-disable-next-line no-console
 const log = console.log
 
+const ppp = '1'
 // Define a class using ES6 class syntax
 class Person {
   constructor(name, age) {
@@ -68,5 +69,6 @@ if (a
   || b
   || c || d
   || (d && b)
-)
+) {
   foo()
+}
