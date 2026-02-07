@@ -1,5 +1,11 @@
 # @icebreakers/changelog-github
 
+## 0.1.1
+
+### Patch Changes
+
+- 🐛 **chore(deps): upgrade** [`c3c641e`](https://github.com/sonofmagic/dev-configs/commit/c3c641e119faf2e0d0ffa64cd8610cf17eed9952) by @sonofmagic
+
 ## 0.1.0
 
 ### Minor Changes
