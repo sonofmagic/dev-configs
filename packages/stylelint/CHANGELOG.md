@@ -1,5 +1,11 @@
 # @icebreakers/stylelint-config
 
+## 2.0.2
+
+### Patch Changes
+
+- 🐛 **chore(deps): upgrade** [`2ab5b70`](https://github.com/sonofmagic/dev-configs/commit/2ab5b706fd41b17752ed8a013a242a70e6d97e39) by @sonofmagic
+
 ## 2.0.1
 
 ### Patch Changes
