@@ -1,5 +1,21 @@
 # @icebreakers/changelog-github
 
+## 0.2.0
+
+### Minor Changes
+
+- ✨ **parse conventional commit headlines and detect breaking changes** [`e0b7039`](https://github.com/sonofmagic/dev-configs/commit/e0b7039253361fafd71db453d77dfb7f2748e2c1) by @sonofmagic
+  - Strip `type(scope):` prefix from headlines, render scope as bold label (e.g. `chore(deps): upgrade` → `**deps:** upgrade`)
+  - Detect breaking changes via `!` suffix or `BREAKING CHANGE:` in body, show 💥 icon with ⚠️ prefix
+
+- ✨ **show full dependency list in collapsible details block when more than 3 packages are updated** [`54b92e2`](https://github.com/sonofmagic/dev-configs/commit/54b92e2c8bed80f27124ba0fec4a50872a5fc96b) by @sonofmagic
+
+### Patch Changes
+
+- 🐛 **deduplicate dependency commit references and preserve intentional line breaks in detail blocks** [`b0d23ea`](https://github.com/sonofmagic/dev-configs/commit/b0d23ea181952d217f7c966edd7f07ac568017a3) by @sonofmagic
+
+- 🐛 **replace deprecated trimRight with trimEnd and fix nested bold markup when scope is present** [`3d73a16`](https://github.com/sonofmagic/dev-configs/commit/3d73a161bf889fe643b3967ecc07580bd666f60b) by @sonofmagic
+
 ## 0.1.1
 
 ### Patch Changes
