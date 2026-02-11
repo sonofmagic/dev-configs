@@ -58,7 +58,7 @@ async function collectDependencyReferences(
     }),
   )
 
-  return references.filter((link): link is string => Boolean(link))
+  return [...new Set(references.filter((link): link is string => Boolean(link)))]
 }
 
 function formatDependencyLine(
@@ -345,10 +345,16 @@ function formatDetailBlock(detailLines: string[]): string {
   const paragraphs = trimmed
     .join('\n')
     .split(/\n\s*\n/)
-    .map(chunk => chunk.replace(/\s+/g, ' ').trim())
-    .filter(Boolean)
+    .filter(chunk => chunk.trim().length > 0)
 
-  return paragraphs.map(text => `  - ${text}`).join('\n')
+  const lines = paragraphs.flatMap(chunk =>
+    chunk
+      .split('\n')
+      .map(line => line.trim())
+      .filter(Boolean),
+  )
+
+  return lines.map(text => `  - ${text}`).join('\n')
 }
 
 const changelogFunctions: ChangelogFunctions = {
