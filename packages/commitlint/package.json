@@ -43,6 +43,14 @@
     "lint:fix": "eslint . --fix"
   },
   "publishConfig": {},
+  "peerDependencies": {
+    "conventional-changelog-conventionalcommits": ">=7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "conventional-changelog-conventionalcommits": {
+      "optional": false
+    }
+  },
   "dependencies": {
     "@commitlint/config-conventional": "^20.4.1",
     "@commitlint/types": "^20.4.0",
