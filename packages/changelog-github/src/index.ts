@@ -118,7 +118,7 @@ function formatHeadline(raw: string): { text: string, breaking: boolean } {
     return { text: raw, breaking: parsed.breaking }
   }
 
-  const scopeTag = parsed.scope ? `**${parsed.scope}:** ` : ''
+  const scopeTag = parsed.scope ? `${parsed.scope}: ` : ''
   return {
     text: `${scopeTag}${parsed.description}`,
     breaking: parsed.breaking,
@@ -202,7 +202,7 @@ function extractSummaryMeta(summary: string): {
 
       return true
     })
-    .map(line => line.trimRight())
+    .map(line => line.trimEnd())
 
   return {
     prNumber,
@@ -329,7 +329,7 @@ function formatDetailBlock(detailLines: string[]): string {
     .join('\n')
     .trim()
     .split('\n')
-    .map(line => line.trimRight())
+    .map(line => line.trimEnd())
 
   const hasFence = trimmed.some(line => /^\s*```/.test(line))
   const isListLike = trimmed.some(line => /^\s*(?:[-*+]\s+|\d+[.)]\s+)/.test(line))

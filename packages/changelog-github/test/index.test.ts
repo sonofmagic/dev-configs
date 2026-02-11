@@ -165,7 +165,7 @@ describe('formatHeadline', () => {
   it('formats conventional commit with scope', () => {
     const result = formatHeadline('feat(eslint): add new rule')
     expect(result).toEqual({
-      text: '**eslint:** add new rule',
+      text: 'eslint: add new rule',
       breaking: false,
     })
   })
@@ -218,7 +218,7 @@ describe('getReleaseLine - conventional commit headlines', () => {
       { repo },
     )
 
-    expect(result).toContain('**eslint:** add strict mode preset')
+    expect(result).toContain('**eslint: add strict mode preset**')
     expect(result).not.toContain('feat(eslint)')
   })
 
