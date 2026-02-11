@@ -141,5 +141,8 @@ describe('release detail formatting', () => {
 
     expect(line).toContain('Updated 4 dependencies')
     expect(line).toContain('aa11bb2')
+    expect(line).toContain('<details>')
+    expect(line).toContain('`a@1.0.0`')
+    expect(line).toContain('`d@4.0.0`')
   })
 })

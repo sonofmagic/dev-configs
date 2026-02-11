@@ -74,18 +74,29 @@ function formatDependencyLine(
     return firstCommit ? `- 📦 **Dependencies** ${firstCommit}` : '- 📦 **Dependencies**'
   }
 
+  const dependencySummaries = dependenciesUpdated.map(
+    dependency => `\`${dependency.name}@${dependency.newVersion}\``,
+  )
+
   if (count <= 3) {
-    const dependencySummaries = dependenciesUpdated.map(
-      dependency => `\`${dependency.name}@${dependency.newVersion}\``,
-    )
     const header = firstCommit ? `- 📦 **Dependencies** ${firstCommit}` : '- 📦 **Dependencies**'
     const details = `  → ${dependencySummaries.join(', ')}`
     return `${header}\n${details}`
   }
 
-  return firstCommit
+  const header = firstCommit
     ? `- 📦 Updated ${count} dependencies ${firstCommit}`
     : `- 📦 Updated ${count} dependencies`
+
+  const detailBlock = [
+    '  <details><summary>Details</summary>',
+    '',
+    `  ${dependencySummaries.join(', ')}`,
+    '',
+    '  </details>',
+  ].join('\n')
+
+  return `${header}\n${detailBlock}`
 }
 
 interface ConventionalHeadline {
