@@ -4,8 +4,10 @@ import {
 } from '@changesets/get-github-info'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  formatHeadline,
   getDependencyReleaseLine,
   getReleaseLine,
+  parseConventionalHeadline,
 } from '@/index'
 
 vi.mock('@changesets/get-github-info', () => ({
@@ -116,5 +118,160 @@ describe('getDependencyReleaseLine', () => {
       repo,
       commit: 'abcdef1234567890',
     })
+  })
+})
+
+describe('parseConventionalHeadline', () => {
+  it('parses type, scope, and description', () => {
+    const result = parseConventionalHeadline('feat(core): add new feature')
+    expect(result).toEqual({
+      type: 'feat',
+      scope: 'core',
+      breaking: false,
+      description: 'add new feature',
+    })
+  })
+
+  it('parses without scope', () => {
+    const result = parseConventionalHeadline('fix: resolve crash')
+    expect(result).toEqual({
+      type: 'fix',
+      scope: undefined,
+      breaking: false,
+      description: 'resolve crash',
+    })
+  })
+
+  it('detects breaking change marker', () => {
+    const result = parseConventionalHeadline('feat(api)!: remove deprecated endpoint')
+    expect(result).toEqual({
+      type: 'feat',
+      scope: 'api',
+      breaking: true,
+      description: 'remove deprecated endpoint',
+    })
+  })
+
+  it('returns raw description for non-conventional format', () => {
+    const result = parseConventionalHeadline('Just a plain headline')
+    expect(result).toEqual({
+      breaking: false,
+      description: 'Just a plain headline',
+    })
+  })
+})
+
+describe('formatHeadline', () => {
+  it('formats conventional commit with scope', () => {
+    const result = formatHeadline('feat(eslint): add new rule')
+    expect(result).toEqual({
+      text: '**eslint:** add new rule',
+      breaking: false,
+    })
+  })
+
+  it('formats conventional commit without scope', () => {
+    const result = formatHeadline('chore: upgrade dependencies')
+    expect(result).toEqual({
+      text: 'upgrade dependencies',
+      breaking: false,
+    })
+  })
+
+  it('passes through non-conventional headline', () => {
+    const result = formatHeadline('Add new feature')
+    expect(result).toEqual({
+      text: 'Add new feature',
+      breaking: false,
+    })
+  })
+
+  it('detects breaking from bang suffix', () => {
+    const result = formatHeadline('feat!: drop Node 16 support')
+    expect(result).toEqual({
+      text: 'drop Node 16 support',
+      breaking: true,
+    })
+  })
+})
+
+describe('getReleaseLine - conventional commit headlines', () => {
+  it('strips conventional prefix and keeps scope', async () => {
+    getInfoMock.mockResolvedValueOnce({
+      user: null,
+      pull: null,
+      links: {
+        commit: '[`abc1234`](https://github.com/sonofmagic/dev-configs/commit/abc1234)',
+        pull: null,
+        user: '[@dev](https://github.com/dev)',
+      },
+    })
+
+    const result = await getReleaseLine(
+      {
+        id: 'conv',
+        summary: 'feat(eslint): add strict mode preset',
+        releases: [],
+        commit: 'abc1234',
+      },
+      'minor',
+      { repo },
+    )
+
+    expect(result).toContain('**eslint:** add strict mode preset')
+    expect(result).not.toContain('feat(eslint)')
+  })
+
+  it('shows breaking change icon for bang suffix', async () => {
+    getInfoMock.mockResolvedValueOnce({
+      user: null,
+      pull: null,
+      links: {
+        commit: '[`def5678`](https://github.com/sonofmagic/dev-configs/commit/def5678)',
+        pull: null,
+        user: null,
+      },
+    })
+
+    const result = await getReleaseLine(
+      {
+        id: 'breaking-bang',
+        summary: 'feat(api)!: remove legacy config format',
+        releases: [],
+        commit: 'def5678',
+      },
+      'major',
+      { repo },
+    )
+
+    expect(result).toContain('💥')
+    expect(result).toContain('⚠️')
+    expect(result).not.toContain('🚀')
+  })
+
+  it('shows breaking change icon for BREAKING CHANGE in body', async () => {
+    getInfoMock.mockResolvedValueOnce({
+      user: null,
+      pull: null,
+      links: {
+        commit: '[`aaa1111`](https://github.com/sonofmagic/dev-configs/commit/aaa1111)',
+        pull: null,
+        user: null,
+      },
+    })
+
+    const result = await getReleaseLine(
+      {
+        id: 'breaking-body',
+        summary: 'Migrate to flat config\nBREAKING CHANGE: drop eslintrc support',
+        releases: [],
+        commit: 'aaa1111',
+      },
+      'major',
+      { repo },
+    )
+
+    expect(result).toContain('💥')
+    expect(result).toContain('⚠️')
   })
 })

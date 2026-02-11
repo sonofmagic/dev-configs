@@ -88,12 +88,50 @@ function formatDependencyLine(
     : `- 📦 Updated ${count} dependencies`
 }
 
+interface ConventionalHeadline {
+  type?: string
+  scope?: string
+  breaking: boolean
+  description: string
+}
+
+function parseConventionalHeadline(raw: string): ConventionalHeadline {
+  const match = raw.match(
+    /^(\w+)(?:\(([^)]*)\))?(!?):\s(.+)$/,
+  )
+  if (!match) {
+    return { breaking: false, description: raw }
+  }
+
+  return {
+    type: match[1],
+    scope: match[2] || undefined,
+    breaking: match[3] === '!',
+    description: match[4].trim(),
+  }
+}
+
+function formatHeadline(raw: string): { text: string, breaking: boolean } {
+  const parsed = parseConventionalHeadline(raw)
+
+  if (!parsed.type) {
+    return { text: raw, breaking: parsed.breaking }
+  }
+
+  const scopeTag = parsed.scope ? `**${parsed.scope}:** ` : ''
+  return {
+    text: `${scopeTag}${parsed.description}`,
+    breaking: parsed.breaking,
+  }
+}
+
 interface ParsedSummary {
   headline: string
   detailLines: string[]
   prNumber?: number
   commitRef?: string
   users: string[]
+  breaking: boolean
 }
 
 function normalizeUserMentions(users: string[]): string {
@@ -122,9 +160,11 @@ function extractSummaryMeta(summary: string): {
   commitRef?: string
   users: string[]
   contentLines: string[]
+  breaking: boolean
 } {
   let prNumber: number | undefined
   let commitRef: string | undefined
+  let breaking = false
   const users: string[] = []
 
   const contentLines = summary
@@ -156,6 +196,10 @@ function extractSummaryMeta(summary: string): {
         return false
       }
 
+      if (/^BREAKING[\s-]CHANGE:/i.test(withoutListMarker)) {
+        breaking = true
+      }
+
       return true
     })
     .map(line => line.trimRight())
@@ -165,6 +209,7 @@ function extractSummaryMeta(summary: string): {
     commitRef,
     users,
     contentLines,
+    breaking,
   }
 }
 
@@ -174,6 +219,7 @@ function parseSummary(summary: string): ParsedSummary {
     commitRef,
     users,
     contentLines,
+    breaking: bodyBreaking,
   } = extractSummaryMeta(summary)
 
   const nonEmptyIndex = contentLines.findIndex(line => line.trim().length > 0)
@@ -184,6 +230,7 @@ function parseSummary(summary: string): ParsedSummary {
       prNumber,
       commitRef,
       users,
+      breaking: bodyBreaking,
     }
   }
 
@@ -197,12 +244,19 @@ function parseSummary(summary: string): ParsedSummary {
 
   const detailLines = restLines
 
+  // Detect breaking from headline (conventional commit `!` suffix)
+  const headlineParsed = headline
+    ? parseConventionalHeadline(headline)
+    : null
+  const breaking = bodyBreaking || (headlineParsed?.breaking ?? false)
+
   return {
     headline,
     detailLines,
     prNumber,
     commitRef,
     users,
+    breaking,
   }
 }
 
@@ -332,12 +386,21 @@ const changelogFunctions: ChangelogFunctions = {
       links.user,
     )
 
-    const headlineText = parsedSummary.headline || 'Miscellaneous improvements'
+    const { text: headlineText, breaking: headlineBreaking } = parsedSummary.headline
+      ? formatHeadline(parsedSummary.headline)
+      : { text: 'Miscellaneous improvements', breaking: false }
+
+    const isBreaking = parsedSummary.breaking || headlineBreaking
+    const breakingPrefix = isBreaking ? '⚠️ ' : ''
 
     // Build main line components
+    const icon = isBreaking
+      ? '💥'
+      : releaseTypeMap[resolvedType].icon
+
     const mainLineParts: string[] = [
-      `- ${releaseTypeMap[resolvedType].icon}`,
-      `**${headlineText}**`,
+      `- ${icon}`,
+      `${breakingPrefix}**${headlineText}**`,
     ]
 
     // Add PR link or commit link (PR preferred)
@@ -370,4 +433,5 @@ const changelogFunctions: ChangelogFunctions = {
 }
 
 export default changelogFunctions
+export { formatHeadline, parseConventionalHeadline }
 export const { getDependencyReleaseLine, getReleaseLine } = changelogFunctions
