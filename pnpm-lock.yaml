@@ -33,8 +33,8 @@ importers:
         specifier: workspace:*
         version: link:packages/eslint
       '@icebreakers/monorepo':
-        specifier: ^3.2.7
-        version: 3.2.7(@types/node@25.2.3)(magicast@0.5.1)(typanion@3.14.0)
+        specifier: ^3.2.8
+        version: 3.2.8(@types/node@25.2.3)(magicast@0.5.1)(typanion@3.14.0)
       '@icebreakers/stylelint-config':
         specifier: workspace:*
         version: link:packages/stylelint
@@ -147,8 +147,8 @@ importers:
         specifier: ^4.21.0
         version: 4.21.0
       turbo:
-        specifier: ^2.8.5
-        version: 2.8.5
+        specifier: ^2.8.7
+        version: 2.8.7
       type-fest:
         specifier: ^5.4.4
         version: 5.4.4
@@ -1294,12 +1294,12 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@icebreakers/monorepo-templates@0.1.7':
-    resolution: {integrity: sha512-17q6SD1gyAKtkrnFXRFJLf83D1MzurYPPraCNtq+PO47cAL6uYsi3Ng7sscnDKV8OjRpD/OHdEX/Ey5HaK37Zg==}
+  '@icebreakers/monorepo-templates@0.1.8':
+    resolution: {integrity: sha512-h5WZggIyKqzpB3H59EsDKg7p/x95Yotb+a6nEUx7H5nYzBYWDk5s9h/MeOLMMwckcfFb8Z1kV91XQRhpKNSD2g==}
     engines: {node: '>=18.0.0'}
 
-  '@icebreakers/monorepo@3.2.7':
-    resolution: {integrity: sha512-nh6n7y1aWgT3+NWWDX33nsTzvGbi2zWPbrhsS+ZYjLlfi+uYESUDVzxgIJP6cAOe5qVcVuFv/l+vRxAFEky58w==}
+  '@icebreakers/monorepo@3.2.8':
+    resolution: {integrity: sha512-aZyhCui9dTR6NQ+p3vshtRdLvisRrWO3Lrb55/rnGPlB//6JUiyW/GfsRw/YCG5TnUmEtqOCHu+c4/6n8Je7CQ==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^21.7.0 || ^20.12.0'}
     hasBin: true
 
@@ -1509,8 +1509,8 @@ packages:
     resolution: {integrity: sha512-qD1hvOZktx7zs9L5J/4tkMNoaLJ3PqSLDH/nXzpS0DtNa/Ok7/evsncM2pr6IFto566fZ02Oumdy9IdiR7r7EQ==}
     engines: {node: '>=18.12'}
 
-  '@pnpm/cli-utils@1001.3.3':
-    resolution: {integrity: sha512-AUvVRO0qGskgeaUN+iu7z9/4U1o6ivbx0ZyjCiZxh4wb78vje9PPgHNXTLVRW/ovgfKx2lXcNt88FKRsOgrzXA==}
+  '@pnpm/cli-utils@1001.3.4':
+    resolution: {integrity: sha512-8kh6OazRHemT0Bz5Xgz8lIe32ppoIr6ReYuONeIie1haI6HhHkxGLnKBVRfMpSDw9wv+yl+92oI2yrI/sPMtAg==}
     engines: {node: '>=18.12'}
     peerDependencies:
       '@pnpm/logger': '>=1001.0.0 <1002.0.0'
@@ -1945,8 +1945,8 @@ packages:
     peerDependencies:
       '@pnpm/logger': '>=1001.0.0 <1002.0.0'
 
-  '@pnpm/workspace.find-packages@1000.0.58':
-    resolution: {integrity: sha512-AwehAhF7zVk49nGOdAJgiaAle7fCQMv1Cfx5+ExVCYaXejuc58ZApHhVU4QiocXCpURdXu9XBNZ/E1zMhYkpGQ==}
+  '@pnpm/workspace.find-packages@1000.0.59':
+    resolution: {integrity: sha512-OM7Ake5bd5jJyeFovKf00g0VcpAoGRvmqCnhy7RUyzzTXEcT2dV7nCdvvegh2xiO5q+0TVmnN9732BhYhx9ICg==}
     engines: {node: '>=18.12'}
     peerDependencies:
       '@pnpm/logger': '>=1001.0.0 <1002.0.0'
@@ -7291,38 +7291,38 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  turbo-darwin-64@2.8.5:
-    resolution: {integrity: sha512-3wngnZrjRh6nXjNFURY9yKV7ysTF2gibpzkQjo4/c4eWjGt39q5p/A/wpxpnVBzyT1/auaPuzxJA98Sv1ZCOJg==}
+  turbo-darwin-64@2.8.7:
+    resolution: {integrity: sha512-Xr4TO/oDDwoozbDtBvunb66g//WK8uHRygl72vUthuwzmiw48pil4IuoG/QbMHd9RE8aBnVmzC0WZEWk/WWt3A==}
     cpu: [x64]
     os: [darwin]
 
-  turbo-darwin-arm64@2.8.5:
-    resolution: {integrity: sha512-QAFH6X9h8M4G8uTVRBQFw6EN0LmvYYyNEA2EKJOEogyeULSUA04M+FzYuSScl6uS9P78fzOCC0hhzk/Eqo4GQg==}
+  turbo-darwin-arm64@2.8.7:
+    resolution: {integrity: sha512-p8Xbmb9kZEY/NoshQUcFmQdO80s2PCGoLYj5DbpxjZr3diknipXxzOK7pcmT7l2gNHaMCpFVWLkiFY9nO3EU5w==}
     cpu: [arm64]
     os: [darwin]
 
-  turbo-linux-64@2.8.5:
-    resolution: {integrity: sha512-o01d5g3CZWavW6vP0KD8wJwdqoHaLuOAb3PvuWY95JEcyPRAKGKNxsTW2xNifY4UYENwSVktFZXZlIO2qnrEmg==}
+  turbo-linux-64@2.8.7:
+    resolution: {integrity: sha512-nwfEPAH3m5y/nJeYly3j1YJNYU2EG5+2ysZUxvBNM+VBV2LjQaLxB9CsEIpIOKuWKCjnFHKIADTSDPZ3D12J5Q==}
     cpu: [x64]
     os: [linux]
 
-  turbo-linux-arm64@2.8.5:
-    resolution: {integrity: sha512-YSNVEUeFVGsA2pmPOokiximJOhKQnrg/M7JlJZzefjmp+j4Raj7YqLwK8pQRbAO4XDoojkf4tvmy+mRVW9O0gQ==}
+  turbo-linux-arm64@2.8.7:
+    resolution: {integrity: sha512-mgA/M6xiJzyxtXV70TtWGDPh+I6acOKmeQGtOzbFQZYEf794pu5jax26bCk5skAp1gqZu3vacPr6jhYHoHU9IQ==}
     cpu: [arm64]
     os: [linux]
 
-  turbo-windows-64@2.8.5:
-    resolution: {integrity: sha512-X0MMT+IwWS+veX8h9/SO3+gkorcuGi0nu8CIg0kBhaqbC6Me0tChvHYQpkXj/+5qG5oFpjgkCSCip4/KYesZtg==}
+  turbo-windows-64@2.8.7:
+    resolution: {integrity: sha512-sHTYMaXuCcyHnGUQgfUUt7S8407TWoP14zc/4N2tsM0wZNK6V9h4H2t5jQPtqKEb6Fg8313kygdDgEwuM4vsHg==}
     cpu: [x64]
     os: [win32]
 
-  turbo-windows-arm64@2.8.5:
-    resolution: {integrity: sha512-YBHZ1a0y8J0ITKv4TgujMFk04y84KimPDg8Br2lQaywrj3i2eRXLVuxhPi0Sqw+QuoqBVNKsHigxShA/w+rLLQ==}
+  turbo-windows-arm64@2.8.7:
+    resolution: {integrity: sha512-WyGiOI2Zp3AhuzVagzQN+T+iq0fWx0oGxDfAWT3ZiLEd4U0cDUkwUZDKVGb3rKqPjDL6lWnuxKKu73ge5xtovQ==}
     cpu: [arm64]
     os: [win32]
 
-  turbo@2.8.5:
-    resolution: {integrity: sha512-pUhV1czFZNGOwnwCLaO727uSDH4botIrhOb/AAFqzfi3x4eeRZoOcAjoidnXD/dwCAw0HJf3+Sy4c2e8SlQKxQ==}
+  turbo@2.8.7:
+    resolution: {integrity: sha512-RBLh5caMAu1kFdTK1jgH2gH/z+jFsvX5rGbhgJ9nlIAWXSvxlzwId05uDlBA1+pBd3wO/UaKYzaQZQBXDd7kcA==}
     hasBin: true
 
   typanion@3.14.0:
@@ -8838,7 +8838,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@icebreakers/monorepo-templates@0.1.7(@types/node@25.2.3)':
+  '@icebreakers/monorepo-templates@0.1.8(@types/node@25.2.3)':
     dependencies:
       '@inquirer/checkbox': 5.0.4(@types/node@25.2.3)
       '@inquirer/input': 5.0.4(@types/node@25.2.3)
@@ -8848,14 +8848,14 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@icebreakers/monorepo@3.2.7(@types/node@25.2.3)(magicast@0.5.1)(typanion@3.14.0)':
+  '@icebreakers/monorepo@3.2.8(@types/node@25.2.3)(magicast@0.5.1)(typanion@3.14.0)':
     dependencies:
-      '@icebreakers/monorepo-templates': 0.1.7(@types/node@25.2.3)
+      '@icebreakers/monorepo-templates': 0.1.8(@types/node@25.2.3)
       '@pnpm/find-workspace-dir': 1000.1.4
       '@pnpm/logger': 1001.0.1
       '@pnpm/types': 1001.3.0
       '@pnpm/worker': 1000.6.4(@pnpm/logger@1001.0.1)(@types/node@25.2.3)
-      '@pnpm/workspace.find-packages': 1000.0.58(@pnpm/logger@1001.0.1)(@pnpm/worker@1000.6.4(@pnpm/logger@1001.0.1)(@types/node@25.2.3))(typanion@3.14.0)
+      '@pnpm/workspace.find-packages': 1000.0.59(@pnpm/logger@1001.0.1)(@pnpm/worker@1000.6.4(@pnpm/logger@1001.0.1)(@types/node@25.2.3))(typanion@3.14.0)
       '@pnpm/workspace.read-manifest': 1000.2.10
       c12: 3.3.3(magicast@0.5.1)
       comment-json: 4.5.1
@@ -9127,7 +9127,7 @@ snapshots:
       '@pnpm/types': 1001.3.0
       load-json-file: 6.2.0
 
-  '@pnpm/cli-utils@1001.3.3(@pnpm/logger@1001.0.1)(@pnpm/worker@1000.6.4(@pnpm/logger@1001.0.1)(@types/node@25.2.3))(typanion@3.14.0)':
+  '@pnpm/cli-utils@1001.3.4(@pnpm/logger@1001.0.1)(@pnpm/worker@1000.6.4(@pnpm/logger@1001.0.1)(@types/node@25.2.3))(typanion@3.14.0)':
     dependencies:
       '@pnpm/cli-meta': 1000.0.16
       '@pnpm/config': 1004.10.1(@pnpm/logger@1001.0.1)
@@ -10028,9 +10028,9 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@pnpm/workspace.find-packages@1000.0.58(@pnpm/logger@1001.0.1)(@pnpm/worker@1000.6.4(@pnpm/logger@1001.0.1)(@types/node@25.2.3))(typanion@3.14.0)':
+  '@pnpm/workspace.find-packages@1000.0.59(@pnpm/logger@1001.0.1)(@pnpm/worker@1000.6.4(@pnpm/logger@1001.0.1)(@types/node@25.2.3))(typanion@3.14.0)':
     dependencies:
-      '@pnpm/cli-utils': 1001.3.3(@pnpm/logger@1001.0.1)(@pnpm/worker@1000.6.4(@pnpm/logger@1001.0.1)(@types/node@25.2.3))(typanion@3.14.0)
+      '@pnpm/cli-utils': 1001.3.4(@pnpm/logger@1001.0.1)(@pnpm/worker@1000.6.4(@pnpm/logger@1001.0.1)(@types/node@25.2.3))(typanion@3.14.0)
       '@pnpm/constants': 1001.3.1
       '@pnpm/fs.find-packages': 1000.0.22(@pnpm/logger@1001.0.1)
       '@pnpm/logger': 1001.0.1
@@ -15960,32 +15960,32 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  turbo-darwin-64@2.8.5:
+  turbo-darwin-64@2.8.7:
     optional: true
 
-  turbo-darwin-arm64@2.8.5:
+  turbo-darwin-arm64@2.8.7:
     optional: true
 
-  turbo-linux-64@2.8.5:
+  turbo-linux-64@2.8.7:
     optional: true
 
-  turbo-linux-arm64@2.8.5:
+  turbo-linux-arm64@2.8.7:
     optional: true
 
-  turbo-windows-64@2.8.5:
+  turbo-windows-64@2.8.7:
     optional: true
 
-  turbo-windows-arm64@2.8.5:
+  turbo-windows-arm64@2.8.7:
     optional: true
 
-  turbo@2.8.5:
+  turbo@2.8.7:
     optionalDependencies:
-      turbo-darwin-64: 2.8.5
-      turbo-darwin-arm64: 2.8.5
-      turbo-linux-64: 2.8.5
-      turbo-linux-arm64: 2.8.5
-      turbo-windows-64: 2.8.5
-      turbo-windows-arm64: 2.8.5
+      turbo-darwin-64: 2.8.7
+      turbo-darwin-arm64: 2.8.7
+      turbo-linux-64: 2.8.7
+      turbo-linux-arm64: 2.8.7
+      turbo-windows-64: 2.8.7
+      turbo-windows-arm64: 2.8.7
 
   typanion@3.14.0: {}
 
