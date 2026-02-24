@@ -67,6 +67,21 @@ describe('createIcebreakerStylelintConfig', () => {
     ])
   })
 
+  it('omits extends when all presets are disabled and no custom extends are provided', async () => {
+    const { createIcebreakerStylelintConfig } = await loadConfig()
+    const config = createIcebreakerStylelintConfig({
+      presets: {
+        scss: false,
+        vue: false,
+        order: false,
+      },
+    })
+
+    expect(config.extends).toBeUndefined()
+    expect(config.overrides).toEqual([])
+    expect(config.rules).toBeDefined()
+  })
+
   it('merges overrides and rules', async () => {
     const { createIcebreakerStylelintConfig } = await loadConfig()
     const overrides = [

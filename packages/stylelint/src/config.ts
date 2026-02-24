@@ -16,7 +16,7 @@ function resolvePresetPath(specifier: string): string {
   if (!disableImportMetaResolve && typeof import.meta.resolve === 'function') {
     try {
       const resolved = import.meta.resolve(specifier)
-      return resolved.startsWith('file:') ? fileURLToPath(resolved) : resolved
+      return fileURLToPath(resolved)
     }
     catch {
       // fall through to require.resolve
@@ -56,7 +56,7 @@ function resolveExtends(options: IcebreakerStylelintOptions | undefined): Config
   return normalizeExtends(values)
 }
 
-function resolveOverrides(options: IcebreakerStylelintOptions | undefined): Config['overrides'] | undefined {
+function resolveOverrides(options: IcebreakerStylelintOptions | undefined): NonNullable<Config['overrides']> {
   const overrides = options?.overrides
   if (!overrides || overrides.length === 0) {
     return []
@@ -65,12 +65,12 @@ function resolveOverrides(options: IcebreakerStylelintOptions | undefined): Conf
   return [...overrides]
 }
 
-function resolveRules(options: IcebreakerStylelintOptions | undefined): Config['rules'] {
+function resolveRules(options: IcebreakerStylelintOptions | undefined): NonNullable<Config['rules']> {
   const ignoreUnits = resolveIgnoreList('units', options?.ignores)
   const ignoreTypes = resolveIgnoreList('types', options?.ignores)
   const ignoreAtRules = resolveIgnoreList('atRules', options?.ignores)
 
-  const rules: Config['rules'] = {
+  const rules: NonNullable<Config['rules']> = {
     'function-name-case': null,
     'selector-class-pattern': [
       new RegExp(BEM_OOCSS_CLASS_NAME_PATTERN),
@@ -123,7 +123,7 @@ export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOpti
 
   return {
     ...(extendsConfig !== undefined ? { extends: extendsConfig } : {}),
-    ...(overrides !== undefined ? { overrides } : {}),
-    ...(rules !== undefined ? { rules } : {}),
+    overrides,
+    rules,
   }
 }
