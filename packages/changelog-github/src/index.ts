@@ -32,7 +32,11 @@ function resolveReleaseType(type: string | undefined): ReleaseTypeKey {
 function assertRepo(
   options: GeneratorOptions | undefined,
 ): asserts options is GeneratorOptions & { repo: string } {
-  if (!options || !options.repo) {
+  if (
+    !options
+    || typeof options['repo'] !== 'string'
+    || options['repo'].trim().length === 0
+  ) {
     throw new Error(
       'Please provide a repo to this changelog generator like this:\n"changelog": ["@icebreakers/changelog-github", { "repo": "org/repo" }]',
     )
@@ -100,8 +104,8 @@ function formatDependencyLine(
 }
 
 interface ConventionalHeadline {
-  type?: string
-  scope?: string
+  type?: string | undefined
+  scope?: string | undefined
   breaking: boolean
   description: string
 }
@@ -114,11 +118,15 @@ function parseConventionalHeadline(raw: string): ConventionalHeadline {
     return { breaking: false, description: raw }
   }
 
+  const type = match[1]
+  const scope = match[2] || undefined
+  const description = (match[4] ?? raw).trim()
+
   return {
-    type: match[1],
-    scope: match[2] || undefined,
+    type,
+    scope,
     breaking: match[3] === '!',
-    description: match[4].trim(),
+    description,
   }
 }
 
@@ -156,14 +164,14 @@ function normalizeUserMentions(users: string[]): string {
   }
 
   if (normalized.length === 1) {
-    return normalized[0]
+    return normalized[0] ?? ''
   }
 
   if (normalized.length === 2) {
-    return `${normalized[0]} and ${normalized[1]}`
+    return `${normalized[0] ?? ''} and ${normalized[1] ?? ''}`
   }
 
-  return `${normalized.slice(0, -1).join(', ')}, and ${normalized.at(-1)}`
+  return `${normalized.slice(0, -1).join(', ')}, and ${normalized.at(-1) ?? ''}`
 }
 
 function extractSummaryMeta(summary: string): {
@@ -188,7 +196,7 @@ function extractSummaryMeta(summary: string): {
         /^(?:pr|pull|pull\s*request):\s*#?(\d+)\s*$/i,
       )
       if (prMatch) {
-        const num = Number(prMatch[1])
+        const num = Number(prMatch[1] ?? Number.NaN)
         if (!Number.isNaN(num)) {
           prNumber = num
         }
@@ -203,7 +211,10 @@ function extractSummaryMeta(summary: string): {
 
       const userMatch = withoutListMarker.match(/^(?:author|user):\s*(\S+)\s*$/i)
       if (userMatch) {
-        users.push(userMatch[1].replace(/^@/, ''))
+        const user = userMatch[1]
+        if (user) {
+          users.push(user.replace(/^@/, ''))
+        }
         return false
       }
 
@@ -216,8 +227,8 @@ function extractSummaryMeta(summary: string): {
     .map(line => line.trimEnd())
 
   return {
-    prNumber,
-    commitRef,
+    ...(prNumber !== undefined ? { prNumber } : {}),
+    ...(commitRef !== undefined ? { commitRef } : {}),
     users,
     contentLines,
     breaking,
@@ -238,14 +249,14 @@ function parseSummary(summary: string): ParsedSummary {
     return {
       headline: '',
       detailLines: [],
-      prNumber,
-      commitRef,
+      ...(prNumber !== undefined ? { prNumber } : {}),
+      ...(commitRef !== undefined ? { commitRef } : {}),
       users,
       breaking: bodyBreaking,
     }
   }
 
-  const firstContentLine = contentLines[nonEmptyIndex].trim()
+  const firstContentLine = contentLines[nonEmptyIndex]?.trim() ?? ''
   const startsWithList = /^(?:[-*+]\s+|\d+[.)]\s+)/.test(firstContentLine)
 
   const headline = startsWithList ? '' : firstContentLine
@@ -264,8 +275,8 @@ function parseSummary(summary: string): ParsedSummary {
   return {
     headline,
     detailLines,
-    prNumber,
-    commitRef,
+    ...(prNumber !== undefined ? { prNumber } : {}),
+    ...(commitRef !== undefined ? { commitRef } : {}),
     users,
     breaking,
   }
@@ -317,7 +328,8 @@ function buildUserMentions(
 
   if (fallbackUser) {
     const match = fallbackUser.match(/@([^\]]+)/)
-    return match ? normalizeUserMentions([match[1]]) : ''
+    const matchedUser = match?.[1]
+    return matchedUser ? normalizeUserMentions([matchedUser]) : ''
   }
 
   return ''
@@ -371,7 +383,7 @@ function formatDetailBlock(detailLines: string[]): string {
 const changelogFunctions: ChangelogFunctions = {
   async getDependencyReleaseLine(changesets, dependenciesUpdated, options) {
     assertRepo(options)
-    const { repo } = options
+    const repo = options.repo
 
     if (dependenciesUpdated.length === 0) {
       return ''
@@ -387,7 +399,7 @@ const changelogFunctions: ChangelogFunctions = {
 
   async getReleaseLine(changeset, type, options) {
     assertRepo(options)
-    const { repo } = options
+    const repo = options.repo
 
     const parsedSummary = parseSummary(changeset.summary)
     const resolvedType = resolveReleaseType(type)

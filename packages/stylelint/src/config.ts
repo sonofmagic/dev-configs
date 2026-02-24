@@ -11,7 +11,7 @@ const requireFromConfig = createRequire(import.meta.url)
 const BEM_OOCSS_CLASS_NAME_PATTERN = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:__[a-z0-9]+(?:-[a-z0-9]+)*)*(?:--[a-z0-9]+(?:-[a-z0-9]+)*)*$/
 
 function resolvePresetPath(specifier: string): string {
-  const disableImportMetaResolve = process.env.ICEBREAKER_STYLELINT_DISABLE_IMPORT_META_RESOLVE === '1'
+  const disableImportMetaResolve = process.env['ICEBREAKER_STYLELINT_DISABLE_IMPORT_META_RESOLVE'] === '1'
 
   if (!disableImportMetaResolve && typeof import.meta.resolve === 'function') {
     try {
@@ -117,9 +117,13 @@ function resolveRules(options: IcebreakerStylelintOptions | undefined): Config['
 }
 
 export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOptions = {}): Config {
+  const extendsConfig = resolveExtends(options)
+  const overrides = resolveOverrides(options)
+  const rules = resolveRules(options)
+
   return {
-    extends: resolveExtends(options),
-    overrides: resolveOverrides(options),
-    rules: resolveRules(options),
+    ...(extendsConfig !== undefined ? { extends: extendsConfig } : {}),
+    ...(overrides !== undefined ? { overrides } : {}),
+    ...(rules !== undefined ? { rules } : {}),
   }
 }

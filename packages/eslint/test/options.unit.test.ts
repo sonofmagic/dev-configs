@@ -98,6 +98,7 @@ describe('resolveUserOptions', () => {
 describe('createBaseRuleSet', () => {
   it('returns the default rules in modern mode', () => {
     expect(createBaseRuleSet(false)['unicorn/prefer-number-properties']).toBe('warn')
+    expect(createBaseRuleSet(false)['dot-notation']).toBe('off')
   })
 
   it('disables perfectionist sorting in legacy mode', () => {

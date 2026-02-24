@@ -22,6 +22,9 @@ const BASE_DEFAULTS: Pick<UserDefinedOptions, 'formatters' | 'javascript' | 'tes
 }
 
 const BASE_RULES: Partial<Linter.RulesRecord> = {
+  // `noPropertyAccessFromIndexSignature` requires bracket access (`obj['key']`)
+  // for index-signature properties, which conflicts with ESLint core `dot-notation`.
+  'dot-notation': 'off',
   // Disable all pnpm rules by default
   // @antfu/eslint-config auto-enables pnpm plugin when pnpm-workspace.yaml exists
   // but we want it opt-in instead of auto-enabled
