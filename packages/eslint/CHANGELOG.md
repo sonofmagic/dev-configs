@@ -1,5 +1,13 @@
 # @icebreakers/eslint-config
 
+## 1.6.20
+
+### Patch Changes
+
+- 🐛 **upgrade** [`94a5a87`](https://github.com/sonofmagic/dev-configs/commit/94a5a87e3f0dc6876b0baa614aec1d71aacca2bb) by @sonofmagic
+
+- 🐛 **Disable core `dot-notation` in the base preset to avoid conflicts with TypeScript `noPropertyAccessFromIndexSignature` (`ts(4111)`) when bracket notation is required for index-signature properties.** [`94a5a87`](https://github.com/sonofmagic/dev-configs/commit/94a5a87e3f0dc6876b0baa614aec1d71aacca2bb) by @sonofmagic
+
 ## 1.6.19
 
 ### Patch Changes

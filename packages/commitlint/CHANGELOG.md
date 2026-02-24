@@ -1,5 +1,11 @@
 # @icebreakers/commitlint-config
 
+## 1.2.8
+
+### Patch Changes
+
+- 🐛 **upgrade** [`94a5a87`](https://github.com/sonofmagic/dev-configs/commit/94a5a87e3f0dc6876b0baa614aec1d71aacca2bb) by @sonofmagic
+
 ## 1.2.7
 
 ### Patch Changes

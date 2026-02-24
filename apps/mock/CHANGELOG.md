@@ -1,5 +1,11 @@
 # @icebreakers/mock
 
+## 0.0.22
+
+### Patch Changes
+
+- 🐛 **upgrade** [`94a5a87`](https://github.com/sonofmagic/dev-configs/commit/94a5a87e3f0dc6876b0baa614aec1d71aacca2bb) by @sonofmagic
+
 ## 0.0.21
 
 ### Patch Changes
