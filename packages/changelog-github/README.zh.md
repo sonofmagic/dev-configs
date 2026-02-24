@@ -44,7 +44,7 @@ pnpm add -D @changesets/cli @icebreakers/changelog-github
 
 可以借助摘要指令精准控制展示的元数据：
 
-```
+```text
 pr: #42
 commit: 1234567890abcdef1234567890abcdef12345678
 author: @octocat
@@ -57,7 +57,7 @@ author: @octocat
 
 最终 changelog 会渲染为：
 
-```
+```md
 - ✨ **为 lint preset 新增可选的 `tailwind-config` 配置项** [#42] [`1234567`](https://github.com/org/repo/commit/1234567890abcdef1234567890abcdef12345678) by @octocat
   - 接受相对路径指向 `tailwind.config.ts`
   - 未设置时默认读取工作区根目录

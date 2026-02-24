@@ -109,26 +109,26 @@ async function resolveCaseContext(caseName: typeof CASES[number]) {
   const hasAstro = await moduleAvailable('eslint-plugin-astro')
   const hasSvelte = await moduleAvailable('eslint-plugin-svelte')
 
-  if (!hasAstro && options.astro) {
-    options.astro = false
+  if (!hasAstro && options['astro']) {
+    options['astro'] = false
   }
-  if (!hasSvelte && options.svelte) {
-    options.svelte = false
+  if (!hasSvelte && options['svelte']) {
+    options['svelte'] = false
   }
 
   const extensions = [...BASE_EXTENSIONS]
-  if (options.astro) {
+  if (options['astro']) {
     extensions.push('astro')
   }
-  if (options.svelte) {
+  if (options['svelte']) {
     extensions.push('svelte')
   }
 
   const ignoreExtensions: string[] = []
-  if (!options.astro) {
+  if (!options['astro']) {
     ignoreExtensions.push('.astro')
   }
-  if (!options.svelte) {
+  if (!options['svelte']) {
     ignoreExtensions.push('.svelte')
   }
 
@@ -210,7 +210,7 @@ function stripUnsupportedRules(configs: Linter.Config[]): Linter.Config[] {
     const { 'ts/ban-types': _banTypes, ...rest } = config.rules
     return {
       ...config,
-      rules: Object.keys(rest).length > 0 ? rest : undefined,
+      ...(Object.keys(rest).length > 0 ? { rules: rest } : {}),
     }
   })
 }

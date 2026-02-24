@@ -44,7 +44,8 @@
     "test": "vitest run",
     "test:dev": "vitest",
     "release": "pnpm publish",
-    "sync": "cnpm sync @icebreakers/stylelint-config"
+    "sync": "cnpm sync @icebreakers/stylelint-config",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "comment-json": "^4.5.1",

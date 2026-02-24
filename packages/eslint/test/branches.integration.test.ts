@@ -97,7 +97,7 @@ function stripUnsupportedRules(configs: Linter.Config[]): Linter.Config[] {
     const { 'ts/ban-types': _banTypes, ...rest } = config.rules
     return {
       ...config,
-      rules: Object.keys(rest).length > 0 ? rest : undefined,
+      ...(Object.keys(rest).length > 0 ? { rules: rest } : {}),
     }
   })
 }

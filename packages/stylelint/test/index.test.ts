@@ -32,6 +32,11 @@ describe('index', () => {
 
   it('common', () => {
     const config = icebreaker()
+    const extendsList = Array.isArray(config.extends)
+      ? config.extends
+      : config.extends
+        ? [config.extends]
+        : []
 
     expect(config.extends).toEqual([
       expect.stringContaining(PRESET_STANDARD_SCSS),
@@ -41,7 +46,7 @@ describe('index', () => {
 
     expect({
       ...config,
-      extends: (config.extends ?? []).map((item) => {
+      extends: extendsList.map((item) => {
         return typeof item === 'string' ? normalizePresetPath(item) : item
       }),
     }).toMatchSnapshot()

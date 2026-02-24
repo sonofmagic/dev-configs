@@ -23,6 +23,14 @@ const resolveNestPresetsMock = vi.mocked(resolveNestPresets)
 const resolveQueryPresetsMock = vi.mocked(resolveQueryPresets)
 const resolveAccessibilityPresetsMock = vi.mocked(resolveAccessibilityPresets)
 
+function toConfigObject(value: unknown): { name?: string, rules?: Record<string, unknown> } {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return {}
+  }
+
+  return value as { name?: string, rules?: Record<string, unknown> }
+}
+
 describe('getPresets', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -30,9 +38,10 @@ describe('getPresets', () => {
 
   it('returns resolved options and base config', () => {
     const [resolved, baseConfig] = getPresets()
+    const base = toConfigObject(baseConfig)
 
     expect(resolved.formatters).toBe(true)
-    expect(baseConfig.rules?.['pnpm/json-enforce-catalog']).toBe('off')
+    expect(base.rules?.['pnpm/json-enforce-catalog']).toBe('off')
   })
 
   it('appends feature presets in the expected order', () => {
@@ -45,15 +54,20 @@ describe('getPresets', () => {
       vue: true,
       react: true,
     })
+    const base = toConfigObject(baseConfig)
 
-    expect(baseConfig.rules?.['unicorn/prefer-number-properties']).toBe('warn')
+    expect(base.rules?.['unicorn/prefer-number-properties']).toBe('warn')
     expect(resolveTailwindPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveMdxPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveNestPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveQueryPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveAccessibilityPresetsMock).toHaveBeenCalledWith(true, expect.any(Object), true)
 
-    expect(presets.map(preset => preset.name)).toEqual([
+    const presetNames = presets
+      .map(preset => toConfigObject(preset).name)
+      .filter((name): name is string => typeof name === 'string')
+
+    expect(presetNames).toEqual([
       'tailwind',
       'mdx',
       'nestjs',
@@ -64,7 +78,8 @@ describe('getPresets', () => {
 
   it('uses legacy rules when requested', () => {
     const [, baseConfig] = getPresets(undefined, 'legacy')
+    const base = toConfigObject(baseConfig)
 
-    expect(baseConfig.rules?.['perfectionist/sort-imports']).toBe('off')
+    expect(base.rules?.['perfectionist/sort-imports']).toBe('off')
   })
 })

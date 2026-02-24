@@ -6,8 +6,8 @@ const existsSync = vi.fn(() => exists)
 const readFileSync = vi.fn(() => readValue)
 const writeFileSync = vi.fn()
 
-const parse = vi.fn(() => ({}))
-const stringify = vi.fn(() => '{"ok":true}')
+const parse = vi.fn((): any => ({}))
+const stringify = vi.fn((_value: Record<string, unknown>) => '{"ok":true}')
 
 vi.mock('node:fs', () => {
   return {
@@ -63,7 +63,11 @@ describe('cli', () => {
     expect(writeFileSync).toHaveBeenCalledWith('/repo/.vscode/settings.json', '{"ok":true}', 'utf8')
     expect(infoSpy).toHaveBeenCalledWith(expect.stringContaining('init'))
 
-    const [writtenConfig] = stringify.mock.calls[0]
+    const firstCall = stringify.mock.calls.at(0)
+    if (!firstCall) {
+      throw new Error('Expected stringify to be called')
+    }
+    const writtenConfig = firstCall[0]
     expect(writtenConfig['stylelint.validate']).toEqual(expect.arrayContaining(['vue', 'css', 'scss']))
   })
 
@@ -88,7 +92,11 @@ describe('cli', () => {
 
     await import('@/cli')
 
-    const [writtenConfig] = stringify.mock.calls[0]
+    const firstCall = stringify.mock.calls.at(0)
+    if (!firstCall) {
+      throw new Error('Expected stringify to be called')
+    }
+    const writtenConfig = firstCall[0]
     expect(writtenConfig['stylelint.validate']).toEqual(expect.arrayContaining(['vue', 'css', 'scss']))
   })
 })

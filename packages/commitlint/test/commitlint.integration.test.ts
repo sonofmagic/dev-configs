@@ -2,12 +2,15 @@ import lint from '@commitlint/lint'
 import createPreset from 'conventional-changelog-conventionalcommits'
 import { createIcebreakerCommitlintConfig } from '@/index'
 
+type LintRules = Parameters<typeof lint>[1]
+type CommitlintRules = ReturnType<typeof createIcebreakerCommitlintConfig>['rules']
+
 async function lintMessage(
   message: string,
-  rules: Record<string, unknown> | undefined,
+  rules: CommitlintRules,
 ) {
   const preset = await createPreset()
-  return lint(message, rules, {
+  return lint(message, rules as LintRules, {
     parserOpts: preset.parser,
   })
 }

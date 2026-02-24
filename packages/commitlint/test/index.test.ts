@@ -38,8 +38,8 @@ describe('createIcebreakerCommitlintConfig', () => {
     expect(typeRule[2]).toContain('deps')
 
     const promptTypes = config.prompt?.questions?.type?.enum
-    expect(promptTypes?.deps?.title).toBe('Dependencies')
-    expect(promptTypes?.deps?.description).toBe('Dependency updates')
+    expect(promptTypes?.['deps']?.title).toBe('Dependencies')
+    expect(promptTypes?.['deps']?.description).toBe('Dependency updates')
   })
 
   it('configures scope rules with enum, case and presence constraints', () => {
@@ -149,14 +149,14 @@ describe('createIcebreakerCommitlintConfig', () => {
     const typeEnum = prompt?.type?.enum as
       | Record<string, { title?: string, description?: string, emoji?: string }>
       | undefined
-    expect(typeEnum?.deps?.title).toBe('Dependencies')
+    expect(typeEnum?.['deps']?.title).toBe('Dependencies')
     expect(prompt?.scope?.description).toBe('What part of the project changed?')
 
     const conventionalPrompt = conventionalConfig.prompt?.questions
     const conventionalTypeEnum = conventionalPrompt?.type?.enum as
       | Record<string, unknown>
       | undefined
-    expect(conventionalTypeEnum?.deps).toBeUndefined()
+    expect(conventionalTypeEnum?.['deps']).toBeUndefined()
     expect(conventionalPrompt?.scope?.description).not.toBe(
       'What part of the project changed?',
     )

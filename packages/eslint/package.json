@@ -46,7 +46,8 @@
     "test": "vitest run",
     "test:dev": "vitest",
     "release": "pnpm publish",
-    "sync": "cnpm sync @icebreakers/eslint-config"
+    "sync": "cnpm sync @icebreakers/eslint-config",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "eslint-plugin-pnpm": "^1.4.3"

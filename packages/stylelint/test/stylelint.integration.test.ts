@@ -24,8 +24,9 @@ describe('stylelint integration', () => {
       config: icebreaker(),
     })
 
+    const warnings = result.results[0]?.warnings ?? []
     expect(result.errored).toBe(false)
-    expect(result.results[0].warnings).toEqual([])
+    expect(warnings).toEqual([])
   })
 
   it('replaces ignore units and reports rpx when removed', async () => {
@@ -44,13 +45,13 @@ describe('stylelint integration', () => {
       }),
     })
 
-    const unitWarnings = result.results[0].warnings.filter(
+    const unitWarnings = (result.results[0]?.warnings ?? []).filter(
       warning => warning.rule === 'unit-no-unknown',
     )
 
     expect(result.errored).toBe(true)
     expect(unitWarnings.length).toBe(1)
-    expect(unitWarnings[0].text).toContain('rpx')
+    expect(unitWarnings[0]?.text).toContain('rpx')
   })
 
   it('replaces at-rule ignores and keeps appended entries', async () => {
@@ -69,7 +70,7 @@ describe('stylelint integration', () => {
       }),
     })
 
-    const atRuleWarnings = result.results[0].warnings.filter(
+    const atRuleWarnings = (result.results[0]?.warnings ?? []).filter(
       warning => warning.rule === 'scss/at-rule-no-unknown',
     )
 

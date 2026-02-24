@@ -46,7 +46,7 @@ All other behaviours (tuple arguments, required `repo` option, rendered layout) 
 
 Leverage the summary tags to control the metadata the formatter displays:
 
-```
+```text
 pr: #42
 commit: 1234567890abcdef1234567890abcdef12345678
 author: @octocat
@@ -59,7 +59,7 @@ Add optional `tailwind-config` flag to the lint preset
 
 The rendered changelog entry becomes:
 
-```
+```md
 - ✨ **Add optional `tailwind-config` flag** [#42] [`1234567`](https://github.com/org/repo/commit/1234567890abcdef1234567890abcdef12345678) by @octocat
   - accepts a relative path to `tailwind.config.ts`
   - falls back to the workspace root when unset

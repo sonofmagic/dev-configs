@@ -70,7 +70,7 @@ export function buildTypesConfig(options?: CommitTypesOptions): TypesConfigResul
   }
 
   if (!options.definitions?.length) {
-    return { rule }
+    return rule ? { rule } : {}
   }
 
   const basePromptType = conventionalConfig.prompt?.questions?.type
@@ -89,9 +89,9 @@ export function buildTypesConfig(options?: CommitTypesOptions): TypesConfigResul
     const { value, title, description, emoji } = definition
     mergedEnum[value] = {
       ...(mergedEnum[value] ?? {}),
-      title,
-      description,
-      emoji,
+      ...(title !== undefined ? { title } : {}),
+      ...(description !== undefined ? { description } : {}),
+      ...(emoji !== undefined ? { emoji } : {}),
     }
   }
 
@@ -106,7 +106,10 @@ export function buildTypesConfig(options?: CommitTypesOptions): TypesConfigResul
     },
   }
 
-  return { rule, prompt }
+  return {
+    ...(rule ? { rule } : {}),
+    prompt,
+  }
 }
 
 export function buildScopeRules(options?: CommitScopeOptions): Partial<RulesConfig> {

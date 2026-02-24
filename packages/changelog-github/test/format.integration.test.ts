@@ -135,7 +135,7 @@ describe('release detail formatting', () => {
         { name: 'b', newVersion: '2.0.0' },
         { name: 'c', newVersion: '3.0.0' },
         { name: 'd', newVersion: '4.0.0' },
-      ],
+      ] as any,
       { repo },
     )
 

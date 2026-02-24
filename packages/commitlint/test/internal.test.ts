@@ -94,13 +94,13 @@ describe('buildTypesConfig', () => {
     const typeEnum = prompt?.type?.enum as
       | Record<string, { title?: string, description?: string, emoji?: string }>
       | undefined
-    expect(typeEnum?.deps?.title).toBe('Dependencies')
-    expect(typeEnum?.deps?.emoji).toBe('📦')
+    expect(typeEnum?.['deps']?.title).toBe('Dependencies')
+    expect(typeEnum?.['deps']?.emoji).toBe('📦')
 
     const conventionalTypeEnum = conventionalConfig.prompt?.questions?.type?.enum as
       | Record<string, unknown>
       | undefined
-    expect(conventionalTypeEnum?.deps).toBeUndefined()
+    expect(conventionalTypeEnum?.['deps']).toBeUndefined()
   })
 })
 

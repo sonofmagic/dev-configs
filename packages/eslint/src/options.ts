@@ -99,20 +99,33 @@ export function resolveUserOptions(options?: UserDefinedOptions): ResolvedUserOp
     BASE_DEFAULTS,
   ) as ResolvedUserOptions
 
-  resolved.vue = mergeOptionWithDefaults(
+  const resolvedVue = mergeOptionWithDefaults(
     resolved.vue,
     getDefaultVueOptions(options),
     {
       postProcess: applyVueVersionSpecificRules,
     },
   )
-  resolved.typescript = mergeOptionWithDefaults(
+  if (resolvedVue === undefined) {
+    delete resolved.vue
+  }
+  else {
+    resolved.vue = resolvedVue
+  }
+
+  const resolvedTypescript = mergeOptionWithDefaults(
     resolved.typescript,
     getDefaultTypescriptOptions(options),
     {
       useDefaultWhenUndefined: true,
     },
   )
+  if (resolvedTypescript === undefined) {
+    delete resolved.typescript
+  }
+  else {
+    resolved.typescript = resolvedTypescript
+  }
 
   return resolved
 }
