@@ -33,7 +33,7 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Download release metadata artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}

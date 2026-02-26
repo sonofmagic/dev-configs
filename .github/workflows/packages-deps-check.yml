@@ -64,7 +64,7 @@ jobs:
 
       - name: Upload release metadata artifact
         if: github.event_name == 'push'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: packages-deps-metadata
           path: .release-metadata/metadata.json
