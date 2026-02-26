@@ -1,0 +1,101 @@
+name: Packages Deps Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - packages/*/package.json
+  push:
+    branches:
+      - main
+    paths:
+      - packages/*/package.json
+
+concurrency: packages-deps-check-${{ github.ref }}
+
+env:
+  HUSKY: 0
+
+jobs:
+  detect:
+    name: Detect package dependency changes
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.diff.outputs.has_changes }}
+      changed_matrix: ${{ steps.diff.outputs.changed_matrix }}
+      changed_names: ${{ steps.diff.outputs.changed_names }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Resolve base SHA
+        id: base
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            base_sha="${{ github.event.pull_request.base.sha }}"
+          else
+            base_sha="${{ github.event.before }}"
+          fi
+
+          # For first push events, GitHub can provide an all-zero SHA.
+          if [[ -z "$base_sha" || "$base_sha" =~ ^0+$ ]]; then
+            base_sha="$(git rev-list --max-parents=0 HEAD)"
+          fi
+
+          echo "base_sha=$base_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Compare package dependencies
+        id: diff
+        env:
+          BASE_SHA: ${{ steps.base.outputs.base_sha }}
+        run: node scripts/release/detect-deps-changes.mjs
+
+      - name: Write release metadata
+        if: github.event_name == 'push'
+        env:
+          HAS_CHANGES: ${{ steps.diff.outputs.has_changes }}
+          CHANGED_MATRIX: ${{ steps.diff.outputs.changed_matrix }}
+        run: node scripts/release/write-run-metadata.mjs
+
+      - name: Upload release metadata artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-deps-metadata
+          path: .release-metadata/metadata.json
+          retention-days: 1
+          if-no-files-found: error
+
+  verify:
+    name: Verify changed packages
+    needs: detect
+    if: needs.detect.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.detect.outputs.changed_matrix) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run package-scoped checks
+        run: pnpm turbo run build test typecheck --filter=${{ matrix.package.name }}

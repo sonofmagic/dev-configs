@@ -1,0 +1,105 @@
+name: Packages Deps Publish
+
+on:
+  workflow_run:
+    workflows:
+      - Packages Deps Check
+    types:
+      - completed
+
+concurrency: packages-deps-publish-${{ github.event.workflow_run.head_branch }}
+
+env:
+  HUSKY: 0
+
+jobs:
+  prepare:
+    name: Prepare release metadata
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      has_changes: ${{ steps.metadata.outputs.has_changes }}
+      changed_matrix: ${{ steps.metadata.outputs.changed_matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Download release metadata artifact
+        uses: actions/download-artifact@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          name: packages-deps-metadata
+          path: .release-metadata
+
+      - name: Read release metadata
+        id: metadata
+        run: node scripts/release/read-run-metadata.mjs
+
+  publish:
+    name: Publish changed packages
+    needs: prepare
+    if: needs.prepare.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create temporary changeset
+        env:
+          CHANGED_MATRIX: ${{ needs.prepare.outputs.changed_matrix }}
+        run: node scripts/release/create-temp-changeset.mjs
+
+      - name: Version package with Changesets
+        run: pnpm changeset version
+
+      - name: Publish changed packages
+        env:
+          CHANGED_MATRIX: ${{ needs.prepare.outputs.changed_matrix }}
+          NPM_CONFIG_PROVENANCE: true
+        run: node scripts/release/publish-changed-packages.mjs
+
+      - name: Commit version files
+        run: |
+          git add packages/*/package.json packages/*/CHANGELOG.md
+
+          if git diff --cached --quiet; then
+            echo "No version files changed"
+            exit 0
+          fi
+
+          git commit -m "chore(release): publish package dependency updates [skip ci]"
+          git push origin HEAD:main
