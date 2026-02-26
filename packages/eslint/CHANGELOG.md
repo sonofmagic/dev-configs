@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 1.6.22
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`64b1558`](https://github.com/sonofmagic/dev-configs/commit/64b15581c9294e97a97f76e606b6b146daee4949) by @sonofmagic
+
 ## 1.6.21
 
 ### Patch Changes
