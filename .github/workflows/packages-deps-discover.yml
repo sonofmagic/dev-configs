@@ -2,9 +2,6 @@ name: Packages Deps Discover
 
 on:
   workflow_dispatch:
-  schedule:
-    # Daily at 02:17 UTC
-    - cron: '17 2 * * *'
 
 concurrency: packages-deps-discover-${{ github.ref }}
 
