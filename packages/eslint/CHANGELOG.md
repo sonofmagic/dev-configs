@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 1.6.23
+
+### Patch Changes
+
+- 🐛 **Add a YAML lint fixture in `demos/input` to verify YAML parsing and rule checks with ESLint (using `--no-ignore` for the ignored demos path).** [`8e7201e`](https://github.com/sonofmagic/dev-configs/commit/8e7201eccbed04f1124ec6ab901d818415647863) by @sonofmagic
+
 ## 1.6.22
 
 ### Patch Changes
