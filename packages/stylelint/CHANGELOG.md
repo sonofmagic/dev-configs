@@ -1,5 +1,11 @@
 # @icebreakers/stylelint-config
 
+## 2.0.3
+
+### Patch Changes
+
+- 🐛 **bump package dependencies for changelog, commitlint, eslint, and stylelint configs.** [`0554cd5`](https://github.com/sonofmagic/dev-configs/commit/0554cd5b3dc3c02e965d579083e7df3f15399332) by @sonofmagic
+
 ## 2.0.2
 
 ### Patch Changes
