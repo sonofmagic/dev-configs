@@ -19,6 +19,7 @@ const getInfoMock = vi.mocked(getInfo)
 const getInfoFromPullRequestMock = vi.mocked(getInfoFromPullRequest)
 
 const repo = 'sonofmagic/dev-configs'
+const MISSING_REPO_ERROR_RE = /Please provide a repo/
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -39,7 +40,7 @@ describe('getReleaseLine', () => {
         'minor',
         undefined as unknown as Record<string, any>,
       ),
-    ).rejects.toThrow(/Please provide a repo/)
+    ).rejects.toThrow(MISSING_REPO_ERROR_RE)
   })
 
   it('formats summary with metadata inline', async () => {

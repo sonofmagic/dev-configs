@@ -20,6 +20,20 @@ const releaseTypeMap = {
   none: { icon: '📝', label: 'Update' },
 } as const
 
+const CONVENTIONAL_HEADLINE_RE = /^(\w+)(?:\(([^)]*)\))?(!?):\s(.+)$/
+const NEWLINE_RE = /\r?\n/
+const LIST_MARKER_RE = /^[-*+]\s+/
+const PR_META_RE = /^(?:pr|pull|pull\s*request):\s*#?(\d+)\s*$/i
+const COMMIT_META_RE = /^commit:\s*(\S+)\s*$/i
+const USER_META_RE = /^(?:author|user):\s*(\S+)\s*$/i
+const LEADING_AT_RE = /^@/
+const BREAKING_CHANGE_RE = /^BREAKING[\s-]CHANGE:/i
+const LIST_LINE_RE = /^(?:[-*+]\s+|\d+[.)]\s+)/
+const FALLBACK_USER_RE = /@([^\]]+)/
+const CODE_FENCE_RE = /^\s*```/
+const LIST_LIKE_RE = /^\s*(?:[-*+]\s+|\d+[.)]\s+)/
+const PARAGRAPH_BREAK_RE = /\n\s*\n/
+
 type ReleaseTypeKey = keyof typeof releaseTypeMap
 
 function resolveReleaseType(type: string | undefined): ReleaseTypeKey {
@@ -111,9 +125,7 @@ interface ConventionalHeadline {
 }
 
 function parseConventionalHeadline(raw: string): ConventionalHeadline {
-  const match = raw.match(
-    /^(\w+)(?:\(([^)]*)\))?(!?):\s(.+)$/,
-  )
+  const match = raw.match(CONVENTIONAL_HEADLINE_RE)
   if (!match) {
     return { breaking: false, description: raw }
   }
@@ -187,14 +199,12 @@ function extractSummaryMeta(summary: string): {
   const users: string[] = []
 
   const contentLines = summary
-    .split(/\r?\n/)
+    .split(NEWLINE_RE)
     .filter((line) => {
       const trimmed = line.trim()
-      const withoutListMarker = trimmed.replace(/^[-*+]\s+/, '')
+      const withoutListMarker = trimmed.replace(LIST_MARKER_RE, '')
 
-      const prMatch = withoutListMarker.match(
-        /^(?:pr|pull|pull\s*request):\s*#?(\d+)\s*$/i,
-      )
+      const prMatch = withoutListMarker.match(PR_META_RE)
       if (prMatch) {
         const num = Number(prMatch[1] ?? Number.NaN)
         if (!Number.isNaN(num)) {
@@ -203,22 +213,22 @@ function extractSummaryMeta(summary: string): {
         return false
       }
 
-      const commitMatch = withoutListMarker.match(/^commit:\s*(\S+)\s*$/i)
+      const commitMatch = withoutListMarker.match(COMMIT_META_RE)
       if (commitMatch) {
         commitRef = commitMatch[1]
         return false
       }
 
-      const userMatch = withoutListMarker.match(/^(?:author|user):\s*(\S+)\s*$/i)
+      const userMatch = withoutListMarker.match(USER_META_RE)
       if (userMatch) {
         const user = userMatch[1]
         if (user) {
-          users.push(user.replace(/^@/, ''))
+          users.push(user.replace(LEADING_AT_RE, ''))
         }
         return false
       }
 
-      if (/^BREAKING[\s-]CHANGE:/i.test(withoutListMarker)) {
+      if (BREAKING_CHANGE_RE.test(withoutListMarker)) {
         breaking = true
       }
 
@@ -257,7 +267,7 @@ function parseSummary(summary: string): ParsedSummary {
   }
 
   const firstContentLine = contentLines[nonEmptyIndex]?.trim() ?? ''
-  const startsWithList = /^(?:[-*+]\s+|\d+[.)]\s+)/.test(firstContentLine)
+  const startsWithList = LIST_LINE_RE.test(firstContentLine)
 
   const headline = startsWithList ? '' : firstContentLine
   const restLines = startsWithList
@@ -327,7 +337,7 @@ function buildUserMentions(
   }
 
   if (fallbackUser) {
-    const match = fallbackUser.match(/@([^\]]+)/)
+    const match = fallbackUser.match(FALLBACK_USER_RE)
     const matchedUser = match?.[1]
     return matchedUser ? normalizeUserMentions([matchedUser]) : ''
   }
@@ -354,8 +364,8 @@ function formatDetailBlock(detailLines: string[]): string {
     .split('\n')
     .map(line => line.trimEnd())
 
-  const hasFence = trimmed.some(line => /^\s*```/.test(line))
-  const isListLike = trimmed.some(line => /^\s*(?:[-*+]\s+|\d+[.)]\s+)/.test(line))
+  const hasFence = trimmed.some(line => CODE_FENCE_RE.test(line))
+  const isListLike = trimmed.some(line => LIST_LIKE_RE.test(line))
 
   if (trimmed.length === 0) {
     return ''
@@ -367,7 +377,7 @@ function formatDetailBlock(detailLines: string[]): string {
 
   const paragraphs = trimmed
     .join('\n')
-    .split(/\n\s*\n/)
+    .split(PARAGRAPH_BREAK_RE)
     .filter(chunk => chunk.trim().length > 0)
 
   const lines = paragraphs.flatMap(chunk =>
