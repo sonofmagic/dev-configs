@@ -10,6 +10,41 @@ const ROOT_DIR = path.resolve(__dirname, '..')
 const FIXTURE_DIR = path.join(ROOT_DIR, 'fixtures')
 
 describe('stylelint integration', () => {
+  it('uses prefix media feature notation to stay aligned with prettier output', async () => {
+    const validResult = await stylelint.lint({
+      code: [
+        '@media (max-width: 480px) {',
+        '  .demo {',
+        '    color: red;',
+        '  }',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'media-query.css'),
+      config: icebreaker(),
+    })
+    const invalidResult = await stylelint.lint({
+      code: [
+        '@media (width <= 480px) {',
+        '  .demo {',
+        '    color: red;',
+        '  }',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'media-query.css'),
+      config: icebreaker(),
+    })
+
+    expect(validResult.errored).toBe(false)
+    expect(validResult.results[0]?.warnings ?? []).toEqual([])
+
+    const mediaWarnings = (invalidResult.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === 'media-feature-range-notation',
+    )
+
+    expect(invalidResult.errored).toBe(true)
+    expect(mediaWarnings).toHaveLength(1)
+  })
+
   it('ignores rpx, page, and tailwind/unocss at-rules by default', async () => {
     const result = await stylelint.lint({
       code: [

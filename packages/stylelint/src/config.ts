@@ -72,6 +72,7 @@ function resolveRules(options: IcebreakerStylelintOptions | undefined): NonNulla
 
   const rules: NonNullable<Config['rules']> = {
     'function-name-case': null,
+    'media-feature-range-notation': 'prefix',
     'selector-class-pattern': [
       new RegExp(BEM_OOCSS_CLASS_NAME_PATTERN),
       {

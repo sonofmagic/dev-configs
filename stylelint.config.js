@@ -1,7 +1,7 @@
 import { icebreaker } from '@icebreakers/stylelint-config'
 
 export default icebreaker({
-  ignoreFiles: [
-    'packages/eslint/fixtures/output/**',
-  ],
+  rules: {
+    'media-feature-range-notation': 'prefix',
+  },
 })

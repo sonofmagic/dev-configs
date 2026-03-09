@@ -28,6 +28,7 @@ exports[`index > common 1`] = `
       },
     ],
     "function-name-case": null,
+    "media-feature-range-notation": "prefix",
     "scss/at-rule-no-unknown": [
       true,
       {
