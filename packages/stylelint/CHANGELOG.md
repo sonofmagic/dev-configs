@@ -1,5 +1,12 @@
 # @icebreakers/stylelint-config
 
+## 2.0.4
+
+### Patch Changes
+
+- 🐛 **Align the default `media-feature-range-notation` rule with Prettier and ESLint formatter output by using prefix media queries such as `max-width`.** [`42eeab4`](https://github.com/sonofmagic/dev-configs/commit/42eeab415269967e4f378d84d3ee2a4b2e3e23ac) by @sonofmagic
+  - This avoids formatter conflicts in repositories that run both Stylelint fixes and CSS formatting through ESLint.
+
 ## 2.0.3
 
 ### Patch Changes
