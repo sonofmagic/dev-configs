@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 1.6.26
+
+### Patch Changes
+
+- 🐛 **Lower `e18e/ban-dependencies` from error to warning in the base ESLint preset.** [`c4a6d5c`](https://github.com/sonofmagic/dev-configs/commit/c4a6d5ca07d32e0e98c28ac391778ccb3cbedf7e) by @sonofmagic
+
 ## 1.6.25
 
 ### Patch Changes
