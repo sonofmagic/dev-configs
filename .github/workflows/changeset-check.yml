@@ -1,0 +1,55 @@
+name: Changeset Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  changeset:
+    name: Require changeset for publishable changes
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Skip generated release PRs
+        if: startsWith(github.head_ref, 'changeset-release/')
+        run: echo "Generated Changesets release PR detected; skipping validation"
+
+      - name: Validate changeset presence
+        if: ${{ !startsWith(github.head_ref, 'changeset-release/') }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          base_sha="${{ github.event.pull_request.base.sha }}"
+          head_sha="${{ github.event.pull_request.head.sha }}"
+          changed_files="$(git diff --name-only "$base_sha" "$head_sha")"
+
+          publishable_changes="$(printf '%s\n' "$changed_files" | \
+            rg '^packages/(changelog-github|commitlint|eslint|stylelint)/(src/|bin/|package\.json$|tsconfig\.json$|tsup\.config\.ts$|build\.config\.ts$)' \
+            || true)"
+
+          if [ -z "$publishable_changes" ]; then
+            echo "No publishable package changes detected"
+            exit 0
+          fi
+
+          changeset_files="$(printf '%s\n' "$changed_files" | rg '^\.changeset/.+\.md$' || true)"
+
+          if [ -n "$changeset_files" ]; then
+            echo "Changeset file detected"
+            exit 0
+          fi
+
+          echo "Publishable package changes require a .changeset/*.md file."
+          echo
+          echo "Changed files:"
+          printf '%s\n' "$publishable_changes"
+          exit 1
