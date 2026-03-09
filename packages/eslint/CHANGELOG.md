@@ -1,5 +1,12 @@
 # @icebreakers/eslint-config
 
+## 1.6.27
+
+### Patch Changes
+
+- 🐛 **Fix formatter option merging so custom `formatters.prettierOptions` no longer disables the default CSS, SCSS, LESS, HTML, Markdown, and GraphQL formatters.** [`189e0af`](https://github.com/sonofmagic/dev-configs/commit/189e0afab5f26bb84e60240933d382c9a490d018) by @sonofmagic
+  - Infer formatter `prettierOptions.endOfLine` from repository `.editorconfig` when `end_of_line` is configured, while keeping explicit user settings unchanged.
+
 ## 1.6.26
 
 ### Patch Changes
