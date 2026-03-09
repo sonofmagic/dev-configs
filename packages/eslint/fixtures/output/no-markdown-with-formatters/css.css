@@ -1,4 +1,4 @@
-@media (width <= 480px) {
+@media (max-width: 480px) {
   .bd-examples {
     margin-right: -0.75rem;
     margin-left: -0.75rem;
