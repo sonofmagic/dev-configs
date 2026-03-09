@@ -1,5 +1,6 @@
 import type { ChangelogFunctions } from '@changesets/types'
 import { getInfo, getInfoFromPullRequest } from '@changesets/get-github-info'
+// eslint-disable-next-line e18e/ban-dependencies -- this package intentionally bootstraps local .env usage for documented Changesets CLI behavior.
 import { config as loadEnv } from 'dotenv'
 
 loadEnv()

@@ -1,4 +1,31 @@
-import { __applyVueVersionSpecificRules, createBaseRuleSet, resolveUserOptions } from '@/options'
+import type { Linter } from 'eslint'
+import fs from 'node:fs/promises'
+import os from 'node:os'
+import path from 'node:path'
+import { icebreaker } from '@/index'
+import { __applyVueVersionSpecificRules, __inferPrettierEndOfLineFromEditorConfig, createBaseRuleSet, resolveUserOptions } from '@/options'
+
+function toFormatterOptions(value: unknown) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error('Expected formatter options to resolve to an object')
+  }
+
+  return value as Record<string, unknown>
+}
+
+function getFormatterRuleOptions(
+  configs: Linter.Config[],
+  name: string,
+): Record<string, unknown> {
+  const config = configs.find(item => item.name === name)
+
+  expect(config).toBeDefined()
+  const rule = config?.rules?.['format/prettier']
+
+  expect(Array.isArray(rule)).toBe(true)
+
+  return (rule as unknown[])[1] as Record<string, unknown>
+}
 
 describe('resolveUserOptions', () => {
   it('expands boolean feature flags into config objects', () => {
@@ -19,7 +46,7 @@ describe('resolveUserOptions', () => {
     expect(resolvedVue.overrides?.['vue/no-v-for-template-key-on-child']).toBe('error')
     expect(resolvedVue.overrides?.['vue/no-v-for-template-key']).toBe('off')
     expect(resolvedTypescript.overrides?.['ts/no-unused-vars']).toBeDefined()
-    expect(resolved.formatters).toBe(true)
+    expect(resolved.formatters).not.toBe(false)
   })
 
   it('keeps vue disabled when not configured', () => {
@@ -93,6 +120,40 @@ describe('resolveUserOptions', () => {
     expect(resolvedVue.overrides?.['vue/custom-rule']).toBe('warn')
     expect(resolvedVue.overrides?.['vue/no-useless-v-bind']).toBeDefined()
   })
+
+  it('deep merges formatter options with the defaults', () => {
+    const resolved = resolveUserOptions({
+      formatters: {
+        prettierOptions: {
+          endOfLine: 'lf',
+        },
+      },
+    })
+
+    const formatters = toFormatterOptions(resolved.formatters)
+    const prettierOptions = toFormatterOptions(formatters['prettierOptions'])
+
+    expect(formatters['css']).toBe(true)
+    expect(formatters['html']).toBe(true)
+    expect(formatters['markdown']).toBe(true)
+    expect(formatters['graphql']).toBe(true)
+    expect(prettierOptions['endOfLine']).toBe('lf')
+  })
+
+  it('keeps formatter overrides while preserving remaining defaults', () => {
+    const resolved = resolveUserOptions({
+      formatters: {
+        markdown: false,
+      },
+    })
+
+    const formatters = toFormatterOptions(resolved.formatters)
+
+    expect(formatters['css']).toBe(true)
+    expect(formatters['html']).toBe(true)
+    expect(formatters['graphql']).toBe(true)
+    expect(formatters['markdown']).toBe(false)
+  })
 })
 
 describe('createBaseRuleSet', () => {
@@ -116,5 +177,72 @@ describe('applyVueVersionSpecificRules', () => {
     const option = { overrides: undefined } as any
     __applyVueVersionSpecificRules(option)
     expect(option.overrides).toBeUndefined()
+  })
+})
+
+describe('formatters integration', () => {
+  it('inherits formatter endOfLine from .editorconfig', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'icebreaker-editorconfig-'))
+    const cwdSpy = vi.spyOn(process, 'cwd').mockReturnValue(tempDir)
+
+    await fs.writeFile(
+      path.join(tempDir, '.editorconfig'),
+      [
+        'root = true',
+        '',
+        '[*]',
+        'end_of_line = lf',
+      ].join('\n'),
+      'utf8',
+    )
+
+    try {
+      expect(__inferPrettierEndOfLineFromEditorConfig()).toBe('lf')
+
+      const configs = await icebreaker().toConfigs()
+      const formatterNames = [
+        'antfu/formatter/css',
+        'antfu/formatter/scss',
+        'antfu/formatter/less',
+        'antfu/formatter/html',
+        'antfu/formatter/markdown',
+        'antfu/formatter/graphql',
+      ]
+
+      for (const name of formatterNames) {
+        expect(getFormatterRuleOptions(configs, name)['endOfLine']).toBe('lf')
+      }
+    }
+    finally {
+      cwdSpy.mockRestore()
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+
+  it('keeps the default formatter configs when only prettierOptions are overridden', async () => {
+    const configs = await icebreaker({
+      formatters: {
+        prettierOptions: {
+          endOfLine: 'lf',
+        },
+      },
+    }).toConfigs()
+
+    const formatterNames = [
+      'antfu/formatter/setup',
+      'antfu/formatter/css',
+      'antfu/formatter/scss',
+      'antfu/formatter/less',
+      'antfu/formatter/html',
+      'antfu/formatter/markdown',
+      'antfu/formatter/graphql',
+    ]
+
+    for (const name of formatterNames) {
+      expect(configs.some(config => config.name === name)).toBe(true)
+    }
+
+    expect(getFormatterRuleOptions(configs, 'antfu/formatter/css')['endOfLine']).toBe('lf')
+    expect(getFormatterRuleOptions(configs, 'antfu/formatter/markdown')['endOfLine']).toBe('lf')
   })
 })

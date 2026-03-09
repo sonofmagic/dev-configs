@@ -40,7 +40,7 @@ describe('getPresets', () => {
     const [resolved, baseConfig] = getPresets()
     const base = toConfigObject(baseConfig)
 
-    expect(resolved.formatters).toBe(true)
+    expect(resolved.formatters).not.toBe(false)
     expect(base.rules?.['pnpm/json-enforce-catalog']).toBe('off')
   })
 

@@ -7,6 +7,22 @@ import { icebreaker } from '@/index'
 const ROOT_DIR = path.resolve(__dirname, '..')
 let tempDir = ''
 
+function stripUnsupportedRules(configs: Linter.Config[]): Linter.Config[] {
+  return configs.map((config) => {
+    if (!config.rules) {
+      return config
+    }
+    if (!Object.hasOwn(config.rules, 'ts/ban-types')) {
+      return config
+    }
+    const { 'ts/ban-types': _banTypes, ...rest } = config.rules
+    return {
+      ...config,
+      ...(Object.keys(rest).length > 0 ? { rules: rest } : {}),
+    }
+  })
+}
+
 describe('eslint branch config behavior', () => {
   let eslint: ESLint
 
@@ -85,19 +101,3 @@ describe('eslint branch config behavior', () => {
     )
   })
 })
-
-function stripUnsupportedRules(configs: Linter.Config[]): Linter.Config[] {
-  return configs.map((config) => {
-    if (!config.rules) {
-      return config
-    }
-    if (!Object.prototype.hasOwnProperty.call(config.rules, 'ts/ban-types')) {
-      return config
-    }
-    const { 'ts/ban-types': _banTypes, ...rest } = config.rules
-    return {
-      ...config,
-      ...(Object.keys(rest).length > 0 ? { rules: rest } : {}),
-    }
-  })
-}

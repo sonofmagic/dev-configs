@@ -18,6 +18,6 @@ export function setVscodeSettingsJson(json: VscodeSettings = {}): VscodeSettings
   existing.add('css')
   existing.add('scss')
 
-  json['stylelint.validate'] = Array.from(existing)
+  json['stylelint.validate'] = [...existing]
   return json
 }

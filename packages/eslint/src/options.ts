@@ -1,6 +1,10 @@
 import type { Linter } from 'eslint'
 import type { OptionsVue } from './antfu'
 import type { TailwindcssOption, UserDefinedOptions } from './types'
+import fs from 'node:fs'
+import { createRequire } from 'node:module'
+import path from 'node:path'
+import process from 'node:process'
 import { defu } from 'defu'
 import { getDefaultTypescriptOptions, getDefaultVueOptions } from './defaults'
 import { isObject } from './utils'
@@ -43,6 +47,27 @@ const BASE_RULES: Partial<Linter.RulesRecord> = {
 export type ResolvedUserOptions = UserDefinedOptions & {
   tailwindcss?: TailwindcssOption | boolean
 }
+
+type FormatterOptions = Exclude<UserDefinedOptions['formatters'], boolean | undefined>
+type FormatterPrettierOptions = NonNullable<FormatterOptions['prettierOptions']>
+type EditorConfigEndOfLine = Extract<
+  FormatterPrettierOptions['endOfLine'],
+  'lf' | 'crlf' | 'cr'
+>
+
+const require = createRequire(import.meta.url)
+const ANTFU_PACKAGE_DIR = path.dirname(
+  require.resolve('@antfu/eslint-config/package.json'),
+)
+const GENERAL_EDITORCONFIG_SECTIONS = new Set([
+  '*',
+  '**',
+  '**/*',
+  '*.*',
+  '**.*',
+  '**/*.*',
+])
+const NEWLINE_PATTERN = /\r?\n/u
 
 function mergeOptionWithDefaults<T extends object>(
   input: T | boolean | undefined,
@@ -94,6 +119,174 @@ function applyVueVersionSpecificRules(option: OptionsVue | boolean | undefined):
   })
 }
 
+function isPackageAvailable(name: string, paths?: string[]): boolean {
+  try {
+    require.resolve(name, paths ? { paths } : undefined)
+    return true
+  }
+  catch {
+    return false
+  }
+}
+
+function getDefaultFormatterOptions(cwd = process.cwd()): FormatterOptions {
+  const hasXmlPlugin = isPackageAvailable('@prettier/plugin-xml', [ANTFU_PACKAGE_DIR])
+
+  return {
+    astro: isPackageAvailable('prettier-plugin-astro', [ANTFU_PACKAGE_DIR]),
+    css: true,
+    graphql: true,
+    html: true,
+    markdown: true,
+    slidev: isPackageAvailable('@slidev/cli', [cwd]),
+    svg: hasXmlPlugin,
+    xml: hasXmlPlugin,
+  }
+}
+
+function normalizeEditorConfigEndOfLine(value: string): EditorConfigEndOfLine | undefined {
+  switch (value.trim().toLowerCase()) {
+    case 'cr':
+    case 'crlf':
+    case 'lf':
+      return value.trim().toLowerCase() as EditorConfigEndOfLine
+    default:
+      return undefined
+  }
+}
+
+function isGeneralEditorConfigSection(section: string): boolean {
+  return GENERAL_EDITORCONFIG_SECTIONS.has(section.trim())
+}
+
+function parseEditorConfig(filePath: string): {
+  endOfLine?: EditorConfigEndOfLine
+  isRoot: boolean
+} {
+  const lines = fs.readFileSync(filePath, 'utf8').split(NEWLINE_PATTERN)
+  let currentSection: string | undefined
+  let endOfLine: EditorConfigEndOfLine | undefined
+  let isRoot = false
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim()
+
+    if (!line || line.startsWith('#') || line.startsWith(';')) {
+      continue
+    }
+
+    if (line.startsWith('[') && line.endsWith(']')) {
+      currentSection = line.slice(1, -1).trim()
+      continue
+    }
+
+    const separatorIndex = line.indexOf('=')
+    if (separatorIndex === -1) {
+      continue
+    }
+
+    const key = line.slice(0, separatorIndex).trim().toLowerCase()
+    const value = line.slice(separatorIndex + 1).trim()
+
+    if (!currentSection && key === 'root') {
+      isRoot = value.toLowerCase() === 'true'
+      continue
+    }
+
+    if (key !== 'end_of_line') {
+      continue
+    }
+
+    const normalized = normalizeEditorConfigEndOfLine(value)
+    if (!normalized) {
+      continue
+    }
+
+    if (!currentSection || isGeneralEditorConfigSection(currentSection)) {
+      endOfLine = normalized
+    }
+  }
+
+  return endOfLine
+    ? {
+        endOfLine,
+        isRoot,
+      }
+    : {
+        isRoot,
+      }
+}
+
+function inferPrettierEndOfLineFromEditorConfig(cwd = process.cwd()): EditorConfigEndOfLine | undefined {
+  const configs: string[] = []
+  let currentDir = path.resolve(cwd)
+
+  while (true) {
+    const editorConfigPath = path.join(currentDir, '.editorconfig')
+
+    if (fs.existsSync(editorConfigPath)) {
+      configs.push(editorConfigPath)
+
+      if (parseEditorConfig(editorConfigPath).isRoot) {
+        break
+      }
+    }
+
+    const parentDir = path.dirname(currentDir)
+    if (parentDir === currentDir) {
+      break
+    }
+    currentDir = parentDir
+  }
+
+  let endOfLine: EditorConfigEndOfLine | undefined
+
+  for (const filePath of configs.reverse()) {
+    const parsed = parseEditorConfig(filePath)
+    if (parsed.endOfLine) {
+      endOfLine = parsed.endOfLine
+    }
+  }
+
+  return endOfLine
+}
+
+function resolveFormattersOption(
+  input: UserDefinedOptions['formatters'],
+  cwd = process.cwd(),
+): Exclude<UserDefinedOptions['formatters'], undefined> {
+  if (input === false) {
+    return false
+  }
+
+  const defaults = getDefaultFormatterOptions(cwd)
+  const inferredEndOfLine = inferPrettierEndOfLineFromEditorConfig(cwd)
+  const defaultsWithPrettier = inferredEndOfLine
+    ? defu<FormatterOptions, [FormatterOptions]>(
+        {
+          prettierOptions: {
+            endOfLine: inferredEndOfLine,
+          },
+        },
+        defaults,
+      )
+    : defaults
+
+  if (input === undefined) {
+    return inferredEndOfLine ? defaultsWithPrettier : true
+  }
+
+  if (input === true) {
+    return defaultsWithPrettier
+  }
+
+  if (isObject(input)) {
+    return defu(input, defaultsWithPrettier)
+  }
+
+  return defaultsWithPrettier
+}
+
 export function resolveUserOptions(options?: UserDefinedOptions): ResolvedUserOptions {
   const resolved = defu<UserDefinedOptions, [UserDefinedOptions, typeof BASE_DEFAULTS]>(
     {},
@@ -129,6 +322,8 @@ export function resolveUserOptions(options?: UserDefinedOptions): ResolvedUserOp
     resolved.typescript = resolvedTypescript
   }
 
+  resolved.formatters = resolveFormattersOption(options?.formatters)
+
   return resolved
 }
 
@@ -144,3 +339,4 @@ export function createBaseRuleSet(isLegacy: boolean): Partial<Linter.RulesRecord
 }
 
 export { applyVueVersionSpecificRules as __applyVueVersionSpecificRules }
+export { inferPrettierEndOfLineFromEditorConfig as __inferPrettierEndOfLineFromEditorConfig }

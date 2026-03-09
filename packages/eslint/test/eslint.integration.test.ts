@@ -102,6 +102,42 @@ const BASE_EXTENSIONS = [
   'toml',
 ]
 
+function stripUnsupportedRules(configs: Linter.Config[]): Linter.Config[] {
+  return configs.map((config) => {
+    if (!config.rules) {
+      return config
+    }
+    if (!Object.hasOwn(config.rules, 'ts/ban-types')) {
+      return config
+    }
+    const { 'ts/ban-types': _banTypes, ...rest } = config.rules
+    return {
+      ...config,
+      ...(Object.keys(rest).length > 0 ? { rules: rest } : {}),
+    }
+  })
+}
+
+const moduleAvailability = new Map<string, Promise<boolean>>()
+
+async function moduleAvailable(name: string) {
+  const cached = moduleAvailability.get(name)
+  if (cached) {
+    return cached
+  }
+  const result = (async () => {
+    try {
+      await import(name)
+      return true
+    }
+    catch {
+      return false
+    }
+  })()
+  moduleAvailability.set(name, result)
+  return result
+}
+
 async function resolveCaseContext(caseName: typeof CASES[number]) {
   const config = CASE_CONFIGS[caseName]
   const options = JSON.parse(JSON.stringify(config.options)) as Record<string, unknown>
@@ -198,39 +234,3 @@ describe('eslint integration fixtures', () => {
     await compareOutputs(caseName, tempDir, { ignoreExtensions })
   })
 })
-
-function stripUnsupportedRules(configs: Linter.Config[]): Linter.Config[] {
-  return configs.map((config) => {
-    if (!config.rules) {
-      return config
-    }
-    if (!Object.prototype.hasOwnProperty.call(config.rules, 'ts/ban-types')) {
-      return config
-    }
-    const { 'ts/ban-types': _banTypes, ...rest } = config.rules
-    return {
-      ...config,
-      ...(Object.keys(rest).length > 0 ? { rules: rest } : {}),
-    }
-  })
-}
-
-const moduleAvailability = new Map<string, Promise<boolean>>()
-
-async function moduleAvailable(name: string) {
-  const cached = moduleAvailability.get(name)
-  if (cached) {
-    return cached
-  }
-  const result = (async () => {
-    try {
-      await import(name)
-      return true
-    }
-    catch {
-      return false
-    }
-  })()
-  moduleAvailability.set(name, result)
-  return result
-}
