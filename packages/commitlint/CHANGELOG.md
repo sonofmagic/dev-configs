@@ -1,5 +1,11 @@
 # @icebreakers/commitlint-config
 
+## 1.2.10
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`3c09a04`](https://github.com/sonofmagic/dev-configs/commit/3c09a04e96183282fd51f7ec710df661740928f9) by @sonofmagic
+
 ## 1.2.9
 
 ### Patch Changes
