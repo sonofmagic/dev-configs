@@ -340,3 +340,5 @@ export function createBaseRuleSet(isLegacy: boolean): Partial<Linter.RulesRecord
 
 export { applyVueVersionSpecificRules as __applyVueVersionSpecificRules }
 export { inferPrettierEndOfLineFromEditorConfig as __inferPrettierEndOfLineFromEditorConfig }
+export { parseEditorConfig as __parseEditorConfig }
+export { resolveFormattersOption as __resolveFormattersOption }

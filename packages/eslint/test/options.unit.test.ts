@@ -3,7 +3,7 @@ import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { icebreaker } from '@/index'
-import { __applyVueVersionSpecificRules, __inferPrettierEndOfLineFromEditorConfig, createBaseRuleSet, resolveUserOptions } from '@/options'
+import { __applyVueVersionSpecificRules, __inferPrettierEndOfLineFromEditorConfig, __parseEditorConfig, __resolveFormattersOption, createBaseRuleSet, resolveUserOptions } from '@/options'
 
 function toFormatterOptions(value: unknown) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -181,6 +181,128 @@ describe('applyVueVersionSpecificRules', () => {
 })
 
 describe('formatters integration', () => {
+  it('returns undefined when no editorconfig can be found', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'icebreaker-no-editorconfig-'))
+
+    try {
+      expect(__inferPrettierEndOfLineFromEditorConfig(tempDir)).toBeUndefined()
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+
+  it('ignores non-general editorconfig sections and invalid end_of_line values', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'icebreaker-editorconfig-parse-'))
+    const editorConfigPath = path.join(tempDir, '.editorconfig')
+
+    await fs.writeFile(
+      editorConfigPath,
+      [
+        '; comment',
+        'root = true',
+        '',
+        '[*.md]',
+        'end_of_line = crlf',
+        '',
+        '[*]',
+        'end_of_line = invalid',
+      ].join('\n'),
+      'utf8',
+    )
+
+    try {
+      expect(__parseEditorConfig(editorConfigPath)).toEqual({
+        isRoot: true,
+      })
+      expect(__inferPrettierEndOfLineFromEditorConfig(tempDir)).toBeUndefined()
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+
+  it('prefers the nearest general editorconfig override before hitting root', async () => {
+    const rootDir = await fs.mkdtemp(path.join(os.tmpdir(), 'icebreaker-editorconfig-nested-'))
+    const nestedDir = path.join(rootDir, 'packages', 'demo')
+
+    await fs.mkdir(nestedDir, { recursive: true })
+    await fs.writeFile(
+      path.join(rootDir, '.editorconfig'),
+      [
+        'root = true',
+        '',
+        '[*]',
+        'end_of_line = crlf',
+      ].join('\n'),
+      'utf8',
+    )
+    await fs.writeFile(
+      path.join(rootDir, 'packages', '.editorconfig'),
+      [
+        '[*]',
+        'end_of_line = lf',
+      ].join('\n'),
+      'utf8',
+    )
+
+    try {
+      expect(__inferPrettierEndOfLineFromEditorConfig(nestedDir)).toBe('lf')
+    }
+    finally {
+      await fs.rm(rootDir, { recursive: true, force: true })
+    }
+  })
+
+  it('returns true when formatters are implicit and no editorconfig override exists', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'icebreaker-formatters-default-'))
+
+    try {
+      expect(__resolveFormattersOption(undefined, tempDir)).toBe(true)
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+
+  it('keeps explicit formatter disable flags untouched', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'icebreaker-formatters-false-'))
+
+    try {
+      expect(__resolveFormattersOption(false, tempDir)).toBe(false)
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+
+  it('expands explicit formatter true into defaults when editorconfig is present', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'icebreaker-formatters-true-'))
+
+    await fs.writeFile(
+      path.join(tempDir, '.editorconfig'),
+      [
+        'root = true',
+        '',
+        '[*]',
+        'end_of_line = cr',
+      ].join('\n'),
+      'utf8',
+    )
+
+    try {
+      const resolved = toFormatterOptions(__resolveFormattersOption(true, tempDir))
+      const prettierOptions = toFormatterOptions(resolved['prettierOptions'])
+
+      expect(resolved['css']).toBe(true)
+      expect(resolved['markdown']).toBe(true)
+      expect(prettierOptions['endOfLine']).toBe('cr')
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+
   it('inherits formatter endOfLine from .editorconfig', async () => {
     const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'icebreaker-editorconfig-'))
     const cwdSpy = vi.spyOn(process, 'cwd').mockReturnValue(tempDir)
