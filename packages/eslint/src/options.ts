@@ -25,6 +25,8 @@ const BASE_RULES: Partial<Linter.RulesRecord> = {
   // `noPropertyAccessFromIndexSignature` requires bracket access (`obj['key']`)
   // for index-signature properties, which conflicts with ESLint core `dot-notation`.
   'dot-notation': 'off',
+  // Keep dependency bans visible without blocking CI on upstream preset defaults.
+  'e18e/ban-dependencies': 'warn',
   // Disable all pnpm rules by default
   // @antfu/eslint-config auto-enables pnpm plugin when pnpm-workspace.yaml exists
   // but we want it opt-in instead of auto-enabled

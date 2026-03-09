@@ -99,6 +99,7 @@ describe('createBaseRuleSet', () => {
   it('returns the default rules in modern mode', () => {
     expect(createBaseRuleSet(false)['unicorn/prefer-number-properties']).toBe('warn')
     expect(createBaseRuleSet(false)['dot-notation']).toBe('off')
+    expect(createBaseRuleSet(false)['e18e/ban-dependencies']).toBe('warn')
   })
 
   it('disables perfectionist sorting in legacy mode', () => {
