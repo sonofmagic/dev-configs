@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 1.6.28
+
+### Patch Changes
+
+- 🐛 **🐛 Disable `e18e/prefer-array-to-sorted` rule to avoid false positives on non-array iterables (`Set`, `Map`).** [`264aafa`](https://github.com/sonofmagic/dev-configs/commit/264aafae6c15568cb516ae666f3541f688abb6d8) by @sonofmagic
+
 ## 1.6.27
 
 ### Patch Changes
