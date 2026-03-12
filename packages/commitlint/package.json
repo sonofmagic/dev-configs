@@ -53,8 +53,8 @@
     }
   },
   "dependencies": {
-    "@commitlint/config-conventional": "^20.4.3",
-    "@commitlint/types": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.4",
+    "@commitlint/types": "^20.4.4",
     "conventional-changelog-conventionalcommits": "^9.3.0"
   }
 }
