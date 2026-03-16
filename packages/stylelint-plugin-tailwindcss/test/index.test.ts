@@ -2,15 +2,18 @@ import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import stylelint from 'stylelint'
-import plugin, {
+import defaultConfig, {
+  base,
+  isTailwindUtilityClass,
   noApplyPlugin,
   noApplyRuleName,
   noArbitraryValuePlugin,
   noArbitraryValueRuleName,
-  isTailwindUtilityClass,
+  noAtomicClassPlugin,
+  noAtomicClassRuleName,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
-  ruleName,
+  recommended,
 } from '@/index'
 
 const FIXTURE_DIR = path.resolve(__dirname, '..', 'fixtures')
@@ -23,6 +26,42 @@ describe('stylelint-plugin-tailwindcss', () => {
     await expect(isTailwindUtilityClass('w-[10px]')).resolves.toBe(true)
     await expect(isTailwindUtilityClass('[mask-type:luminance]')).resolves.toBe(true)
     await expect(isTailwindUtilityClass('card__body')).resolves.toBe(false)
+  })
+
+  it('exports base and recommended configs', () => {
+    expect(base).toEqual({
+      plugins: [
+        noAtomicClassPlugin,
+        noInvalidApplyPlugin,
+      ],
+      rules: {
+        [noAtomicClassRuleName]: true,
+        [noInvalidApplyRuleName]: true,
+      },
+    })
+    expect(recommended).toEqual(defaultConfig)
+    expect(recommended.rules).toEqual({
+      [noAtomicClassRuleName]: true,
+      [noInvalidApplyRuleName]: true,
+      [noApplyRuleName]: true,
+      [noArbitraryValueRuleName]: true,
+    })
+  })
+
+  it('works with the exported recommended config directly', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply rounded-lg;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: recommended,
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+    expect(result.errored).toBe(true)
+    expect(warnings.some(warning => warning.rule === noApplyRuleName)).toBe(true)
   })
 
   it('reports declared utility selectors', async () => {
@@ -38,9 +77,9 @@ describe('stylelint-plugin-tailwindcss', () => {
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
       config: {
-        plugins: [plugin],
+        plugins: [noAtomicClassPlugin],
         rules: {
-          [ruleName]: true,
+          [noAtomicClassRuleName]: true,
         },
       },
     })
@@ -48,7 +87,7 @@ describe('stylelint-plugin-tailwindcss', () => {
     const warnings = result.results[0]?.warnings ?? []
     expect(result.errored).toBe(true)
     expect(warnings).toHaveLength(1)
-    expect(warnings[0]?.rule).toBe(ruleName)
+    expect(warnings[0]?.rule).toBe(noAtomicClassRuleName)
     expect(warnings[0]?.text).toContain('.flex')
   })
 
@@ -65,9 +104,9 @@ describe('stylelint-plugin-tailwindcss', () => {
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
       config: {
-        plugins: [plugin],
+        plugins: [noAtomicClassPlugin],
         rules: {
-          [ruleName]: true,
+          [noAtomicClassRuleName]: true,
         },
       },
     })

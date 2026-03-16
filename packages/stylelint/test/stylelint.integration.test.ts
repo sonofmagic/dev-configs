@@ -7,8 +7,8 @@ import stylelint from 'stylelint'
 import {
   noApplyRuleName,
   noArbitraryValueRuleName,
+  noAtomicClassRuleName,
   noInvalidApplyRuleName,
-  ruleName as noTailwindcssRuleName,
 } from 'stylelint-plugin-tailwindcss'
 import { PRESET_RECESS_ORDER, PRESET_VUE_SCSS } from '@/constants'
 import { createStylelintConfig, icebreaker } from '@/index'
@@ -87,7 +87,7 @@ describe('stylelint integration', () => {
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
-      warning => warning.rule === noTailwindcssRuleName,
+      warning => warning.rule === noAtomicClassRuleName,
     )
 
     expect(result.errored).toBe(true)

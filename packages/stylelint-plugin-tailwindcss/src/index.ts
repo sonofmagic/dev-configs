@@ -4,8 +4,8 @@ import { noInvalidApplyRuleFunction } from './apply-rule'
 import {
   NO_APPLY_RULE_NAME,
   NO_ARBITRARY_VALUE_RULE_NAME,
+  NO_ATOMIC_CLASS_RULE_NAME,
   NO_INVALID_APPLY_RULE_NAME,
-  RULE_NAME,
 } from './constants'
 import {
   messages,
@@ -17,6 +17,11 @@ import { noApplyRuleFunction } from './no-apply-rule'
 import { noArbitraryValueRuleFunction } from './no-arbitrary-value-rule'
 import { ruleFunction } from './rule'
 
+interface StylelintPluginConfig {
+  plugins: unknown[]
+  rules: Record<string, true>
+}
+
 export { noInvalidApplyRuleFunction } from './apply-rule'
 export { messages } from './messages'
 export { noApplyMessages } from './messages'
@@ -27,13 +32,13 @@ export { noArbitraryValueRuleFunction } from './no-arbitrary-value-rule'
 export { ruleFunction } from './rule'
 export { isTailwindUtilityClass } from './runtime'
 
-ruleFunction.ruleName = RULE_NAME
+ruleFunction.ruleName = NO_ATOMIC_CLASS_RULE_NAME
 ruleFunction.messages = messages as Rule['messages']
 ruleFunction.meta = {
   url: 'https://github.com/sonofmagic/dev-configs',
 }
 
-const plugin = stylelint.createPlugin(RULE_NAME, ruleFunction)
+const noAtomicClassPlugin = stylelint.createPlugin(NO_ATOMIC_CLASS_RULE_NAME, ruleFunction)
 const noInvalidApplyPlugin = stylelint.createPlugin(
   NO_INVALID_APPLY_RULE_NAME,
   noInvalidApplyRuleFunction,
@@ -65,16 +70,44 @@ noArbitraryValueRuleFunction.meta = {
   url: 'https://github.com/sonofmagic/dev-configs',
 }
 
+const base: StylelintPluginConfig = {
+  plugins: [
+    noAtomicClassPlugin,
+    noInvalidApplyPlugin,
+  ],
+  rules: {
+    [NO_ATOMIC_CLASS_RULE_NAME]: true,
+    [NO_INVALID_APPLY_RULE_NAME]: true,
+  },
+}
+
+const recommended: StylelintPluginConfig = {
+  plugins: [
+    noAtomicClassPlugin,
+    noInvalidApplyPlugin,
+    noApplyPlugin,
+    noArbitraryValuePlugin,
+  ],
+  rules: {
+    [NO_ATOMIC_CLASS_RULE_NAME]: true,
+    [NO_INVALID_APPLY_RULE_NAME]: true,
+    [NO_APPLY_RULE_NAME]: true,
+    [NO_ARBITRARY_VALUE_RULE_NAME]: true,
+  },
+}
+
 export {
+  base,
   noApplyPlugin,
   NO_APPLY_RULE_NAME as noApplyRuleName,
   noArbitraryValuePlugin,
   NO_ARBITRARY_VALUE_RULE_NAME as noArbitraryValueRuleName,
+  noAtomicClassPlugin,
+  NO_ATOMIC_CLASS_RULE_NAME as noAtomicClassRuleName,
   noInvalidApplyPlugin,
   NO_INVALID_APPLY_RULE_NAME as noInvalidApplyRuleName,
-  plugin,
-  RULE_NAME as ruleName,
+  recommended,
 }
 export type { Warning }
 
-export default plugin
+export default recommended

@@ -2,11 +2,11 @@ import stylelint from 'stylelint'
 import {
   NO_APPLY_RULE_NAME,
   NO_ARBITRARY_VALUE_RULE_NAME,
+  NO_ATOMIC_CLASS_RULE_NAME,
   NO_INVALID_APPLY_RULE_NAME,
-  RULE_NAME,
 } from './constants'
 
-export const messages = stylelint.utils.ruleMessages(RULE_NAME, {
+export const messages = stylelint.utils.ruleMessages(NO_ATOMIC_CLASS_RULE_NAME, {
   rejected: (className: string) =>
     `Unexpected Tailwind CSS utility selector ".${className}"`,
 })

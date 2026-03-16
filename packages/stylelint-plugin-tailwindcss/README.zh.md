@@ -69,23 +69,25 @@ pnpm add -D stylelint stylelint-plugin-tailwindcss
 
 ```ts
 // stylelint.config.ts
-import tailwindcssPlugin, { ruleName } from 'stylelint-plugin-tailwindcss'
+import { recommended } from 'stylelint-plugin-tailwindcss'
 
-export default {
-  plugins: [tailwindcssPlugin],
-  rules: {
-    [ruleName]: true,
-  },
-}
+export default recommended
 ```
 
-导出的规则名是：
+最小基础配置：
 
-```txt
-tailwindcss/no-atomic-class
+```ts
+import { base } from 'stylelint-plugin-tailwindcss'
+
+export default base
 ```
 
-另外还导出了这些规则名和插件：
+`base` 默认启用：
+
+- `tailwindcss/no-atomic-class`
+- `tailwindcss/no-invalid-apply`
+
+推荐使用的规则名和插件导出：
 
 ```ts
 import {
@@ -93,11 +95,15 @@ import {
   noApplyRuleName,
   noArbitraryValuePlugin,
   noArbitraryValueRuleName,
+  noAtomicClassPlugin,
+  noAtomicClassRuleName,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
 } from 'stylelint-plugin-tailwindcss'
 ```
 
+- `tailwindcss/no-atomic-class`
+  对应导出名为 `noAtomicClassRuleName`，匹配插件为 `noAtomicClassPlugin`。
 - `tailwindcss/no-invalid-apply`
   检查 `@apply` 里那些“看起来像 utility、但在当前 Tailwind 运行时里并不存在”的 candidate。
 - `tailwindcss/no-apply`

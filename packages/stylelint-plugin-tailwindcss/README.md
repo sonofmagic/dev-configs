@@ -69,23 +69,25 @@ If the consuming project uses Tailwind CSS and you want exact validation, instal
 
 ```ts
 // stylelint.config.ts
-import tailwindcssPlugin, { ruleName } from 'stylelint-plugin-tailwindcss'
+import { recommended } from 'stylelint-plugin-tailwindcss'
 
-export default {
-  plugins: [tailwindcssPlugin],
-  rules: {
-    [ruleName]: true,
-  },
-}
+export default recommended
 ```
 
-Exported rule name:
+Minimal base config:
 
-```txt
-tailwindcss/no-atomic-class
+```ts
+import { base } from 'stylelint-plugin-tailwindcss'
+
+export default base
 ```
 
-Additional exported rule names and plugins:
+`base` enables:
+
+- `tailwindcss/no-atomic-class`
+- `tailwindcss/no-invalid-apply`
+
+Preferred exported rule names and plugins:
 
 ```ts
 import {
@@ -93,11 +95,15 @@ import {
   noApplyRuleName,
   noArbitraryValuePlugin,
   noArbitraryValueRuleName,
+  noAtomicClassPlugin,
+  noAtomicClassRuleName,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
 } from 'stylelint-plugin-tailwindcss'
 ```
 
+- `tailwindcss/no-atomic-class`
+  Exported as `noAtomicClassRuleName`, with `noAtomicClassPlugin` as the matching plugin.
 - `tailwindcss/no-invalid-apply`
   Reports utility-like `@apply` candidates that do not exist in the resolved Tailwind runtime.
 - `tailwindcss/no-apply`
