@@ -20,7 +20,7 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
@@ -28,22 +28,16 @@
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/*",
-        "./dist/index.d.ts"
-      ]
-    }
-  },
+  "types": "./index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "index.d.ts"
   ],
   "scripts": {
     "dev": "tsdown --watch --sourcemap",
     "build": "tsdown",
     "test": "vitest run",
+    "test:types": "tsd",
     "test:dev": "vitest",
     "release": "pnpm publish",
     "sync": "cnpm sync @icebreakers/eslint-config",
@@ -77,5 +71,11 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
+  },
+  "tsd": {
+    "directory": "test-d",
+    "compilerOptions": {
+      "skipLibCheck": true
+    }
   }
 }

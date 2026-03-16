@@ -39,6 +39,7 @@
     "dev": "tsdown --watch --sourcemap",
     "build": "tsdown",
     "test": "vitest run",
+    "test:types": "tsd",
     "test:dev": "vitest",
     "release": "pnpm publish",
     "sync": "cnpm sync lightningcss-tailwindcss",
@@ -50,5 +51,11 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
+  },
+  "tsd": {
+    "directory": "test-d",
+    "compilerOptions": {
+      "skipLibCheck": true
+    }
   }
 }

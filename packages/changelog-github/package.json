@@ -37,6 +37,7 @@
     "dev": "tsdown --watch --sourcemap",
     "build": "tsdown",
     "test": "vitest run",
+    "test:types": "tsd",
     "test:dev": "vitest",
     "release": "pnpm publish",
     "lint": "eslint .",
@@ -44,6 +45,12 @@
     "typecheck": "tsc --noEmit"
   },
   "publishConfig": {},
+  "tsd": {
+    "directory": "test-d",
+    "compilerOptions": {
+      "skipLibCheck": true
+    }
+  },
   "dependencies": {
     "@changesets/get-github-info": "^0.8.0",
     "@changesets/types": "^6.1.0",

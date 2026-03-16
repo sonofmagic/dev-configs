@@ -37,6 +37,7 @@
     "build:watch": "tsdown --watch --sourcemap",
     "build": "tsdown",
     "test": "vitest run",
+    "test:types": "tsd",
     "test:dev": "vitest",
     "release": "pnpm publish",
     "lint": "eslint .",
@@ -44,6 +45,12 @@
     "typecheck": "tsc --noEmit"
   },
   "publishConfig": {},
+  "tsd": {
+    "directory": "test-d",
+    "compilerOptions": {
+      "skipLibCheck": true
+    }
+  },
   "peerDependencies": {
     "conventional-changelog-conventionalcommits": ">=9.0.0"
   },
