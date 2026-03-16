@@ -1,14 +1,14 @@
 {
-  "name": "stylelint-plugin-no-tailwindcss",
+  "name": "postcss-tailwindcss",
   "type": "module",
   "version": "0.0.0",
-  "description": "Stylelint plugin that disallows declaring Tailwind CSS utility selectors",
+  "description": "PostCSS AST utilities for analyzing Tailwind CSS syntax",
   "author": "ice breaker <1324318532@qq.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sonofmagic/dev-configs.git",
-    "directory": "packages/stylelint-plugin-no-tailwindcss"
+    "directory": "packages/postcss-tailwindcss"
   },
   "bugs": {
     "url": "https://github.com/sonofmagic/dev-configs/issues"
@@ -16,7 +16,7 @@
   "keywords": [
     "dev-configs",
     "icebreakers",
-    "stylelint",
+    "postcss",
     "tailwindcss"
   ],
   "sideEffects": false,
@@ -41,18 +41,13 @@
     "test": "vitest run",
     "test:dev": "vitest",
     "release": "pnpm publish",
-    "sync": "cnpm sync stylelint-plugin-no-tailwindcss",
+    "sync": "cnpm sync postcss-tailwindcss",
     "typecheck": "tsc --noEmit"
   },
-  "peerDependencies": {
-    "stylelint": "^17.4.0",
-    "tailwindcss": "^3.4.0 || ^4.0.0"
-  },
   "dependencies": {
-    "@tailwindcss/node": "^4.2.1",
+    "postcss": "^8.5.6",
     "postcss-selector-parser": "^7.1.0",
-    "postcss-tailwindcss": "workspace:*",
-    "tailwindcss-v3": "npm:tailwindcss@3.4.19"
+    "postcss-value-parser": "^4.2.0"
   },
   "publishConfig": {
     "access": "public",

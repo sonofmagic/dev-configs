@@ -1,9 +1,10 @@
+import type { Root as PostcssRoot } from 'postcss'
 import type { Rule, Warning } from 'stylelint'
 import fs from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import process from 'node:process'
-import selectorParser from 'postcss-selector-parser'
+import { collectUtilitySelectors } from 'postcss-tailwindcss'
 import stylelint from 'stylelint'
 import generateRulesModule from 'tailwindcss-v3/lib/lib/generateRules.js'
 import setupContextUtils from 'tailwindcss-v3/lib/lib/setupContextUtils.js'
@@ -133,24 +134,17 @@ const ruleFunction: Rule = (primary) => {
     }
 
     const filePath = root.source?.input.file
-    const classEntries: Array<{
-      className: string
-      endIndex: number
-      index: number
-      rule: object
-    }> = []
+    const classEntries = collectUtilitySelectors(root as unknown as PostcssRoot).map((entry) => {
+      const selectorIndex = entry.selector.indexOf(`.${entry.className}`)
 
-    root.walkRules((rule) => {
-      selectorParser((selectors) => {
-        selectors.walkClasses((classNode) => {
-          classEntries.push({
-            className: classNode.value,
-            endIndex: classNode.sourceIndex + classNode.toString().length,
-            index: classNode.sourceIndex,
-            rule,
-          })
-        })
-      }).processSync(rule.selector)
+      return {
+        className: entry.className,
+        endIndex: selectorIndex === -1
+          ? undefined
+          : selectorIndex + entry.className.length + 1,
+        index: selectorIndex === -1 ? undefined : selectorIndex,
+        rule: entry.rule,
+      }
     })
 
     for (const entry of classEntries) {
@@ -163,8 +157,8 @@ const ruleFunction: Rule = (primary) => {
         ruleName: RULE_NAME,
         message: messages.rejected(entry.className),
         node: entry.rule as never,
-        index: entry.index,
-        endIndex: entry.endIndex,
+        ...(entry.index !== undefined ? { index: entry.index } : {}),
+        ...(entry.endIndex !== undefined ? { endIndex: entry.endIndex } : {}),
       })
     }
   }
