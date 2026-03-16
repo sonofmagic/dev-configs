@@ -6,8 +6,8 @@ import plugin, { isTailwindUtilityClass, ruleName } from '@/index'
 
 const FIXTURE_DIR = path.resolve(__dirname, '..', 'fixtures')
 
-describe('stylelint-plugin-no-tailwindcss', () => {
-  it('detects Tailwind utility class candidates', async () => {
+describe('stylelint-plugin-tailwindcss', () => {
+  it('detects utility class candidates', async () => {
     await expect(isTailwindUtilityClass('flex')).resolves.toBe(true)
     await expect(isTailwindUtilityClass('hover:bg-red-500')).resolves.toBe(true)
     await expect(isTailwindUtilityClass('!mt-4')).resolves.toBe(true)
@@ -16,7 +16,7 @@ describe('stylelint-plugin-no-tailwindcss', () => {
     await expect(isTailwindUtilityClass('card__body')).resolves.toBe(false)
   })
 
-  it('reports declared Tailwind utility selectors', async () => {
+  it('reports declared utility selectors', async () => {
     const result = await stylelint.lint({
       code: [
         '.card {',
@@ -43,7 +43,7 @@ describe('stylelint-plugin-no-tailwindcss', () => {
     expect(warnings[0]?.text).toContain('.flex')
   })
 
-  it('allows non-Tailwind selectors', async () => {
+  it('allows non-utility selectors', async () => {
     const result = await stylelint.lint({
       code: [
         '.page-shell {',
@@ -67,8 +67,8 @@ describe('stylelint-plugin-no-tailwindcss', () => {
     expect(result.results[0]?.warnings ?? []).toEqual([])
   })
 
-  it('falls back to heuristic utility detection when tailwindcss is not installed', async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'stylelint-no-tailwindcss-'))
+  it('falls back to heuristic detection when tailwindcss is not installed', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'stylelint-tailwindcss-'))
     const cssFile = path.join(tempDir, 'sample.css')
     await fs.writeFile(cssFile, '.demo {}', 'utf8')
 

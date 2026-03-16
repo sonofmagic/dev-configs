@@ -85,10 +85,10 @@ export default createStylelintConfig({
 
 ## Tailwind 原子类拦截
 
-该预设默认启用了 `stylelint-plugin-no-tailwindcss`，对应规则为：
+该预设默认启用了 `stylelint-plugin-tailwindcss`，对应规则为：
 
 ```txt
-no-tailwindcss/no-atomic-class
+tailwindcss/no-atomic-class
 ```
 
 这个规则会拦截在样式文件中直接声明 Tailwind utility selector，但不会影响正常的语义化类名，例如 BEM / OOCSS 风格命名。

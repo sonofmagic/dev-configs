@@ -87,10 +87,10 @@ Defaults include:
 
 ## Tailwind Utility Selector Guard
 
-This preset enables `stylelint-plugin-no-tailwindcss` by default with:
+This preset enables `stylelint-plugin-tailwindcss` by default with:
 
 ```txt
-no-tailwindcss/no-atomic-class
+tailwindcss/no-atomic-class
 ```
 
 The rule reports Tailwind utility selectors declared in authored stylesheets while still allowing semantic selectors such as BEM/OOCSS class names.

@@ -7,9 +7,9 @@
 - [@icebreakers/eslint-config](packages/eslint) - icebreakers's eslint config
 - [postcss-tailwindcss](packages/postcss-tailwindcss) - Tailwind CSS analysis utilities built on PostCSS AST
 - [lightningcss-tailwindcss](packages/lightningcss-tailwindcss) - Tailwind CSS analysis utilities built on Lightning CSS AST
+- [stylelint-plugin-tailwindcss](packages/stylelint-plugin-tailwindcss) - Stylelint plugin that blocks authored Tailwind utility selectors
 - [@icebreakers/mock](apps/mock)
 - [@icebreakers/stylelint-config](packages/stylelint) - icebreaker's stylelint config
-- [stylelint-plugin-no-tailwindcss](packages/stylelint-plugin-no-tailwindcss) - Stylelint plugin that blocks authored Tailwind utility selectors
 
 ## Contributing
 

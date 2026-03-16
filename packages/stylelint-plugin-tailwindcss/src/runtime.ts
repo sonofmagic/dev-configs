@@ -1,164 +1,26 @@
-import type { Root as PostcssRoot } from 'postcss'
-import type { Rule, Warning } from 'stylelint'
+import type {
+  TailwindResolutionMode,
+  TailwindRuntimeContextV3,
+  TailwindV4DesignSystem,
+  TailwindV4ModuleLoaderResult,
+  TailwindV4ModuleShape,
+} from './types'
 import fs from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import process from 'node:process'
 import { pathToFileURL } from 'node:url'
 import {
-  collectUtilitySelectors,
   detectInstalledTailwindVersion,
   resolveTailwindRuntime,
 } from 'postcss-tailwindcss'
-import stylelint from 'stylelint'
-import { RULE_NAME } from './constants'
-
-const messages = stylelint.utils.ruleMessages(RULE_NAME, {
-  rejected: (className: string) =>
-    `Unexpected Tailwind CSS utility selector ".${className}"`,
-})
-
-type TailwindMajorVersion = 3 | 4
-type TailwindResolutionMode = TailwindMajorVersion | 'heuristic'
-interface TailwindRuntimeContextV3 {
-  candidateRuleContext: object
-  generateRules: (candidates: Set<string>, context: object) => unknown[]
-}
-
-interface TailwindV4DesignSystem {
-  candidatesToCss: (classes: string[]) => Array<string | null>
-}
-
-interface TailwindV4ModuleLoaderResult {
-  base: string
-  module: unknown
-}
-
-interface TailwindV4ModuleShape {
-  __unstable__loadDesignSystem?: (
-    css: string,
-    options: {
-      base: string
-      loadModule: (
-        id: string,
-        base: string,
-      ) => Promise<TailwindV4ModuleLoaderResult>
-      loadStylesheet: (
-        id: string,
-        base: string,
-      ) => Promise<{ base: string, content: string }>
-    },
-  ) => Promise<TailwindV4DesignSystem>
-  default?: TailwindV4ModuleShape
-}
+import { isHeuristicUtilityClass } from './heuristics'
 
 const tailwindV3ContextCache = new Map<string, Promise<TailwindRuntimeContextV3>>()
 const tailwindV3CandidateCache = new Map<string, Map<string, boolean>>()
-const heuristicCandidateCache = new Map<string, boolean>()
 const detectedVersionCache = new Map<string, Promise<TailwindResolutionMode>>()
 const tailwindV4DesignSystemCache = new Map<string, Promise<TailwindV4DesignSystem>>()
 const tailwindV4CandidateCacheByRuntime = new Map<string, Map<string, boolean>>()
-
-const UTILITY_PREFIXES = [
-  'absolute',
-  'relative',
-  'fixed',
-  'sticky',
-  'static',
-  'block',
-  'inline',
-  'inline-block',
-  'inline-flex',
-  'inline-grid',
-  'flex',
-  'grid',
-  'hidden',
-  'contents',
-  'table',
-  'sr-only',
-  'not-sr-only',
-  'container',
-  'items-',
-  'justify-',
-  'content-',
-  'self-',
-  'place-',
-  'gap-',
-  'space-x-',
-  'space-y-',
-  'p-',
-  'px-',
-  'py-',
-  'pt-',
-  'pr-',
-  'pb-',
-  'pl-',
-  'm-',
-  'mx-',
-  'my-',
-  'mt-',
-  'mr-',
-  'mb-',
-  'ml-',
-  'w-',
-  'h-',
-  'min-w-',
-  'min-h-',
-  'max-w-',
-  'max-h-',
-  'text-',
-  'font-',
-  'leading-',
-  'tracking-',
-  'bg-',
-  'from-',
-  'via-',
-  'to-',
-  'border-',
-  'rounded',
-  'shadow',
-  'ring',
-  'opacity-',
-  'overflow-',
-  'object-',
-  'z-',
-  'order-',
-  'col-',
-  'row-',
-  'aspect-',
-  'cursor-',
-  'select-',
-  'align-',
-  'whitespace-',
-  'break-',
-  'truncate',
-  'line-clamp-',
-  'transition',
-  'duration-',
-  'ease-',
-  'delay-',
-  'animate-',
-  'transform',
-  'scale-',
-  'rotate-',
-  'translate-',
-  'skew-',
-  'origin-',
-  'filter',
-  'backdrop-',
-  'pointer-events-',
-  'appearance-',
-  'accent-',
-  'caret-',
-  'fill-',
-  'stroke-',
-]
-
-const VARIANT_PREFIX_RE = /^(?:[a-z0-9-]+:)+/
-const ARBITRARY_VALUE_RE = /\[[^\]]+\]/
-const FRACTIONAL_VALUE_RE = /^\d+\/\d+$/
-const NEGATIVE_UTILITY_RE = /^-[a-z]/
-const IMPORTANT_UTILITY_RE = /^![a-z]/
 
 function createContextFromFile(filePath: string) {
   return createRequire(filePath)
@@ -166,37 +28,6 @@ function createContextFromFile(filePath: string) {
 
 function resolveRuntimeCwd(fromFile?: string): string {
   return fromFile ? path.dirname(fromFile) : process.cwd()
-}
-
-function normalizeUtilityCandidate(className: string): string {
-  let normalized = className
-    .replace(VARIANT_PREFIX_RE, '')
-    .replace(/^!/, '')
-
-  if (normalized.startsWith('-')) {
-    normalized = normalized.slice(1)
-  }
-
-  return normalized
-}
-
-function isHeuristicUtilityClass(className: string): boolean {
-  const cached = heuristicCandidateCache.get(className)
-  if (cached !== undefined) {
-    return cached
-  }
-
-  const normalized = normalizeUtilityCandidate(className)
-  const matched = (
-    ARBITRARY_VALUE_RE.test(className)
-    || FRACTIONAL_VALUE_RE.test(normalized)
-    || NEGATIVE_UTILITY_RE.test(className)
-    || IMPORTANT_UTILITY_RE.test(className)
-    || UTILITY_PREFIXES.some(prefix => normalized === prefix || normalized.startsWith(prefix))
-  )
-
-  heuristicCandidateCache.set(className, matched)
-  return matched
 }
 
 async function detectTailwindMajorVersion(fromFile?: string): Promise<TailwindResolutionMode> {
@@ -407,62 +238,8 @@ export async function isTailwindUtilityClass(className: string, fromFile?: strin
   if (majorVersion === 'heuristic') {
     return isHeuristicUtilityClass(className)
   }
+
   return majorVersion === 4
     ? isTailwindUtilityClassV4(className, fromFile)
     : isTailwindUtilityClassV3(className, fromFile)
 }
-
-const ruleFunction: Rule = (primary) => {
-  return async (root, result) => {
-    const validOptions = stylelint.utils.validateOptions(result, RULE_NAME, {
-      actual: primary,
-      possible: [true],
-    })
-
-    if (!validOptions || primary !== true) {
-      return
-    }
-
-    const filePath = root.source?.input.file
-    const classEntries = collectUtilitySelectors(root as unknown as PostcssRoot).map((entry) => {
-      const selectorIndex = entry.selector.indexOf(`.${entry.className}`)
-
-      return {
-        className: entry.className,
-        endIndex: selectorIndex === -1
-          ? undefined
-          : selectorIndex + entry.className.length + 1,
-        index: selectorIndex === -1 ? undefined : selectorIndex,
-        rule: entry.rule,
-      }
-    })
-
-    for (const entry of classEntries) {
-      if (!await isTailwindUtilityClass(entry.className, filePath)) {
-        continue
-      }
-
-      stylelint.utils.report({
-        result,
-        ruleName: RULE_NAME,
-        message: messages.rejected(entry.className),
-        node: entry.rule as never,
-        ...(entry.index !== undefined ? { index: entry.index } : {}),
-        ...(entry.endIndex !== undefined ? { endIndex: entry.endIndex } : {}),
-      })
-    }
-  }
-}
-
-ruleFunction.ruleName = RULE_NAME
-ruleFunction.messages = messages as Rule['messages']
-ruleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
-}
-
-const plugin = stylelint.createPlugin(RULE_NAME, ruleFunction)
-
-export { messages, plugin, RULE_NAME as ruleName }
-export type { Warning }
-
-export default plugin

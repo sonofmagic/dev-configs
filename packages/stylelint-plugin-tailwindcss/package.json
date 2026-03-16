@@ -1,14 +1,14 @@
 {
-  "name": "stylelint-plugin-no-tailwindcss",
+  "name": "stylelint-plugin-tailwindcss",
   "type": "module",
   "version": "0.0.0",
-  "description": "Stylelint plugin that disallows declaring Tailwind CSS utility selectors",
+  "description": "Stylelint plugin utilities for Tailwind CSS and utility-first selector rules",
   "author": "ice breaker <1324318532@qq.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sonofmagic/dev-configs.git",
-    "directory": "packages/stylelint-plugin-no-tailwindcss"
+    "directory": "packages/stylelint-plugin-tailwindcss"
   },
   "bugs": {
     "url": "https://github.com/sonofmagic/dev-configs/issues"
@@ -41,7 +41,7 @@
     "test": "vitest run",
     "test:dev": "vitest",
     "release": "pnpm publish",
-    "sync": "cnpm sync stylelint-plugin-no-tailwindcss",
+    "sync": "cnpm sync stylelint-plugin-tailwindcss",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {

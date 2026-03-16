@@ -1,9 +1,10 @@
+import type { Config as StylelintConfig } from 'stylelint'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
 import stylelint from 'stylelint'
-import { ruleName as noTailwindcssRuleName } from 'stylelint-plugin-no-tailwindcss'
+import { ruleName as noTailwindcssRuleName } from 'stylelint-plugin-tailwindcss'
 import { PRESET_RECESS_ORDER, PRESET_VUE_SCSS } from '@/constants'
 import { createStylelintConfig, icebreaker } from '@/index'
 
@@ -21,7 +22,7 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'media-query.css'),
-      config: icebreaker(),
+      config: icebreaker() as StylelintConfig,
     })
     const invalidResult = await stylelint.lint({
       code: [
@@ -32,7 +33,7 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'media-query.css'),
-      config: icebreaker(),
+      config: icebreaker() as StylelintConfig,
     })
 
     expect(validResult.errored).toBe(false)
@@ -57,7 +58,7 @@ describe('stylelint integration', () => {
         '@unocss preflights;',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker(),
+      config: icebreaker() as StylelintConfig,
     })
 
     const warnings = result.results[0]?.warnings ?? []
@@ -77,7 +78,7 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker(),
+      config: icebreaker() as StylelintConfig,
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -102,7 +103,7 @@ describe('stylelint integration', () => {
         ignores: {
           units: ['upx'],
         },
-      }),
+      }) as StylelintConfig,
     })
 
     const unitWarnings = (result.results[0]?.warnings ?? []).filter(
@@ -127,7 +128,7 @@ describe('stylelint integration', () => {
           atRules: ['tailwind'],
           addAtRules: ['uno-layer'],
         },
-      }),
+      }) as StylelintConfig,
     })
 
     const atRuleWarnings = (result.results[0]?.warnings ?? []).filter(

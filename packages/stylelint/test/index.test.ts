@@ -33,7 +33,7 @@ function normalizeConfigForSnapshot(config: ReturnType<typeof icebreaker>) {
     extends: extendsList.map((item) => {
       return typeof item === 'string' ? normalizePresetPath(item) : item
     }),
-    plugins: plugins.map(() => 'stylelint-plugin-no-tailwindcss'),
+    plugins: plugins.map(() => 'stylelint-plugin-tailwindcss'),
   }
 }
 

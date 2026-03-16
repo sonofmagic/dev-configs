@@ -1,6 +1,6 @@
 ---
 '@icebreakers/stylelint-config': patch
-'stylelint-plugin-no-tailwindcss': patch
+'stylelint-plugin-tailwindcss': patch
 ---
 
 Add a dedicated Stylelint plugin that blocks authored Tailwind utility selectors

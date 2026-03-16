@@ -1,4 +1,4 @@
-import type { Config } from 'stylelint'
+import type { StylelintConfig } from '@/types'
 import { createStylelintConfig, icebreaker } from '@/index'
 
 vi.mock('@/config', () => {
@@ -19,7 +19,7 @@ describe('index helpers', () => {
   })
 
   it('merges overrides into the base config', () => {
-    const override: Config = {
+    const override: StylelintConfig = {
       extends: ['override'],
       rules: {
         'selector-class-pattern': ['override'],

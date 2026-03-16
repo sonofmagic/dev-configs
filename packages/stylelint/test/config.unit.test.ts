@@ -45,7 +45,7 @@ describe('createIcebreakerStylelintConfig', () => {
     expect(config.plugins).toHaveLength(1)
     expect(config.overrides).toEqual([])
     expect(config.rules?.['selector-class-pattern']).toBeDefined()
-    expect(config.rules?.['no-tailwindcss/no-atomic-class']).toBe(true)
+    expect(config.rules?.['tailwindcss/no-atomic-class']).toBe(true)
   })
 
   it('toggles presets and merges extends', async () => {

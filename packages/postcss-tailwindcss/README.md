@@ -128,8 +128,8 @@ Resolution is project-aware:
 - escaped selectors such as `.hover\\:bg-red-500:hover` are normalized back to `hover:bg-red-500`
 - this package does **not** validate whether a class is truly registered by Tailwind; it only extracts and normalizes syntax
 
-## Relationship To `stylelint-plugin-no-tailwindcss`
+## Relationship To `stylelint-plugin-tailwindcss`
 
-`stylelint-plugin-no-tailwindcss` uses this package for selector collection and Tailwind runtime resolution.
+`stylelint-plugin-tailwindcss` uses this package for selector collection and Tailwind runtime resolution.
 
 This package provides the low-level analysis layer; the Stylelint plugin provides the policy and reporting layer.

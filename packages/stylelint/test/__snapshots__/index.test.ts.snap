@@ -9,7 +9,7 @@ exports[`index > common 1`] = `
   ],
   "overrides": [],
   "plugins": [
-    "stylelint-plugin-no-tailwindcss",
+    "stylelint-plugin-tailwindcss",
   ],
   "rules": {
     "at-rule-no-deprecated": [
@@ -32,7 +32,6 @@ exports[`index > common 1`] = `
     ],
     "function-name-case": null,
     "media-feature-range-notation": "prefix",
-    "no-tailwindcss/no-atomic-class": true,
     "scss/at-rule-no-unknown": [
       true,
       {
@@ -67,6 +66,7 @@ exports[`index > common 1`] = `
         ],
       },
     ],
+    "tailwindcss/no-atomic-class": true,
     "unit-no-unknown": [
       true,
       {

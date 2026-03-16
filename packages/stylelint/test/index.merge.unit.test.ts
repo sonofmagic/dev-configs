@@ -1,4 +1,4 @@
-import type { Config } from 'stylelint'
+import type { StylelintConfig } from '@/types'
 
 describe('mergeConfigs branches', () => {
   afterEach(() => {
@@ -17,7 +17,7 @@ describe('mergeConfigs branches', () => {
     })
 
     const { icebreaker } = await import('@/index')
-    const override: Config = {
+    const override: StylelintConfig = {
       extends: ['override'],
     }
 

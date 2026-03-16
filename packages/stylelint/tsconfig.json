@@ -3,8 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "stylelint-plugin-no-tailwindcss": [
-        "../stylelint-plugin-no-tailwindcss/src/index.ts"
+      "stylelint-plugin-tailwindcss": [
+        "../stylelint-plugin-tailwindcss/src/index.ts"
       ],
       "postcss-tailwindcss": [
         "../postcss-tailwindcss/src/index.ts"
@@ -17,7 +17,7 @@
   "include": [
     "src",
     "test",
-    "../stylelint-plugin-no-tailwindcss/src",
+    "../stylelint-plugin-tailwindcss/src",
     "../postcss-tailwindcss/src"
   ]
 }

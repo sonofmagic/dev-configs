@@ -6,7 +6,7 @@ import type {
 import { createRequire } from 'node:module'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import noTailwindcssPlugin, { ruleName as noTailwindcssRuleName } from 'stylelint-plugin-no-tailwindcss'
+import tailwindcssPlugin, { ruleName as tailwindcssRuleName } from 'stylelint-plugin-tailwindcss'
 import { PRESET_RECESS_ORDER, PRESET_STANDARD_SCSS, PRESET_VUE_SCSS } from './constants'
 import { normalizeExtends, resolveIgnoreList, toArray, unique } from './utils'
 
@@ -128,10 +128,10 @@ export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOpti
 
   return {
     ...(extendsConfig !== undefined ? { extends: extendsConfig } : {}),
-    plugins: [noTailwindcssPlugin],
+    plugins: [tailwindcssPlugin],
     overrides,
     rules: {
-      [noTailwindcssRuleName]: true,
+      [tailwindcssRuleName]: true,
       ...rules,
     },
   }

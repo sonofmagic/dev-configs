@@ -128,8 +128,8 @@ interface TailwindAnalysis {
 - `.hover\\:bg-red-500:hover` 这类转义 selector 会被还原成 `hover:bg-red-500`
 - 这个包**不会**判断某个类名是否真的被 Tailwind 注册；它只负责提取和归一化语法
 
-## 与 `stylelint-plugin-no-tailwindcss` 的关系
+## 与 `stylelint-plugin-tailwindcss` 的关系
 
-`stylelint-plugin-no-tailwindcss` 当前会复用这个包来做 selector 收集和 Tailwind 运行时解析。
+`stylelint-plugin-tailwindcss` 当前会复用这个包来做 selector 收集和 Tailwind 运行时解析。
 
 这个包是底层分析层，Stylelint 插件是在其上叠加规则策略和报错逻辑。
