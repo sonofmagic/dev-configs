@@ -1,5 +1,14 @@
 # @icebreakers/changelog-github
 
+## 0.2.2
+
+### Patch Changes
+
+- 🐛 **Migrate all packages under `packages/` to build with `tsdown`.** [`45c73ca`](https://github.com/sonofmagic/dev-configs/commit/45c73ca9f70ba813052c9970b54e08d853e638ce) by @sonofmagic
+  - This removes the remaining `tsup` and `unbuild` package-level build configs,
+  - switches package scripts to `tsdown`, and keeps the package outputs aligned with
+  - the existing published entry points.
+
 ## 0.2.1
 
 ### Patch Changes
