@@ -114,6 +114,30 @@ function normalizeUtilityCandidate(className: string): string {
   return normalized
 }
 
+export function getNormalizedUtilityCandidate(className: string): string {
+  return normalizeUtilityCandidate(className)
+}
+
+export function isArbitraryValueUtilityClass(className: string): boolean {
+  const normalized = normalizeUtilityCandidate(className)
+
+  if (!ARBITRARY_VALUE_RE.test(normalized)) {
+    return false
+  }
+
+  if (normalized.startsWith('[') && normalized.endsWith(']')) {
+    return true
+  }
+
+  const arbitraryStartIndex = normalized.indexOf('[')
+  if (arbitraryStartIndex === -1) {
+    return false
+  }
+
+  const utilityPrefix = normalized.slice(0, arbitraryStartIndex)
+  return UTILITY_PREFIXES.some(prefix => utilityPrefix === prefix || utilityPrefix.startsWith(prefix))
+}
+
 export function isHeuristicUtilityClass(className: string): boolean {
   const cached = heuristicCandidateCache.get(className)
   if (cached !== undefined) {

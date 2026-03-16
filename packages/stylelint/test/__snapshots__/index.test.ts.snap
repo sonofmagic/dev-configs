@@ -11,6 +11,8 @@ exports[`index > common 1`] = `
   "plugins": [
     "stylelint-plugin-tailwindcss",
     "stylelint-plugin-tailwindcss/no-invalid-apply",
+    "stylelint-plugin-tailwindcss/no-apply",
+    "stylelint-plugin-tailwindcss/no-arbitrary-value",
   ],
   "rules": {
     "at-rule-no-deprecated": [
@@ -67,6 +69,8 @@ exports[`index > common 1`] = `
         ],
       },
     ],
+    "tailwindcss/no-apply": true,
+    "tailwindcss/no-arbitrary-value": true,
     "tailwindcss/no-atomic-class": true,
     "tailwindcss/no-invalid-apply": true,
     "unit-no-unknown": [

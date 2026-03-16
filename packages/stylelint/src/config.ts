@@ -7,6 +7,10 @@ import { createRequire } from 'node:module'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import tailwindcssPlugin, {
+  noApplyPlugin,
+  noApplyRuleName,
+  noArbitraryValuePlugin,
+  noArbitraryValueRuleName,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
   ruleName as tailwindcssRuleName,
@@ -132,11 +136,18 @@ export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOpti
 
   return {
     ...(extendsConfig !== undefined ? { extends: extendsConfig } : {}),
-    plugins: [tailwindcssPlugin, noInvalidApplyPlugin],
+    plugins: [
+      tailwindcssPlugin,
+      noInvalidApplyPlugin,
+      noApplyPlugin,
+      noArbitraryValuePlugin,
+    ],
     overrides,
     rules: {
       [tailwindcssRuleName]: true,
       [noInvalidApplyRuleName]: true,
+      [noApplyRuleName]: true,
+      [noArbitraryValueRuleName]: true,
       ...rules,
     },
   }

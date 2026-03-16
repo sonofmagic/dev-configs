@@ -17,6 +17,9 @@
 ## 内置规则
 
 - `tailwindcss/no-atomic-class`
+- `tailwindcss/no-invalid-apply`
+- `tailwindcss/no-apply`
+- `tailwindcss/no-arbitrary-value`
 
 ## 会拦截什么
 
@@ -81,6 +84,26 @@ export default {
 ```txt
 tailwindcss/no-atomic-class
 ```
+
+另外还导出了这些规则名和插件：
+
+```ts
+import {
+  noApplyPlugin,
+  noApplyRuleName,
+  noArbitraryValuePlugin,
+  noArbitraryValueRuleName,
+  noInvalidApplyPlugin,
+  noInvalidApplyRuleName,
+} from 'stylelint-plugin-tailwindcss'
+```
+
+- `tailwindcss/no-invalid-apply`
+  检查 `@apply` 里那些“看起来像 utility、但在当前 Tailwind 运行时里并不存在”的 candidate。
+- `tailwindcss/no-apply`
+  只要出现 `@apply` 就报错。
+- `tailwindcss/no-arbitrary-value`
+  检查 selector 和 `@apply` 里的 arbitrary value / arbitrary property，例如 `w-[10px]`、`[mask-type:luminance]`。
 
 ## 配合 `@icebreakers/stylelint-config`
 

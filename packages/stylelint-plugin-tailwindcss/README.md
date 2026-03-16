@@ -17,6 +17,9 @@ It is designed for teams that want:
 ## Included Rules
 
 - `tailwindcss/no-atomic-class`
+- `tailwindcss/no-invalid-apply`
+- `tailwindcss/no-apply`
+- `tailwindcss/no-arbitrary-value`
 
 ## What The Rule Reports
 
@@ -81,6 +84,26 @@ Exported rule name:
 ```txt
 tailwindcss/no-atomic-class
 ```
+
+Additional exported rule names and plugins:
+
+```ts
+import {
+  noApplyPlugin,
+  noApplyRuleName,
+  noArbitraryValuePlugin,
+  noArbitraryValueRuleName,
+  noInvalidApplyPlugin,
+  noInvalidApplyRuleName,
+} from 'stylelint-plugin-tailwindcss'
+```
+
+- `tailwindcss/no-invalid-apply`
+  Reports utility-like `@apply` candidates that do not exist in the resolved Tailwind runtime.
+- `tailwindcss/no-apply`
+  Reports every `@apply` directive.
+- `tailwindcss/no-arbitrary-value`
+  Reports arbitrary values and arbitrary properties in selectors and `@apply` candidates, such as `w-[10px]` and `[mask-type:luminance]`.
 
 ## With `@icebreakers/stylelint-config`
 

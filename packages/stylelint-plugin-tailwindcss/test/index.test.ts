@@ -3,6 +3,10 @@ import os from 'node:os'
 import path from 'node:path'
 import stylelint from 'stylelint'
 import plugin, {
+  noApplyPlugin,
+  noApplyRuleName,
+  noArbitraryValuePlugin,
+  noArbitraryValueRuleName,
   isTailwindUtilityClass,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
@@ -123,6 +127,105 @@ describe('stylelint-plugin-tailwindcss', () => {
         plugins: [noInvalidApplyPlugin],
         rules: {
           [noInvalidApplyRuleName]: true,
+        },
+      },
+    })
+
+    expect(result.errored).toBe(false)
+    expect(result.results[0]?.warnings ?? []).toEqual([])
+  })
+
+  it('reports any @apply usage when no-apply is enabled', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply rounded-lg px-4;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: {
+        plugins: [noApplyPlugin],
+        rules: {
+          [noApplyRuleName]: true,
+        },
+      },
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.rule).toBe(noApplyRuleName)
+    expect(warnings[0]?.text).toContain('@apply')
+  })
+
+  it('reports arbitrary value selectors when no-arbitrary-value is enabled', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.card {',
+        '  color: red;',
+        '}',
+        '',
+        '.w-\\[10px\\] {',
+        '  width: 10px;',
+        '}',
+        '',
+        '.\\[mask-type\\:luminance\\] {',
+        '  mask-type: luminance;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: {
+        plugins: [noArbitraryValuePlugin],
+        rules: {
+          [noArbitraryValueRuleName]: true,
+        },
+      },
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(2)
+    expect(warnings[0]?.rule).toBe(noArbitraryValueRuleName)
+    expect(warnings[0]?.text).toContain('w-[10px]')
+    expect(warnings[1]?.text).toContain('[mask-type:luminance]')
+  })
+
+  it('reports arbitrary value @apply candidates when no-arbitrary-value is enabled', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply w-[10px] [mask-type:luminance];',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: {
+        plugins: [noArbitraryValuePlugin],
+        rules: {
+          [noArbitraryValueRuleName]: true,
+        },
+      },
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(2)
+    expect(warnings[0]?.rule).toBe(noArbitraryValueRuleName)
+    expect(warnings[0]?.text).toContain('w-[10px]')
+    expect(warnings[1]?.text).toContain('[mask-type:luminance]')
+  })
+
+  it('ignores semantic selectors when no-arbitrary-value is enabled', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.card-[featured] {',
+        '  color: red;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: {
+        plugins: [noArbitraryValuePlugin],
+        rules: {
+          [noArbitraryValueRuleName]: true,
         },
       },
     })

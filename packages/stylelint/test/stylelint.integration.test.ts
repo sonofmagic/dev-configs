@@ -5,6 +5,8 @@ import path from 'node:path'
 import process from 'node:process'
 import stylelint from 'stylelint'
 import {
+  noApplyRuleName,
+  noArbitraryValueRuleName,
   noInvalidApplyRuleName,
   ruleName as noTailwindcssRuleName,
 } from 'stylelint-plugin-tailwindcss'
@@ -111,6 +113,52 @@ describe('stylelint integration', () => {
     expect(result.errored).toBe(true)
     expect(warnings).toHaveLength(1)
     expect(warnings[0]?.text).toContain('bg-rd-500')
+  })
+
+  it('reports any @apply usage by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply rounded-lg px-4;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noApplyRuleName,
+    )
+
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('@apply')
+  })
+
+  it('reports arbitrary values by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply w-[10px];',
+        '}',
+        '',
+        '.\\[mask-type\\:luminance\\] {',
+        '  mask-type: luminance;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noArbitraryValueRuleName,
+    )
+    const warningTexts = warnings.map(warning => warning.text)
+
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(2)
+    expect(warningTexts.some(text => text.includes('w-[10px]'))).toBe(true)
+    expect(warningTexts.some(text => text.includes('[mask-type:luminance]'))).toBe(true)
   })
 
   it('replaces ignore units and reports rpx when removed', async () => {

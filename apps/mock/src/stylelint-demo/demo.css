@@ -7,19 +7,37 @@
   color: #123456;
 }
 
+.button-primary {
+  padding: 8px 16px;
+  border-radius: 12px;
+}
+
+.media-frame {
+  width: 320px;
+}
+
+.hero-mask {
+  mask-type: luminance;
+}
+
 /* stylelint-disable selector-class-pattern, comment-empty-line-before */
-/* should report: Tailwind utility selector */
+/* should report: tailwindcss/no-atomic-class */
 .flex {
   display: flex;
 }
 
-/* should report: Tailwind utility selector */
+/* should report: tailwindcss/no-atomic-class */
 .hover\:bg-red-500:hover {
   background: red;
 }
 
-/* should report: Tailwind utility selector */
+/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
 .w-\[10px\] {
   width: 10px;
+}
+
+/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+.\[mask-type\:luminance\] {
+  mask-type: luminance;
 }
 /* stylelint-enable selector-class-pattern, comment-empty-line-before */

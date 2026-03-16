@@ -6,25 +6,52 @@
   }
 }
 
+.semantic-button {
+  padding: 8px 16px;
+  border-radius: 12px;
+}
+
+.token-card {
+  width: 240px;
+}
+
 @tailwind utilities;
 
-.semantic-button {
+/* stylelint-disable comment-empty-line-before */
+/* should report: tailwindcss/no-apply */
+.button-with-apply {
   @apply rounded-lg;
 }
 
+/* should report: tailwindcss/no-invalid-apply and tailwindcss/no-apply */
+.button-with-invalid-apply {
+  @apply bg-rd-500 rounded-lg;
+}
+
+/* should report: tailwindcss/no-apply and tailwindcss/no-arbitrary-value */
+.button-with-arbitrary-apply {
+  @apply w-[10px] [mask-type:luminance];
+}
+/* stylelint-enable comment-empty-line-before */
+
 /* stylelint-disable selector-class-pattern, comment-empty-line-before */
-/* should report: Tailwind utility selector */
+/* should report: tailwindcss/no-atomic-class */
 .grid {
   display: grid;
 }
 
-/* should report: Tailwind utility selector */
+/* should report: tailwindcss/no-atomic-class */
 .items-center {
   align-items: center;
 }
 
-/* should report: Tailwind utility selector */
+/* should report: tailwindcss/no-atomic-class */
 .md\:flex {
   display: flex;
+}
+
+/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+.w-\[10px\] {
+  width: 10px;
 }
 /* stylelint-enable selector-class-pattern, comment-empty-line-before */

@@ -91,9 +91,17 @@ This preset enables `stylelint-plugin-tailwindcss` by default with:
 
 ```txt
 tailwindcss/no-atomic-class
+tailwindcss/no-invalid-apply
+tailwindcss/no-apply
+tailwindcss/no-arbitrary-value
 ```
 
-The rule reports Tailwind utility selectors declared in authored stylesheets while still allowing semantic selectors such as BEM/OOCSS class names.
+These rules:
+
+- report Tailwind utility selectors declared in authored stylesheets while still allowing semantic selectors such as BEM/OOCSS class names
+- report invalid utility-like `@apply` candidates
+- disallow `@apply` entirely
+- disallow arbitrary values / arbitrary properties such as `w-[10px]` and `[mask-type:luminance]`
 
 The underlying plugin supports both Tailwind CSS v3 and v4, and switches automatically based on the installed `tailwindcss` major version in the consuming project.
 
