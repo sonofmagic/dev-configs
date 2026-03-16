@@ -4,8 +4,10 @@ import {
   collectImportDirectives,
   collectThemeCalls,
   collectUtilitySelectors,
+  detectInstalledTailwindVersion,
   detectTailwindVersion,
   parseTailwindCss,
+  resolveTailwindRuntime,
 } from '@/index'
 
 describe('postcss-tailwindcss', () => {
@@ -131,5 +133,21 @@ describe('postcss-tailwindcss', () => {
     expect(analysis.applyCandidates).toHaveLength(1)
     expect(analysis.themeCalls).toHaveLength(1)
     expect(analysis.utilitySelectors).toHaveLength(2)
+  })
+
+  it('resolves Tailwind runtime details from the current workspace', () => {
+    const runtime = resolveTailwindRuntime({
+      cwd: process.cwd(),
+    })
+
+    expect(runtime.packageJsonPath).toContain('tailwindcss')
+    expect(runtime.installationPath).toContain('tailwindcss')
+    expect(runtime.version).toMatch(/^[34]\./)
+  })
+
+  it('detects the installed Tailwind major version from the current workspace', () => {
+    expect([3, 4]).toContain(detectInstalledTailwindVersion({
+      cwd: process.cwd(),
+    }))
   })
 })
