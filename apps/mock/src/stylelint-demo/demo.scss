@@ -1,0 +1,30 @@
+.demo-panel {
+  padding: 16px;
+
+  &__content {
+    color: #222;
+  }
+}
+
+@tailwind utilities;
+
+.semantic-button {
+  @apply rounded-lg;
+}
+
+/* stylelint-disable selector-class-pattern, comment-empty-line-before */
+/* should report: Tailwind utility selector */
+.grid {
+  display: grid;
+}
+
+/* should report: Tailwind utility selector */
+.items-center {
+  align-items: center;
+}
+
+/* should report: Tailwind utility selector */
+.md\:flex {
+  display: flex;
+}
+/* stylelint-enable selector-class-pattern, comment-empty-line-before */

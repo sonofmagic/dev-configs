@@ -19,18 +19,21 @@
 
 ## 兼容性
 
-插件同时兼容 Tailwind CSS v3 和 v4：
+插件支持三种模式：
 
-- Tailwind CSS v3：使用内置的 v3 兼容运行时校验
-- Tailwind CSS v4：使用 `@tailwindcss/node` 校验
+- Tailwind CSS v3：从使用方项目解析并基于真实安装的 Tailwind 运行时做精确校验
+- Tailwind CSS v4：从使用方项目解析并基于真实安装的 Tailwind 运行时做精确校验
+- 没有安装 Tailwind：自动退化成启发式 utility-first 类名检测，对 UnoCSS 一类项目同样有用
 
-运行时会自动解析当前项目安装的 `tailwindcss` 主版本，并选择对应的检测逻辑。
+运行时会自动解析当前项目安装的 `tailwindcss` 主版本，并选择对应的检测逻辑。如果当前项目解析不到 Tailwind 安装，不会直接报错，而是退化成常见原子类命名的启发式检测。
 
 ## 安装
 
 ```bash
-pnpm add -D stylelint stylelint-plugin-no-tailwindcss tailwindcss
+pnpm add -D stylelint stylelint-plugin-no-tailwindcss
 ```
+
+如果使用方项目本身装了 Tailwind，并且你希望得到“是否真的是 Tailwind utility”的精确判断，只需要照常在该项目里安装 `tailwindcss`。这个依赖现在是可选 peer。
 
 ## 用法
 

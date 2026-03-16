@@ -16,7 +16,7 @@ export type StylelintRuleSetting
 export interface StylelintOverride {
   files: string | string[]
   name?: string
-  customSyntax?: string
+  customSyntax?: unknown
   extends?: string | string[]
   plugins?: Array<string | object>
   rules?: Record<string, StylelintRuleSetting>
@@ -27,7 +27,7 @@ export interface StylelintConfig {
   plugins?: string | object | Array<string | object>
   overrides?: StylelintOverride[]
   rules?: Record<string, StylelintRuleSetting>
-  customSyntax?: string
+  customSyntax?: unknown
   ignoreFiles?: string | string[]
 }
 

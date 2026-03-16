@@ -19,6 +19,7 @@ const messages = stylelint.utils.ruleMessages(RULE_NAME, {
 })
 
 type TailwindMajorVersion = 3 | 4
+type TailwindResolutionMode = TailwindMajorVersion | 'heuristic'
 interface TailwindRuntimeContextV3 {
   candidateRuleContext: object
   generateRules: (candidates: Set<string>, context: object) => unknown[]
@@ -33,11 +34,131 @@ interface TailwindV4ModuleLoaderResult {
   module: unknown
 }
 
+interface TailwindV4ModuleShape {
+  __unstable__loadDesignSystem?: (
+    css: string,
+    options: {
+      base: string
+      loadModule: (
+        id: string,
+        base: string,
+      ) => Promise<TailwindV4ModuleLoaderResult>
+      loadStylesheet: (
+        id: string,
+        base: string,
+      ) => Promise<{ base: string, content: string }>
+    },
+  ) => Promise<TailwindV4DesignSystem>
+  default?: TailwindV4ModuleShape
+}
+
 const tailwindV3ContextCache = new Map<string, Promise<TailwindRuntimeContextV3>>()
 const tailwindV3CandidateCache = new Map<string, Map<string, boolean>>()
-const detectedVersionCache = new Map<string, Promise<TailwindMajorVersion>>()
+const heuristicCandidateCache = new Map<string, boolean>()
+const detectedVersionCache = new Map<string, Promise<TailwindResolutionMode>>()
 const tailwindV4DesignSystemCache = new Map<string, Promise<TailwindV4DesignSystem>>()
 const tailwindV4CandidateCacheByRuntime = new Map<string, Map<string, boolean>>()
+
+const UTILITY_PREFIXES = [
+  'absolute',
+  'relative',
+  'fixed',
+  'sticky',
+  'static',
+  'block',
+  'inline',
+  'inline-block',
+  'inline-flex',
+  'inline-grid',
+  'flex',
+  'grid',
+  'hidden',
+  'contents',
+  'table',
+  'sr-only',
+  'not-sr-only',
+  'container',
+  'items-',
+  'justify-',
+  'content-',
+  'self-',
+  'place-',
+  'gap-',
+  'space-x-',
+  'space-y-',
+  'p-',
+  'px-',
+  'py-',
+  'pt-',
+  'pr-',
+  'pb-',
+  'pl-',
+  'm-',
+  'mx-',
+  'my-',
+  'mt-',
+  'mr-',
+  'mb-',
+  'ml-',
+  'w-',
+  'h-',
+  'min-w-',
+  'min-h-',
+  'max-w-',
+  'max-h-',
+  'text-',
+  'font-',
+  'leading-',
+  'tracking-',
+  'bg-',
+  'from-',
+  'via-',
+  'to-',
+  'border-',
+  'rounded',
+  'shadow',
+  'ring',
+  'opacity-',
+  'overflow-',
+  'object-',
+  'z-',
+  'order-',
+  'col-',
+  'row-',
+  'aspect-',
+  'cursor-',
+  'select-',
+  'align-',
+  'whitespace-',
+  'break-',
+  'truncate',
+  'line-clamp-',
+  'transition',
+  'duration-',
+  'ease-',
+  'delay-',
+  'animate-',
+  'transform',
+  'scale-',
+  'rotate-',
+  'translate-',
+  'skew-',
+  'origin-',
+  'filter',
+  'backdrop-',
+  'pointer-events-',
+  'appearance-',
+  'accent-',
+  'caret-',
+  'fill-',
+  'stroke-',
+]
+
+const VARIANT_PREFIX_RE = /^(?:[a-z0-9-]+:)+/
+const ARBITRARY_VALUE_RE = /\[[^\]]+\]/
+const FRACTIONAL_VALUE_RE = /^\d+\/\d+$/
+const NEGATIVE_UTILITY_RE = /^-[a-z]/
+const IMPORTANT_UTILITY_RE = /^![a-z]/
 
 function createContextFromFile(filePath: string) {
   return createRequire(filePath)
@@ -47,7 +168,38 @@ function resolveRuntimeCwd(fromFile?: string): string {
   return fromFile ? path.dirname(fromFile) : process.cwd()
 }
 
-async function detectTailwindMajorVersion(fromFile?: string): Promise<TailwindMajorVersion> {
+function normalizeUtilityCandidate(className: string): string {
+  let normalized = className
+    .replace(VARIANT_PREFIX_RE, '')
+    .replace(/^!/, '')
+
+  if (normalized.startsWith('-')) {
+    normalized = normalized.slice(1)
+  }
+
+  return normalized
+}
+
+function isHeuristicUtilityClass(className: string): boolean {
+  const cached = heuristicCandidateCache.get(className)
+  if (cached !== undefined) {
+    return cached
+  }
+
+  const normalized = normalizeUtilityCandidate(className)
+  const matched = (
+    ARBITRARY_VALUE_RE.test(className)
+    || FRACTIONAL_VALUE_RE.test(normalized)
+    || NEGATIVE_UTILITY_RE.test(className)
+    || IMPORTANT_UTILITY_RE.test(className)
+    || UTILITY_PREFIXES.some(prefix => normalized === prefix || normalized.startsWith(prefix))
+  )
+
+  heuristicCandidateCache.set(className, matched)
+  return matched
+}
+
+async function detectTailwindMajorVersion(fromFile?: string): Promise<TailwindResolutionMode> {
   const runtime = resolveTailwindRuntime({
     cwd: resolveRuntimeCwd(fromFile),
   })
@@ -64,7 +216,7 @@ async function detectTailwindMajorVersion(fromFile?: string): Promise<TailwindMa
     })
 
     if (installedVersion === 'unknown') {
-      return 4
+      return 'heuristic'
     }
 
     return installedVersion
@@ -173,10 +325,16 @@ async function getTailwindV4DesignSystem(fromFile?: string): Promise<TailwindV4D
 
     const packageJsonPath = runtime.packageJsonPath
     const tailwindEntry = createContextFromFile(packageJsonPath).resolve('tailwindcss')
-    const tailwindModule = await import(pathToFileURL(tailwindEntry).href)
+    const tailwindModule = await import(pathToFileURL(tailwindEntry).href) as TailwindV4ModuleShape
+    const loadDesignSystem = tailwindModule.__unstable__loadDesignSystem
+      ?? tailwindModule.default?.__unstable__loadDesignSystem
+
+    if (!loadDesignSystem) {
+      throw new Error('Unable to access Tailwind CSS v4 design system loader from the current project.')
+    }
 
     const cssSource = '@import "tailwindcss";'
-    return tailwindModule.__unstable__loadDesignSystem(cssSource, {
+    return loadDesignSystem(cssSource, {
       base: cwd,
       loadModule: async (
         id: string,
@@ -246,6 +404,9 @@ async function isTailwindUtilityClassV4(className: string, fromFile?: string): P
 
 export async function isTailwindUtilityClass(className: string, fromFile?: string): Promise<boolean> {
   const majorVersion = await detectTailwindMajorVersion(fromFile)
+  if (majorVersion === 'heuristic') {
+    return isHeuristicUtilityClass(className)
+  }
   return majorVersion === 4
     ? isTailwindUtilityClassV4(className, fromFile)
     : isTailwindUtilityClassV3(className, fromFile)

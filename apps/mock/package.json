@@ -18,7 +18,8 @@
     "mock"
   ],
   "scripts": {
-    "stylelint": "npx @icebreakers/stylelint-config"
+    "stylelint": "npx @icebreakers/stylelint-config",
+    "lint:styles:demo": "stylelint \"src/stylelint-demo/**/*.{css,scss,vue}\""
   },
   "dependencies": {
     "@icebreakers/stylelint-config": "workspace:*"

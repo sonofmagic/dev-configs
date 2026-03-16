@@ -14,18 +14,21 @@ It is useful when your team wants:
 
 ## Compatibility
 
-The plugin supports both major Tailwind lines:
+The plugin supports three modes:
 
-- Tailwind CSS v3: detected and validated with a bundled v3 compatibility runtime
-- Tailwind CSS v4: detected and validated with `@tailwindcss/node`
+- Tailwind CSS v3: resolved from the consuming project and validated against the installed runtime
+- Tailwind CSS v4: resolved from the consuming project and validated against the installed runtime
+- No Tailwind installed: falls back to heuristic utility-first class detection, which is also useful for UnoCSS-style projects
 
-At runtime the plugin resolves the installed `tailwindcss` version from the current project and chooses the matching validation path automatically.
+At runtime the plugin resolves the installed `tailwindcss` version from the current project and chooses the matching validation path automatically. If no Tailwind installation can be resolved, it does not fail; instead it uses heuristic detection for common utility-first selectors.
 
 ## Installation
 
 ```bash
-pnpm add -D stylelint stylelint-plugin-no-tailwindcss tailwindcss
+pnpm add -D stylelint stylelint-plugin-no-tailwindcss
 ```
+
+If the project also uses Tailwind CSS and you want exact validation, install `tailwindcss` in the consuming project as usual. It is treated as an optional peer dependency.
 
 ## Usage
 

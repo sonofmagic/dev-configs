@@ -1,3 +1,5 @@
+import fs from 'node:fs/promises'
+import os from 'node:os'
 import path from 'node:path'
 import stylelint from 'stylelint'
 import plugin, { isTailwindUtilityClass, ruleName } from '@/index'
@@ -63,5 +65,21 @@ describe('stylelint-plugin-no-tailwindcss', () => {
 
     expect(result.errored).toBe(false)
     expect(result.results[0]?.warnings ?? []).toEqual([])
+  })
+
+  it('falls back to heuristic utility detection when tailwindcss is not installed', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'stylelint-no-tailwindcss-'))
+    const cssFile = path.join(tempDir, 'sample.css')
+    await fs.writeFile(cssFile, '.demo {}', 'utf8')
+
+    try {
+      await expect(isTailwindUtilityClass('flex', cssFile)).resolves.toBe(true)
+      await expect(isTailwindUtilityClass('hover:bg-red-500', cssFile)).resolves.toBe(true)
+      await expect(isTailwindUtilityClass('w-[10px]', cssFile)).resolves.toBe(true)
+      await expect(isTailwindUtilityClass('card__body', cssFile)).resolves.toBe(false)
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
   })
 })
