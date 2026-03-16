@@ -4,7 +4,10 @@ import os from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
 import stylelint from 'stylelint'
-import { ruleName as noTailwindcssRuleName } from 'stylelint-plugin-tailwindcss'
+import {
+  noInvalidApplyRuleName,
+  ruleName as noTailwindcssRuleName,
+} from 'stylelint-plugin-tailwindcss'
 import { PRESET_RECESS_ORDER, PRESET_VUE_SCSS } from '@/constants'
 import { createStylelintConfig, icebreaker } from '@/index'
 
@@ -88,6 +91,26 @@ describe('stylelint integration', () => {
     expect(result.errored).toBe(true)
     expect(warnings).toHaveLength(1)
     expect(warnings[0]?.text).toContain('.flex')
+  })
+
+  it('reports invalid @apply candidates by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply bg-rd-500 rounded-lg;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noInvalidApplyRuleName,
+    )
+
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('bg-rd-500')
   })
 
   it('replaces ignore units and reports rpx when removed', async () => {

@@ -2,7 +2,12 @@ import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import stylelint from 'stylelint'
-import plugin, { isTailwindUtilityClass, ruleName } from '@/index'
+import plugin, {
+  isTailwindUtilityClass,
+  noInvalidApplyPlugin,
+  noInvalidApplyRuleName,
+  ruleName,
+} from '@/index'
 
 const FIXTURE_DIR = path.resolve(__dirname, '..', 'fixtures')
 
@@ -81,5 +86,48 @@ describe('stylelint-plugin-tailwindcss', () => {
     finally {
       await fs.rm(tempDir, { recursive: true, force: true })
     }
+  })
+
+  it('reports invalid @apply utility candidates', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply bg-rd-500 rounded-lg;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: {
+        plugins: [noInvalidApplyPlugin],
+        rules: {
+          [noInvalidApplyRuleName]: true,
+        },
+      },
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.rule).toBe(noInvalidApplyRuleName)
+    expect(warnings[0]?.text).toContain('bg-rd-500')
+  })
+
+  it('ignores semantic @apply candidates that do not look utility-like', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply button-base;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: {
+        plugins: [noInvalidApplyPlugin],
+        rules: {
+          [noInvalidApplyRuleName]: true,
+        },
+      },
+    })
+
+    expect(result.errored).toBe(false)
+    expect(result.results[0]?.warnings ?? []).toEqual([])
   })
 })

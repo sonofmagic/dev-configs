@@ -33,7 +33,11 @@ function normalizeConfigForSnapshot(config: ReturnType<typeof icebreaker>) {
     extends: extendsList.map((item) => {
       return typeof item === 'string' ? normalizePresetPath(item) : item
     }),
-    plugins: plugins.map(() => 'stylelint-plugin-tailwindcss'),
+    plugins: plugins.map((_, index) => {
+      return index === 0
+        ? 'stylelint-plugin-tailwindcss'
+        : 'stylelint-plugin-tailwindcss/no-invalid-apply'
+    }),
   }
 }
 
@@ -60,7 +64,7 @@ describe('index', () => {
       expect.stringContaining(PRESET_VUE_SCSS),
       expect.stringContaining(PRESET_RECESS_ORDER),
     ])
-    expect(config.plugins).toHaveLength(1)
+    expect(config.plugins).toHaveLength(2)
 
     expect(normalizeConfigForSnapshot(config)).toMatchSnapshot()
   })
@@ -116,7 +120,7 @@ describe('index', () => {
       },
     })
 
-    expect(config.plugins).toHaveLength(2)
+    expect(config.plugins).toHaveLength(3)
     expect(config.rules?.['selector-class-pattern']).toBeNull()
   })
 })

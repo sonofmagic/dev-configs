@@ -10,6 +10,7 @@ exports[`index > common 1`] = `
   "overrides": [],
   "plugins": [
     "stylelint-plugin-tailwindcss",
+    "stylelint-plugin-tailwindcss/no-invalid-apply",
   ],
   "rules": {
     "at-rule-no-deprecated": [
@@ -67,6 +68,7 @@ exports[`index > common 1`] = `
       },
     ],
     "tailwindcss/no-atomic-class": true,
+    "tailwindcss/no-invalid-apply": true,
     "unit-no-unknown": [
       true,
       {

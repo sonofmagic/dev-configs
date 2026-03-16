@@ -132,3 +132,7 @@ export function isHeuristicUtilityClass(className: string): boolean {
   heuristicCandidateCache.set(className, matched)
   return matched
 }
+
+export function isLikelyUtilityClass(className: string): boolean {
+  return isHeuristicUtilityClass(className)
+}
