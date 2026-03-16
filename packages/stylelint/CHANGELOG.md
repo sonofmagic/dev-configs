@@ -1,5 +1,21 @@
 # @icebreakers/stylelint-config
 
+## 2.0.5
+
+### Patch Changes
+
+- 🐛 **Migrate all packages under `packages/` to build with `tsdown`.** [`45c73ca`](https://github.com/sonofmagic/dev-configs/commit/45c73ca9f70ba813052c9970b54e08d853e638ce) by @sonofmagic
+  - This removes the remaining `tsup` and `unbuild` package-level build configs,
+  - switches package scripts to `tsdown`, and keeps the package outputs aligned with
+  - the existing published entry points.
+
+- 🐛 **Add a dedicated Stylelint plugin that blocks authored Tailwind utility selectors** [`7045cc1`](https://github.com/sonofmagic/dev-configs/commit/7045cc1742e8a9101fe2a567f96356482ce7b186) by @sonofmagic
+  - and enable it by default in `@icebreakers/stylelint-config`.
+  - The new plugin supports both Tailwind CSS v3 and v4 projects by detecting the
+  - installed major version at runtime.
+- 📦 **Dependencies** [`3847047`](https://github.com/sonofmagic/dev-configs/commit/38470476b5ceb034bd6661f653a8f9a889f660ea)
+  → `stylelint-plugin-tailwindcss@0.0.1`
+
 ## 2.0.4
 
 ### Patch Changes

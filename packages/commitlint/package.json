@@ -1,7 +1,7 @@
 {
   "name": "@icebreakers/commitlint-config",
   "type": "module",
-  "version": "1.2.11",
+  "version": "1.2.12",
   "description": "Commitlint preset from Icebreaker's dev-configs",
   "author": "ice breaker <1324318532@qq.com>",
   "license": "MIT",
