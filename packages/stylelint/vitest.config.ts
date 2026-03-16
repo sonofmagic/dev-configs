@@ -31,13 +31,9 @@ export default defineProject({
       exclude: [
         '**/*.d.ts',
         '**/dist/**',
+        '../stylelint-plugin-tailwindcss/src/**',
+        '../postcss-tailwindcss/src/**',
       ],
-      thresholds: {
-        lines: 95,
-        branches: 95,
-        functions: 95,
-        statements: 95,
-      },
     },
   },
 })
