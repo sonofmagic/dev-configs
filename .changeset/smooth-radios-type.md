@@ -3,7 +3,7 @@
 '@icebreakers/commitlint-config': patch
 '@icebreakers/eslint-config': patch
 '@icebreakers/stylelint-config': patch
-'stylelint-plugin-no-tailwindcss': patch
+'stylelint-plugin-tailwindcss': patch
 'postcss-tailwindcss': patch
 'lightningcss-tailwindcss': patch
 ---
