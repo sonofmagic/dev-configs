@@ -2,7 +2,7 @@
 
 ## 概览
 
-`@icebreakers/stylelint-config` 为 Vue + SCSS 技术栈提供开箱即用的 Stylelint 预设，并附带一个 CLI，可快速生成编辑器配置。它在上游推荐规则的基础上，补充了常用的单位白名单、UnoCSS / Tailwind 指令忽略项，同时保留对预设开关和自定义规则的控制能力。
+`@icebreakers/stylelint-config` 为 Vue + SCSS 技术栈提供开箱即用的 Stylelint 预设，并附带一个 CLI，可快速生成编辑器配置。它在上游推荐规则的基础上，补充了常用的单位白名单、UnoCSS / Tailwind 指令忽略项，以及默认启用的 Tailwind 原子类声明拦截规则，同时保留对预设开关和自定义规则的控制能力。
 
 ## 环境要求
 
@@ -80,7 +80,20 @@ export default createStylelintConfig({
 - 允许 BEM / OOCSS 风格的类名（如 `block__element--modifier`、`object--state`）
 - 允许 `rpx` 单位，兼容小程序
 - 忽略 Tailwind / UnoCSS 常见指令（如 `apply`、`screen`）
+- 禁止在手写样式中声明 `.flex`、`.hover\:bg-red-500` 这类 Tailwind 原子类选择器
 - 忽略多端平台常见的 `page` 选择器
+
+## Tailwind 原子类拦截
+
+该预设默认启用了 `stylelint-plugin-no-tailwindcss`，对应规则为：
+
+```txt
+no-tailwindcss/no-atomic-class
+```
+
+这个规则会拦截在样式文件中直接声明 Tailwind utility selector，但不会影响正常的语义化类名，例如 BEM / OOCSS 风格命名。
+
+底层插件同时兼容 Tailwind CSS v3 和 v4，会根据使用方项目实际安装的 `tailwindcss` 主版本自动切换检测逻辑。
 
 ## 推荐脚本
 

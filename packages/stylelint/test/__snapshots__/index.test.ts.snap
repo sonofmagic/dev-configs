@@ -8,6 +8,9 @@ exports[`index > common 1`] = `
     "stylelint-config-recess-order",
   ],
   "overrides": [],
+  "plugins": [
+    "stylelint-plugin-no-tailwindcss",
+  ],
   "rules": {
     "at-rule-no-deprecated": [
       true,
@@ -29,6 +32,7 @@ exports[`index > common 1`] = `
     ],
     "function-name-case": null,
     "media-feature-range-notation": "prefix",
+    "no-tailwindcss/no-atomic-class": true,
     "scss/at-rule-no-unknown": [
       true,
       {

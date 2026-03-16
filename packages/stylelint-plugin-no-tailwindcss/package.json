@@ -1,14 +1,14 @@
 {
-  "name": "@icebreakers/stylelint-config",
+  "name": "stylelint-plugin-no-tailwindcss",
   "type": "module",
-  "version": "2.0.4",
-  "description": "Stylelint preset from Icebreaker's dev-configs",
+  "version": "0.0.0",
+  "description": "Stylelint plugin that disallows declaring Tailwind CSS utility selectors",
   "author": "ice breaker <1324318532@qq.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sonofmagic/dev-configs.git",
-    "directory": "packages/stylelint"
+    "directory": "packages/stylelint-plugin-no-tailwindcss"
   },
   "bugs": {
     "url": "https://github.com/sonofmagic/dev-configs/issues"
@@ -16,7 +16,8 @@
   "keywords": [
     "dev-configs",
     "icebreakers",
-    "stylelint"
+    "stylelint",
+    "tailwindcss"
   ],
   "sideEffects": false,
   "exports": {
@@ -24,20 +25,14 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./cli": {
-      "types": "./dist/cli.d.ts",
-      "default": "./dist/cli.js"
-    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "bin": "./bin/init.js",
   "files": [
     "README.md",
     "README.zh.md",
-    "bin",
     "dist"
   ],
   "scripts": {
@@ -46,17 +41,17 @@
     "test": "vitest run",
     "test:dev": "vitest",
     "release": "pnpm publish",
-    "sync": "cnpm sync @icebreakers/stylelint-config",
+    "sync": "cnpm sync stylelint-plugin-no-tailwindcss",
     "typecheck": "tsc --noEmit"
   },
+  "peerDependencies": {
+    "stylelint": "^17.4.0",
+    "tailwindcss": "^3.4.0 || ^4.0.0"
+  },
   "dependencies": {
-    "comment-json": "^4.6.2",
-    "postcss-html": "^1.8.1",
-    "stylelint-config-recess-order": "^7.6.1",
-    "stylelint-config-recommended-scss": "^17.0.0",
-    "stylelint-config-recommended-vue": "^1.6.1",
-    "stylelint-config-standard-scss": "^17.0.0",
-    "stylelint-plugin-no-tailwindcss": "workspace:*"
+    "@tailwindcss/node": "^4.2.1",
+    "postcss-selector-parser": "^7.1.0",
+    "tailwindcss-v3": "npm:tailwindcss@3.4.19"
   },
   "publishConfig": {
     "access": "public",

@@ -3,6 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
 import stylelint from 'stylelint'
+import { ruleName as noTailwindcssRuleName } from 'stylelint-plugin-no-tailwindcss'
 import { PRESET_RECESS_ORDER, PRESET_VUE_SCSS } from '@/constants'
 import { createStylelintConfig, icebreaker } from '@/index'
 
@@ -62,6 +63,30 @@ describe('stylelint integration', () => {
     const warnings = result.results[0]?.warnings ?? []
     expect(result.errored).toBe(false)
     expect(warnings).toEqual([])
+  })
+
+  it('reports Tailwind utility selector declarations by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.page-shell {',
+        '  display: block;',
+        '}',
+        '',
+        '.flex {',
+        '  display: flex;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: icebreaker(),
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noTailwindcssRuleName,
+    )
+
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('.flex')
   })
 
   it('replaces ignore units and reports rpx when removed', async () => {

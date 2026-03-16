@@ -15,6 +15,28 @@ function normalizePresetPath(value: string) {
   return value
 }
 
+function normalizeConfigForSnapshot(config: ReturnType<typeof icebreaker>) {
+  const extendsList = Array.isArray(config.extends)
+    ? config.extends
+    : config.extends
+      ? [config.extends]
+      : []
+
+  const plugins = Array.isArray(config.plugins)
+    ? config.plugins
+    : config.plugins
+      ? [config.plugins]
+      : []
+
+  return {
+    ...config,
+    extends: extendsList.map((item) => {
+      return typeof item === 'string' ? normalizePresetPath(item) : item
+    }),
+    plugins: plugins.map(() => 'stylelint-plugin-no-tailwindcss'),
+  }
+}
+
 describe('index', () => {
   it('setVscodeSettingsJson case 0', () => {
     expect(setVscodeSettingsJson()).toMatchSnapshot()
@@ -32,24 +54,15 @@ describe('index', () => {
 
   it('common', () => {
     const config = icebreaker()
-    const extendsList = Array.isArray(config.extends)
-      ? config.extends
-      : config.extends
-        ? [config.extends]
-        : []
 
     expect(config.extends).toEqual([
       expect.stringContaining(PRESET_STANDARD_SCSS),
       expect.stringContaining(PRESET_VUE_SCSS),
       expect.stringContaining(PRESET_RECESS_ORDER),
     ])
+    expect(config.plugins).toHaveLength(1)
 
-    expect({
-      ...config,
-      extends: extendsList.map((item) => {
-        return typeof item === 'string' ? normalizePresetPath(item) : item
-      }),
-    }).toMatchSnapshot()
+    expect(normalizeConfigForSnapshot(config)).toMatchSnapshot()
   })
 
   it('createStylelintConfig toggles presets', () => {
@@ -97,11 +110,13 @@ describe('index', () => {
 
   it('merges overrides in icebreaker configs', () => {
     const config = icebreaker({
+      plugins: ['custom-plugin'],
       rules: {
         'selector-class-pattern': null,
       },
     })
 
+    expect(config.plugins).toHaveLength(2)
     expect(config.rules?.['selector-class-pattern']).toBeNull()
   })
 })

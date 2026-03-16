@@ -13,9 +13,21 @@ function mergeConfigs(base: Config, overrides?: Config): Config {
     return base
   }
 
+  const basePlugins = Array.isArray(base.plugins)
+    ? base.plugins
+    : base.plugins
+      ? [base.plugins]
+      : []
+  const overridePlugins = Array.isArray(overrides.plugins)
+    ? overrides.plugins
+    : overrides.plugins
+      ? [overrides.plugins]
+      : []
+
   return {
     ...base,
     ...overrides,
+    plugins: [...basePlugins, ...overridePlugins],
     rules: {
       ...(base.rules ?? {}),
       ...(overrides.rules ?? {}),

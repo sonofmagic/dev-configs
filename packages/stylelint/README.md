@@ -4,7 +4,7 @@
 
 ## Overview
 
-`@icebreakers/stylelint-config` bundles a Stylelint preset for Vue + SCSS stacks and ships a CLI helper that bootstraps editor settings. It layers sensible defaults (unit allowlists, UnoCSS/Tailwind at-rule ignores) on top of the upstream recommended configs, while still letting you toggle specific bundles or append extra rules.
+`@icebreakers/stylelint-config` bundles a Stylelint preset for Vue + SCSS stacks and ships a CLI helper that bootstraps editor settings. It layers sensible defaults (unit allowlists, UnoCSS/Tailwind at-rule ignores, and a built-in Tailwind utility selector ban) on top of the upstream recommended configs, while still letting you toggle specific bundles or append extra rules.
 
 ## Requirements
 
@@ -82,7 +82,20 @@ Defaults include:
 - Allowing BEM/OOCSS class selectors (e.g. `block__element--modifier`, `object--state`)
 - Allowing the `rpx` unit for mini-program compatibility
 - Ignoring Tailwind/UnoCSS style at-rules (`apply`, `screen`, etc.)
+- Disallowing authored Tailwind utility selectors such as `.flex` or `.hover\:bg-red-500`
 - Ignoring the `page` selector used by various platforms
+
+## Tailwind Utility Selector Guard
+
+This preset enables `stylelint-plugin-no-tailwindcss` by default with:
+
+```txt
+no-tailwindcss/no-atomic-class
+```
+
+The rule reports Tailwind utility selectors declared in authored stylesheets while still allowing semantic selectors such as BEM/OOCSS class names.
+
+The underlying plugin supports both Tailwind CSS v3 and v4, and switches automatically based on the installed `tailwindcss` major version in the consuming project.
 
 ## Recommended Scripts
 

@@ -8,14 +8,9 @@ export default defineProject({
         find: '@',
         replacement: path.resolve(__dirname, './src'),
       },
-      {
-        find: 'stylelint-plugin-no-tailwindcss',
-        replacement: path.resolve(__dirname, '../stylelint-plugin-no-tailwindcss/src/index.ts'),
-      },
     ],
     globals: true,
     testTimeout: 60_000,
-    setupFiles: ['./vitest.setup.ts'],
     coverage: {
       enabled: true,
       provider: 'v8',
