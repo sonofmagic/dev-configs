@@ -1,4 +1,35 @@
-import type { Config } from 'stylelint'
+export interface StylelintRuleOptions {
+  [key: string]: unknown
+}
+
+export type StylelintRuleSetting
+  = | null
+    | undefined
+    | string
+    | number
+    | boolean
+    | RegExp
+    | StylelintRuleOptions
+    | [unknown]
+    | [unknown, StylelintRuleOptions]
+
+export interface StylelintOverride {
+  files: string | string[]
+  name?: string
+  customSyntax?: string
+  extends?: string | string[]
+  plugins?: Array<string | object>
+  rules?: Record<string, StylelintRuleSetting>
+}
+
+export interface StylelintConfig {
+  extends?: string | string[]
+  plugins?: string | object | Array<string | object>
+  overrides?: StylelintOverride[]
+  rules?: Record<string, StylelintRuleSetting>
+  customSyntax?: string
+  ignoreFiles?: string | string[]
+}
 
 export interface PresetToggles {
   /** Include rules for SCSS syntax. Enabled by default. */
@@ -28,13 +59,13 @@ export interface IcebreakerStylelintOptions {
   /** Toggle built-in preset bundles. */
   presets?: PresetToggles
   /** Append extra extends entries. */
-  extends?: Config['extends']
+  extends?: StylelintConfig['extends']
   /** Append override entries. */
-  overrides?: Config['overrides']
+  overrides?: StylelintConfig['overrides']
   /** Provide additional or replacement rule ignore lists. */
   ignores?: IgnoreListOptions
   /** Override or add rules. */
-  rules?: Config['rules']
+  rules?: StylelintConfig['rules']
 }
 
 export type ResolvedIgnoreKind = 'atRules' | 'types' | 'units'

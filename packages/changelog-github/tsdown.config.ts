@@ -1,6 +1,9 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
+  checks: {
+    pluginTimings: false,
+  },
   entry: {
     index: 'src/index.ts',
   },
@@ -8,4 +11,7 @@ export default defineConfig({
   dts: true,
   clean: true,
   fixedExtension: false,
+  outputOptions: {
+    exports: 'named',
+  },
 })

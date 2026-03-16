@@ -1,4 +1,4 @@
-import type { Config } from 'stylelint'
+import type { StylelintConfig } from './types'
 import { createIcebreakerStylelintConfig } from './config'
 
 export { createIcebreakerStylelintConfig as createStylelintConfig } from './config'
@@ -8,7 +8,7 @@ export type {
   PresetToggles,
 } from './types'
 
-function mergeConfigs(base: Config, overrides?: Config): Config {
+function mergeConfigs(base: StylelintConfig, overrides?: StylelintConfig): StylelintConfig {
   if (!overrides) {
     return base
   }
@@ -35,7 +35,7 @@ function mergeConfigs(base: Config, overrides?: Config): Config {
   }
 }
 
-export function icebreaker(config?: Config): Config {
+export function icebreaker(config?: StylelintConfig): StylelintConfig {
   const base = createIcebreakerStylelintConfig()
   return mergeConfigs(base, config)
 }

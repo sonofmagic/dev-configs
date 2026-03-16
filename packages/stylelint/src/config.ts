@@ -1,5 +1,8 @@
-import type { Config } from 'stylelint'
-import type { IcebreakerStylelintOptions, PresetToggles } from './types'
+import type {
+  IcebreakerStylelintOptions,
+  PresetToggles,
+  StylelintConfig,
+} from './types'
 import { createRequire } from 'node:module'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
@@ -50,14 +53,14 @@ function resolvePresetExtends(presets: PresetToggles | undefined): string[] {
   return entries
 }
 
-function resolveExtends(options: IcebreakerStylelintOptions | undefined): Config['extends'] {
+function resolveExtends(options: IcebreakerStylelintOptions | undefined): StylelintConfig['extends'] {
   const presets = resolvePresetExtends(options?.presets)
   const extras = toArray(options?.extends)
   const values = unique([...presets, ...extras])
   return normalizeExtends(values)
 }
 
-function resolveOverrides(options: IcebreakerStylelintOptions | undefined): NonNullable<Config['overrides']> {
+function resolveOverrides(options: IcebreakerStylelintOptions | undefined): NonNullable<StylelintConfig['overrides']> {
   const overrides = options?.overrides
   if (!overrides || overrides.length === 0) {
     return []
@@ -66,12 +69,12 @@ function resolveOverrides(options: IcebreakerStylelintOptions | undefined): NonN
   return [...overrides]
 }
 
-function resolveRules(options: IcebreakerStylelintOptions | undefined): NonNullable<Config['rules']> {
+function resolveRules(options: IcebreakerStylelintOptions | undefined): NonNullable<StylelintConfig['rules']> {
   const ignoreUnits = resolveIgnoreList('units', options?.ignores)
   const ignoreTypes = resolveIgnoreList('types', options?.ignores)
   const ignoreAtRules = resolveIgnoreList('atRules', options?.ignores)
 
-  const rules: NonNullable<Config['rules']> = {
+  const rules: NonNullable<StylelintConfig['rules']> = {
     'function-name-case': null,
     'media-feature-range-notation': 'prefix',
     'selector-class-pattern': [
@@ -118,7 +121,7 @@ function resolveRules(options: IcebreakerStylelintOptions | undefined): NonNulla
   return rules
 }
 
-export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOptions = {}): Config {
+export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOptions = {}): StylelintConfig {
   const extendsConfig = resolveExtends(options)
   const overrides = resolveOverrides(options)
   const rules = resolveRules(options)

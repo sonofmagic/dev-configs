@@ -1,6 +1,9 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
+  checks: {
+    pluginTimings: false,
+  },
   entry: {
     index: 'src/index.ts',
   },
@@ -12,5 +15,6 @@ export default defineConfig({
   fixedExtension: false,
   deps: {
     neverBundle: ['eslint-plugin-mdx'],
+    onlyBundle: false,
   },
 })

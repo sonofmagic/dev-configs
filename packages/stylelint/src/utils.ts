@@ -1,5 +1,8 @@
-import type { Config } from 'stylelint'
-import type { IgnoreListOptions, ResolvedIgnoreKind } from './types'
+import type {
+  IgnoreListOptions,
+  ResolvedIgnoreKind,
+  StylelintConfig,
+} from './types'
 import { DEFAULT_IGNORE_AT_RULES, DEFAULT_IGNORE_TYPES, DEFAULT_IGNORE_UNITS } from './constants'
 
 const IGNORE_DEFAULTS: Record<ResolvedIgnoreKind, readonly string[]> = {
@@ -55,7 +58,7 @@ export function resolveIgnoreList(kind: ResolvedIgnoreKind, options?: IgnoreList
   return unique([...initial, ...extras])
 }
 
-export function normalizeExtends(base: Config['extends']): Config['extends'] {
+export function normalizeExtends(base: StylelintConfig['extends']): StylelintConfig['extends'] {
   if (!base || (Array.isArray(base) && base.length === 0)) {
     return undefined
   }
