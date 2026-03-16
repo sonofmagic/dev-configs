@@ -3,6 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "postcss-tailwindcss": [
+        "../postcss-tailwindcss/src/index.ts"
+      ],
       "@/*": [
         "src/*"
       ]
@@ -10,6 +13,7 @@
   },
   "include": [
     "src",
-    "test"
+    "test",
+    "../postcss-tailwindcss/src"
   ]
 }

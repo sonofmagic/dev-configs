@@ -26,8 +26,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
-    "test": "vitest run",
-    "test:dev": "vitest",
+    "test": "mkdir -p coverage/.tmp && vitest run",
+    "test:dev": "mkdir -p coverage/.tmp && vitest",
     "test:release-scripts": "vitest run -c scripts/release/vitest.config.mjs",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",

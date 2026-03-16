@@ -8,6 +8,10 @@ export default defineProject({
         find: '@',
         replacement: path.resolve(__dirname, './src'),
       },
+      {
+        find: 'postcss-tailwindcss',
+        replacement: path.resolve(__dirname, '../postcss-tailwindcss/src/index.ts'),
+      },
     ],
     globals: true,
     testTimeout: 60_000,

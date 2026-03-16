@@ -12,6 +12,10 @@ export default defineProject({
         find: 'stylelint-plugin-no-tailwindcss',
         replacement: path.resolve(__dirname, '../stylelint-plugin-no-tailwindcss/src/index.ts'),
       },
+      {
+        find: 'postcss-tailwindcss',
+        replacement: path.resolve(__dirname, '../postcss-tailwindcss/src/index.ts'),
+      },
     ],
     globals: true,
     testTimeout: 60_000,
