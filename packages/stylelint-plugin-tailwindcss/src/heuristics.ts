@@ -45,6 +45,13 @@ const UTILITY_PREFIXES = [
   'min-h-',
   'max-w-',
   'max-h-',
+  'inset-',
+  'inset-x-',
+  'inset-y-',
+  'top-',
+  'right-',
+  'bottom-',
+  'left-',
   'text-',
   'font-',
   'leading-',
@@ -65,6 +72,9 @@ const UTILITY_PREFIXES = [
   'col-',
   'row-',
   'aspect-',
+  'basis-',
+  'grow-',
+  'shrink-',
   'cursor-',
   'select-',
   'align-',
@@ -79,10 +89,15 @@ const UTILITY_PREFIXES = [
   'animate-',
   'transform',
   'scale-',
+  'scale-x-',
+  'scale-y-',
   'rotate-',
   'translate-',
+  'translate-x-',
+  'translate-y-',
   'skew-',
   'origin-',
+  'outline-',
   'filter',
   'backdrop-',
   'pointer-events-',
@@ -93,25 +108,80 @@ const UTILITY_PREFIXES = [
   'stroke-',
 ] as const
 
-const VARIANT_PREFIX_RE = /^(?:[a-z0-9-]+:)+/
 const ARBITRARY_VALUE_RE = /\[[^\]]+\]/
 const FRACTIONAL_VALUE_RE = /^\d+\/\d+$/
 const NEGATIVE_UTILITY_RE = /^-[a-z]/
 const IMPORTANT_UTILITY_RE = /^![a-z]/
 const IMPORTANT_PREFIX_RE = /^!/
+const BARE_ARBITRARY_VALUE_RE = /^(?:-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|rpx|rem|em|%|vh|vw|vmin|vmax|dvh|dvw|deg|rad|turn|ms|s|fr|ch|ex|pt|pc|cm|mm|in)|#[0-9a-fA-F]{3,8}|\$[A-Za-z_][\w-]*|(?:calc|min|max|clamp|rgb|rgba|hsl|hsla|color|url|var)\(.+\))$/
+const SORTED_UTILITY_PREFIXES = [...UTILITY_PREFIXES].sort((left, right) => right.length - left.length)
 
 const heuristicCandidateCache = new Map<string, boolean>()
 
 function normalizeUtilityCandidate(className: string): string {
   let normalized = className
-    .replace(VARIANT_PREFIX_RE, '')
     .replace(IMPORTANT_PREFIX_RE, '')
+
+  normalized = stripVariantPrefixes(normalized)
 
   if (normalized.startsWith('-')) {
     normalized = normalized.slice(1)
   }
 
   return normalized
+}
+
+function stripVariantPrefixes(className: string): string {
+  let normalized = className
+
+  while (true) {
+    let bracketDepth = 0
+    let parenDepth = 0
+    let consumed = false
+
+    for (let index = 0; index < normalized.length; index += 1) {
+      const char = normalized[index]
+
+      if (char === '[') {
+        bracketDepth += 1
+        continue
+      }
+
+      if (char === ']') {
+        bracketDepth = Math.max(0, bracketDepth - 1)
+        continue
+      }
+
+      if (char === '(') {
+        parenDepth += 1
+        continue
+      }
+
+      if (char === ')') {
+        parenDepth = Math.max(0, parenDepth - 1)
+        continue
+      }
+
+      if (char === ':' && bracketDepth === 0 && parenDepth === 0) {
+        normalized = normalized.slice(index + 1)
+        consumed = true
+        break
+      }
+    }
+
+    if (!consumed) {
+      return normalized
+    }
+  }
+}
+
+function isUnoCssBareArbitraryValue(value: string): boolean {
+  return BARE_ARBITRARY_VALUE_RE.test(value)
+}
+
+function getMatchedUtilityPrefix(className: string): string | undefined {
+  return SORTED_UTILITY_PREFIXES
+    .find(prefix => className === prefix || className.startsWith(prefix))
 }
 
 export function getNormalizedUtilityCandidate(className: string): string {
@@ -121,17 +191,22 @@ export function getNormalizedUtilityCandidate(className: string): string {
 export function isArbitraryValueUtilityClass(className: string): boolean {
   const normalized = normalizeUtilityCandidate(className)
 
-  if (!ARBITRARY_VALUE_RE.test(normalized)) {
-    return false
-  }
-
   if (normalized.startsWith('[') && normalized.endsWith(']')) {
     return true
   }
 
   const arbitraryStartIndex = normalized.indexOf('[')
   if (arbitraryStartIndex === -1) {
-    return false
+    const matchedPrefix = getMatchedUtilityPrefix(normalized)
+    if (!matchedPrefix) {
+      return false
+    }
+
+    const utilityValue = normalized
+      .slice(matchedPrefix.length)
+      .replace(/^-/, '')
+
+    return utilityValue.length > 0 && isUnoCssBareArbitraryValue(utilityValue)
   }
 
   const utilityPrefix = normalized.slice(0, arbitraryStartIndex)

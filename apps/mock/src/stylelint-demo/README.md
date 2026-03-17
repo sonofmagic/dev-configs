@@ -8,7 +8,7 @@ Expected behavior:
 - Tailwind utility selectors such as `.flex`, `.grid`, `.hover\:bg-red-500`, `.w-\[10px\]` should fail with `tailwindcss/no-atomic-class`
 - any `@apply` usage should fail with `tailwindcss/no-apply`
 - invalid `@apply` candidates such as `bg-rd-500` should fail with `tailwindcss/no-invalid-apply`
-- arbitrary values / arbitrary properties such as `.w-\[10px\]`, `.\[mask-type\:luminance\]`, and `@apply w-[10px]` should fail with `tailwindcss/no-arbitrary-value`
+- arbitrary values / arbitrary properties such as `.w-\[10px\]`, `.w-10px`, `.top--10px`, `.bg-\$brand`, `.text-rgb\(255\,0\,0\)`, `.translate-x-50\%`, `.\[mask-type\:luminance\]`, and `@apply w-[10px]` should fail with `tailwindcss/no-arbitrary-value`
 - CSS, SCSS, and Vue SFC style blocks should all be checked
 
 Files:

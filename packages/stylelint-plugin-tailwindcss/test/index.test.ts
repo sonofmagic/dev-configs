@@ -124,6 +124,12 @@ describe('stylelint-plugin-tailwindcss', () => {
       await expect(isTailwindUtilityClass('flex', cssFile)).resolves.toBe(true)
       await expect(isTailwindUtilityClass('hover:bg-red-500', cssFile)).resolves.toBe(true)
       await expect(isTailwindUtilityClass('w-[10px]', cssFile)).resolves.toBe(true)
+      await expect(isTailwindUtilityClass('w-10px', cssFile)).resolves.toBe(true)
+      await expect(isTailwindUtilityClass('top--10px', cssFile)).resolves.toBe(true)
+      await expect(isTailwindUtilityClass('bg-$brand', cssFile)).resolves.toBe(true)
+      await expect(isTailwindUtilityClass('text-rgb(255,0,0)', cssFile)).resolves.toBe(true)
+      await expect(isTailwindUtilityClass('translate-x-50%', cssFile)).resolves.toBe(true)
+      await expect(isTailwindUtilityClass('[&>*]:w-10px', cssFile)).resolves.toBe(true)
       await expect(isTailwindUtilityClass('card__body', cssFile)).resolves.toBe(false)
     }
     finally {
@@ -208,6 +214,34 @@ describe('stylelint-plugin-tailwindcss', () => {
         '  width: 10px;',
         '}',
         '',
+        '.w-10px {',
+        '  width: 10px;',
+        '}',
+        '',
+        '.w-50\\% {',
+        '  width: 50%;',
+        '}',
+        '',
+        '.top--10px {',
+        '  top: -10px;',
+        '}',
+        '',
+        '.bg-\\$brand {',
+        '  background: var(--brand);',
+        '}',
+        '',
+        '.text-rgb\\(255\\,0\\,0\\) {',
+        '  color: rgb(255 0 0);',
+        '}',
+        '',
+        '.translate-x-50\\% {',
+        '  translate: 50% 0;',
+        '}',
+        '',
+        '.outline-\\#fff {',
+        '  outline-color: #fff;',
+        '}',
+        '',
         '.\\[mask-type\\:luminance\\] {',
         '  mask-type: luminance;',
         '}',
@@ -223,17 +257,24 @@ describe('stylelint-plugin-tailwindcss', () => {
 
     const warnings = result.results[0]?.warnings ?? []
     expect(result.errored).toBe(true)
-    expect(warnings).toHaveLength(2)
+    expect(warnings).toHaveLength(9)
     expect(warnings[0]?.rule).toBe(noArbitraryValueRuleName)
     expect(warnings[0]?.text).toContain('w-[10px]')
-    expect(warnings[1]?.text).toContain('[mask-type:luminance]')
+    expect(warnings[1]?.text).toContain('w-10px')
+    expect(warnings[2]?.text).toContain('w-50%')
+    expect(warnings[3]?.text).toContain('top--10px')
+    expect(warnings[4]?.text).toContain('bg-$brand')
+    expect(warnings[5]?.text).toContain('text-rgb(255,0,0)')
+    expect(warnings[6]?.text).toContain('translate-x-50%')
+    expect(warnings[7]?.text).toContain('outline-#fff')
+    expect(warnings[8]?.text).toContain('[mask-type:luminance]')
   })
 
   it('reports arbitrary value @apply candidates when no-arbitrary-value is enabled', async () => {
     const result = await stylelint.lint({
       code: [
         '.button {',
-        '  @apply w-[10px] [mask-type:luminance];',
+        '  @apply w-[10px] w-10px w-50% top--10px bg-$brand text-rgb(255,0,0) translate-x-50% outline-#fff [&>*]:w-10px [mask-type:luminance];',
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
@@ -247,10 +288,18 @@ describe('stylelint-plugin-tailwindcss', () => {
 
     const warnings = result.results[0]?.warnings ?? []
     expect(result.errored).toBe(true)
-    expect(warnings).toHaveLength(2)
+    expect(warnings).toHaveLength(10)
     expect(warnings[0]?.rule).toBe(noArbitraryValueRuleName)
     expect(warnings[0]?.text).toContain('w-[10px]')
-    expect(warnings[1]?.text).toContain('[mask-type:luminance]')
+    expect(warnings[1]?.text).toContain('w-10px')
+    expect(warnings[2]?.text).toContain('w-50%')
+    expect(warnings[3]?.text).toContain('top--10px')
+    expect(warnings[4]?.text).toContain('bg-$brand')
+    expect(warnings[5]?.text).toContain('text-rgb(255,0,0)')
+    expect(warnings[6]?.text).toContain('translate-x-50%')
+    expect(warnings[7]?.text).toContain('outline-#fff')
+    expect(warnings[8]?.text).toContain('[&>*]:w-10px')
+    expect(warnings[9]?.text).toContain('[mask-type:luminance]')
   })
 
   it('ignores semantic selectors when no-arbitrary-value is enabled', async () => {

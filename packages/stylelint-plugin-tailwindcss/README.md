@@ -109,7 +109,7 @@ import {
 - `tailwindcss/no-apply`
   Reports every `@apply` directive.
 - `tailwindcss/no-arbitrary-value`
-  Reports arbitrary values and arbitrary properties in selectors and `@apply` candidates, such as `w-[10px]` and `[mask-type:luminance]`.
+  Reports arbitrary values and arbitrary properties in selectors and `@apply` candidates, such as `w-[10px]`, `[mask-type:luminance]`, and common UnoCSS bare-value forms like `w-10px`, `w-50%`, `top--10px`, `bg-$brand`, `text-rgb(255,0,0)`, `translate-x-50%`, `outline-#fff`, and `[&>*]:w-10px`.
 
 ## With `@icebreakers/stylelint-config`
 

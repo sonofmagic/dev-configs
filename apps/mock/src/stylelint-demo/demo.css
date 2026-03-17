@@ -37,6 +37,41 @@
 }
 
 /* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+.w-10px {
+  width: 10px;
+}
+
+/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+.w-50\% {
+  width: 50%;
+}
+
+/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+.top--10px {
+  top: -10px;
+}
+
+/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+.bg-\$brand {
+  background: var(--brand);
+}
+
+/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+.text-rgb\(255\,0\,0\) {
+  color: rgb(255 0 0);
+}
+
+/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+.translate-x-50\% {
+  translate: 50% 0;
+}
+
+/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+.outline-\#fff {
+  outline-color: #fff;
+}
+
+/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
 .\[mask-type\:luminance\] {
   mask-type: luminance;
 }

@@ -139,7 +139,15 @@ describe('stylelint integration', () => {
     const result = await stylelint.lint({
       code: [
         '.button {',
-        '  @apply w-[10px];',
+        '  @apply w-[10px] top--10px bg-$brand;',
+        '}',
+        '',
+        '.w-10px {',
+        '  width: 10px;',
+        '}',
+        '',
+        '.translate-x-50\\% {',
+        '  translate: 50% 0;',
         '}',
         '',
         '.\\[mask-type\\:luminance\\] {',
@@ -156,7 +164,11 @@ describe('stylelint integration', () => {
     const warningTexts = warnings.map(warning => warning.text)
 
     expect(result.errored).toBe(true)
-    expect(warnings).toHaveLength(2)
+    expect(warnings).toHaveLength(6)
+    expect(warningTexts.some(text => text.includes('w-10px'))).toBe(true)
+    expect(warningTexts.some(text => text.includes('top--10px'))).toBe(true)
+    expect(warningTexts.some(text => text.includes('bg-$brand'))).toBe(true)
+    expect(warningTexts.some(text => text.includes('translate-x-50%'))).toBe(true)
     expect(warningTexts.some(text => text.includes('w-[10px]'))).toBe(true)
     expect(warningTexts.some(text => text.includes('[mask-type:luminance]'))).toBe(true)
   })

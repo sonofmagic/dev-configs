@@ -109,7 +109,7 @@ import {
 - `tailwindcss/no-apply`
   只要出现 `@apply` 就报错。
 - `tailwindcss/no-arbitrary-value`
-  检查 selector 和 `@apply` 里的 arbitrary value / arbitrary property，例如 `w-[10px]`、`[mask-type:luminance]`。
+  检查 selector 和 `@apply` 里的 arbitrary value / arbitrary property，例如 `w-[10px]`、`[mask-type:luminance]`，以及 UnoCSS 常见的裸值写法 `w-10px`、`w-50%`、`top--10px`、`bg-$brand`、`text-rgb(255,0,0)`、`translate-x-50%`、`outline-#fff`、`[&>*]:w-10px`。
 
 ## 配合 `@icebreakers/stylelint-config`
 
