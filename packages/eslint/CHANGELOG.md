@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 1.6.32
+
+### Patch Changes
+
+- 🐛 **Fix editor linting conflicts between ESLint and Stylelint for CSS-like files by removing style languages from generated VS Code ESLint validation settings, and disable the noisy `style/eol-last` ESLint rule in the base preset.** [`546a350`](https://github.com/sonofmagic/dev-configs/commit/546a350daee9d73aa364fd09de5857bb06e5c07d) by @sonofmagic
+
 ## 1.6.31
 
 ### Patch Changes

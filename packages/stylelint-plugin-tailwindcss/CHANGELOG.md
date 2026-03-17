@@ -1,5 +1,11 @@
 # stylelint-plugin-tailwindcss
 
+## 0.0.3
+
+### Patch Changes
+
+- 🐛 **Disallow more UnoCSS-style arbitrary value selectors and candidates in the built-in Tailwind utility rules, including bare values such as `w-10px`, `top--10px`, `bg-$brand`, and `[&>*]:w-10px`.** [`5f7f93e`](https://github.com/sonofmagic/dev-configs/commit/5f7f93eb3ba030f61e055a11241bbe7326509857) by @sonofmagic
+
 ## 0.0.2
 
 ### Patch Changes
