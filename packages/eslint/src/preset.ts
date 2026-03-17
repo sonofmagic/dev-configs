@@ -8,6 +8,12 @@ export function getPresets(options?: UserDefinedOptions, mode?: 'legacy'): [User
     {
       rules: createBaseRuleSet(mode === 'legacy'),
     },
+    {
+      files: ['**/*.{css,scss,sass,less,pcss,postcss,json,jsonc,json5}'],
+      rules: {
+        'style/eol-last': 'off',
+      },
+    },
   ]
 
   presets.push(

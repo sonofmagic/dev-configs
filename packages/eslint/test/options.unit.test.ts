@@ -162,7 +162,6 @@ describe('createBaseRuleSet', () => {
     expect(createBaseRuleSet(false)['dot-notation']).toBe('off')
     expect(createBaseRuleSet(false)['e18e/ban-dependencies']).toBe('warn')
     expect(createBaseRuleSet(false)['e18e/prefer-array-to-sorted']).toBe('off')
-    expect(createBaseRuleSet(false)['style/eol-last']).toBe('off')
   })
 
   it('disables perfectionist sorting in legacy mode', () => {

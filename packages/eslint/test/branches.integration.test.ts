@@ -43,6 +43,11 @@ describe('eslint branch config behavior', () => {
       '.demo {}\n',
       'utf8',
     )
+    await fs.writeFile(
+      path.join(tempDir, 'sample.json'),
+      '{}\n',
+      'utf8',
+    )
 
     const configs = await icebreaker({
       vue: true,
@@ -106,15 +111,31 @@ describe('eslint branch config behavior', () => {
     )
   })
 
-  it('disables style/eol-last for css files', async () => {
-    const config = await eslint.calculateConfigForFile(
+  it('disables style/eol-last only for style and json files', async () => {
+    const cssConfig = await eslint.calculateConfigForFile(
       path.join(tempDir, 'sample.css'),
     )
+    const jsonConfig = await eslint.calculateConfigForFile(
+      path.join(tempDir, 'sample.json'),
+    )
+    const tsConfig = await eslint.calculateConfigForFile(
+      path.join(tempDir, 'sample.ts'),
+    )
 
-    const eolRule = config.rules?.['style/eol-last']
-    const eolRuleDisabled = eolRule === 'off'
-      || (Array.isArray(eolRule) && eolRule[0] === 0)
+    const cssRule = cssConfig.rules?.['style/eol-last']
+    const jsonRule = jsonConfig.rules?.['style/eol-last']
+    const tsRule = tsConfig.rules?.['style/eol-last']
 
-    expect(eolRuleDisabled).toBe(true)
+    const cssRuleDisabled = cssRule === 'off'
+      || (Array.isArray(cssRule) && cssRule[0] === 0)
+    const jsonRuleDisabled = jsonRule === 'off'
+      || (Array.isArray(jsonRule) && jsonRule[0] === 0)
+    const tsRuleEnabled = tsRule === 'error'
+      || tsRule === 'warn'
+      || (Array.isArray(tsRule) && [1, 2, 'warn', 'error'].includes(tsRule[0] as never))
+
+    expect(cssRuleDisabled).toBe(true)
+    expect(jsonRuleDisabled).toBe(true)
+    expect(tsRuleEnabled).toBe(true)
   })
 })
