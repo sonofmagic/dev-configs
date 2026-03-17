@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 1.6.33
+
+### Patch Changes
+
+- 🐛 **Limit the `style/eol-last` relaxation to style and JSON files only, while keeping the rule enabled for script files.** [`71c03be`](https://github.com/sonofmagic/dev-configs/commit/71c03bedeb260e111f55bd1b0818c3f17c2ed19f) by @sonofmagic
+
 ## 1.6.32
 
 ### Patch Changes
