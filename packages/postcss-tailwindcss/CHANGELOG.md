@@ -1,5 +1,11 @@
 # postcss-tailwindcss
 
+## 0.0.2
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`1823e9c`](https://github.com/sonofmagic/dev-configs/commit/1823e9c51aec4aaccaa03697267e67c16d27be71) by @sonofmagic
+
 ## 0.0.1
 
 ### Patch Changes
