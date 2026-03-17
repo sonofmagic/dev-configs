@@ -23,7 +23,7 @@ For new projects you can scaffold the VS Code integration:
 npx @icebreakers/stylelint-config
 ```
 
-The CLI will create or update `.vscode/settings.json` with the proper `stylelint.validate` entries so editor diagnostics use Stylelint instead of language servers.
+The CLI will create or update `.vscode/settings.json` with the proper `stylelint.validate` entries so editor diagnostics use Stylelint instead of language servers. It also removes CSS-like languages (`css`, `less`, `scss`, `pcss`, `postcss`) from `eslint.validate` to avoid ESLint and Stylelint fighting over the same file on save.
 
 ## Basic Usage
 
@@ -114,4 +114,4 @@ The underlying plugin supports both Tailwind CSS v3 and v4, and switches automat
 
 - Tailwind directives require `postcss.config.*` to include `@icebreakers/stylelint-config` ignore lists; adjust `ignores.addAtRules` when adding new utilities.
 - If Stylelint cannot resolve the preset, ensure your workspace hoists the package or add it to the specific package `devDependencies`.
-- Use the generated VS Code settings to avoid duplicate diagnostics from the built-in CSS validation.
+- Use the generated VS Code settings to avoid duplicate diagnostics from the built-in CSS validation and from ESLint handling CSS files.

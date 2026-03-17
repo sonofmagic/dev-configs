@@ -21,7 +21,7 @@ pnpm add -D stylelint @icebreakers/stylelint-config
 npx @icebreakers/stylelint-config
 ```
 
-该命令会创建或更新 `.vscode/settings.json`，为 VS Code 添加 `stylelint.validate` 条目，确保代码诊断来自 Stylelint 而非内置 CSS 校验器。
+该命令会创建或更新 `.vscode/settings.json`，为 VS Code 添加 `stylelint.validate` 条目，确保代码诊断来自 Stylelint 而非内置 CSS 校验器。同时它会把 `css`、`less`、`scss`、`pcss`、`postcss` 从 `eslint.validate` 中移除，避免 ESLint 与 Stylelint 在保存时同时改同一个样式文件。
 
 ## 基本用法
 
@@ -112,4 +112,4 @@ tailwindcss/no-arbitrary-value
 
 - Tailwind 指令需要在 `postcss.config.*` 中配合忽略列表，否则可能误报，可通过 `ignores.addAtRules` 添加新指令。
 - 如果 Stylelint 无法解析预设，请确认包已安装在当前 workspace 的 `devDependencies` 中，或已正确 hoist。
-- 建议使用 CLI 生成的 VS Code 设置，避免内置 CSS 校验与 Stylelint 重复报错。
+- 建议使用 CLI 生成的 VS Code 设置，避免内置 CSS 校验、ESLint 与 Stylelint 对样式文件重复报错或冲突修复。

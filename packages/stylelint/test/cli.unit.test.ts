@@ -73,9 +73,10 @@ describe('cli', () => {
 
   it('updates settings when the file exists', async () => {
     exists = true
-    readValue = '{"stylelint.validate":["scss"]}'
+    readValue = '{"stylelint.validate":["scss"],"eslint.validate":["javascript","css","scss","markdown"]}'
     parse.mockReturnValueOnce({
       'stylelint.validate': ['scss'],
+      'eslint.validate': ['javascript', 'css', 'scss', 'markdown'],
     })
 
     await import('@/cli')
@@ -83,6 +84,7 @@ describe('cli', () => {
     expect(readFileSync).toHaveBeenCalledWith('/repo/.vscode/settings.json', 'utf8')
     expect(parse).toHaveBeenCalledWith(readValue)
     expect(infoSpy).toHaveBeenCalledWith(expect.stringContaining('update'))
+    expect(stringify).toHaveBeenCalled()
   })
 
   it('handles falsy parsed config values', async () => {

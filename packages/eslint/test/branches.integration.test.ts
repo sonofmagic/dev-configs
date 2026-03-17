@@ -38,6 +38,11 @@ describe('eslint branch config behavior', () => {
       'export class Sample {}\n',
       'utf8',
     )
+    await fs.writeFile(
+      path.join(tempDir, 'sample.css'),
+      '.demo {}\n',
+      'utf8',
+    )
 
     const configs = await icebreaker({
       vue: true,
@@ -99,5 +104,17 @@ describe('eslint branch config behavior', () => {
     expect(rule?.[1]?.allow).toEqual(
       expect.arrayContaining(['decoratedFunctions']),
     )
+  })
+
+  it('disables style/eol-last for css files', async () => {
+    const config = await eslint.calculateConfigForFile(
+      path.join(tempDir, 'sample.css'),
+    )
+
+    const eolRule = config.rules?.['style/eol-last']
+    const eolRuleDisabled = eolRule === 'off'
+      || (Array.isArray(eolRule) && eolRule[0] === 0)
+
+    expect(eolRuleDisabled).toBe(true)
   })
 })

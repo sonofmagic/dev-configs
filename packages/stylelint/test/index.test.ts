@@ -63,6 +63,18 @@ describe('index', () => {
     })).toMatchSnapshot()
   })
 
+  it('setVscodeSettingsJson removes style languages from eslint.validate', () => {
+    expect(setVscodeSettingsJson({
+      'eslint.validate': [
+        'javascript',
+        'css',
+        'scss',
+        'postcss',
+        'markdown',
+      ],
+    })).toMatchSnapshot()
+  })
+
   it('common', () => {
     const config = icebreaker()
 

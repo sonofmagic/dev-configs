@@ -43,6 +43,7 @@ const BASE_RULES: Partial<Linter.RulesRecord> = {
   'pnpm/yaml-enforce-settings': 'off',
   'pnpm/yaml-no-duplicate-catalog-item': 'off',
   'pnpm/yaml-no-unused-catalog-item': 'off',
+  'style/eol-last': 'off',
   'unused-imports/no-unused-vars': 'off',
   'unicorn/prefer-number-properties': 'warn',
 }

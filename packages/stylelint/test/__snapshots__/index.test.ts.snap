@@ -110,3 +110,20 @@ exports[`index > setVscodeSettingsJson case 1 1`] = `
   ],
 }
 `;
+
+exports[`index > setVscodeSettingsJson removes style languages from eslint.validate 1`] = `
+{
+  "css.validate": false,
+  "eslint.validate": [
+    "javascript",
+    "markdown",
+  ],
+  "less.validate": false,
+  "scss.validate": false,
+  "stylelint.validate": [
+    "vue",
+    "css",
+    "scss",
+  ],
+}
+`;
