@@ -75,6 +75,17 @@ interface StylelintPluginConfig {
   rules: NonNullable<Config['rules']>
 }
 
+const RULE_DOCS_BASE_URL = 'https://github.com/sonofmagic/dev-configs/blob/main/packages/stylelint-plugin-tailwindcss/docs/rules'
+
+function getRuleDocUrl(ruleName: string) {
+  const [namespace, name] = ruleName.split('/')
+  if (!namespace || !name) {
+    return RULE_DOCS_BASE_URL
+  }
+
+  return `${RULE_DOCS_BASE_URL}/${namespace}/${name}.md`
+}
+
 function createPluginBundle(names: {
   noApply: string
   noArbitraryValue: string
@@ -86,21 +97,21 @@ function createPluginBundle(names: {
   noAtomicClassRuleFunction.ruleName = names.noAtomicClass
   noAtomicClassRuleFunction.messages = createMessages(names.noAtomicClass) as Rule['messages']
   noAtomicClassRuleFunction.meta = {
-    url: 'https://github.com/sonofmagic/dev-configs',
+    url: getRuleDocUrl(names.noAtomicClass),
   }
 
   const noInvalidApplyRule = createNoInvalidApplyRuleFunction(names.noInvalidApply)
   noInvalidApplyRule.ruleName = names.noInvalidApply
   noInvalidApplyRule.messages = createNoInvalidApplyMessages(names.noInvalidApply) as Rule['messages']
   noInvalidApplyRule.meta = {
-    url: 'https://github.com/sonofmagic/dev-configs',
+    url: getRuleDocUrl(names.noInvalidApply),
   }
 
   const noApplyRule = createNoApplyRuleFunction(names.noApply)
   noApplyRule.ruleName = names.noApply
   noApplyRule.messages = createNoApplyMessages(names.noApply) as Rule['messages']
   noApplyRule.meta = {
-    url: 'https://github.com/sonofmagic/dev-configs',
+    url: getRuleDocUrl(names.noApply),
   }
 
   const noArbitraryValueRule = createNoArbitraryValueRuleFunction(names.noArbitraryValue)
@@ -109,7 +120,7 @@ function createPluginBundle(names: {
     names.noArbitraryValue,
   ) as Rule['messages']
   noArbitraryValueRule.meta = {
-    url: 'https://github.com/sonofmagic/dev-configs',
+    url: getRuleDocUrl(names.noArbitraryValue),
   }
 
   const noVariantGroupRule = names.noVariantGroup
@@ -122,7 +133,7 @@ function createPluginBundle(names: {
       names.noVariantGroup,
     ) as Rule['messages']
     noVariantGroupRule.meta = {
-      url: 'https://github.com/sonofmagic/dev-configs',
+      url: getRuleDocUrl(names.noVariantGroup),
     }
   }
 
@@ -223,7 +234,7 @@ export { isTailwindUtilityClass } from './runtime'
 ruleFunction.ruleName = NO_ATOMIC_CLASS_RULE_NAME
 ruleFunction.messages = messages as Rule['messages']
 ruleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
+  url: getRuleDocUrl(NO_ATOMIC_CLASS_RULE_NAME),
 }
 
 const noAtomicClassPlugin = stylelint.createPlugin(NO_ATOMIC_CLASS_RULE_NAME, ruleFunction)
@@ -267,19 +278,19 @@ const noCssLayerPlugin = stylelint.createPlugin(
 noInvalidApplyRuleFunction.ruleName = NO_INVALID_APPLY_RULE_NAME
 noInvalidApplyRuleFunction.messages = noInvalidApplyMessages as Rule['messages']
 noInvalidApplyRuleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
+  url: getRuleDocUrl(NO_INVALID_APPLY_RULE_NAME),
 }
 
 noApplyRuleFunction.ruleName = NO_APPLY_RULE_NAME
 noApplyRuleFunction.messages = noApplyMessages as Rule['messages']
 noApplyRuleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
+  url: getRuleDocUrl(NO_APPLY_RULE_NAME),
 }
 
 noArbitraryValueRuleFunction.ruleName = NO_ARBITRARY_VALUE_RULE_NAME
 noArbitraryValueRuleFunction.messages = noArbitraryValueMessages as Rule['messages']
 noArbitraryValueRuleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
+  url: getRuleDocUrl(NO_ARBITRARY_VALUE_RULE_NAME),
 }
 
 noThemeFunctionRuleFunction.ruleName = TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME
@@ -287,7 +298,7 @@ noThemeFunctionRuleFunction.messages = createNoThemeFunctionMessages(
   TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME,
 ) as Rule['messages']
 noThemeFunctionRuleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
+  url: getRuleDocUrl(TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME),
 }
 
 noScreenDirectiveRuleFunction.ruleName = TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME
@@ -295,7 +306,7 @@ noScreenDirectiveRuleFunction.messages = createNoScreenDirectiveMessages(
   TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME,
 ) as Rule['messages']
 noScreenDirectiveRuleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
+  url: getRuleDocUrl(TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME),
 }
 
 noTailwindDirectiveRuleFunction.ruleName = TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME
@@ -303,7 +314,7 @@ noTailwindDirectiveRuleFunction.messages = createNoTailwindDirectiveMessages(
   TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME,
 ) as Rule['messages']
 noTailwindDirectiveRuleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
+  url: getRuleDocUrl(TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME),
 }
 
 noImportDirectiveRuleFunction.ruleName = TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME
@@ -311,7 +322,7 @@ noImportDirectiveRuleFunction.messages = createNoImportDirectiveMessages(
   TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME,
 ) as Rule['messages']
 noImportDirectiveRuleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
+  url: getRuleDocUrl(TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME),
 }
 
 noInvalidThemeFunctionRuleFunction.ruleName = TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME
@@ -319,7 +330,7 @@ noInvalidThemeFunctionRuleFunction.messages = createNoInvalidThemeFunctionMessag
   TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME,
 ) as Rule['messages']
 noInvalidThemeFunctionRuleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
+  url: getRuleDocUrl(TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME),
 }
 
 noCssLayerRuleFunction.ruleName = TAILWINDCSS_NO_CSS_LAYER_RULE_NAME
@@ -327,7 +338,7 @@ noCssLayerRuleFunction.messages = createNoCssLayerMessages(
   TAILWINDCSS_NO_CSS_LAYER_RULE_NAME,
 ) as Rule['messages']
 noCssLayerRuleFunction.meta = {
-  url: 'https://github.com/sonofmagic/dev-configs',
+  url: getRuleDocUrl(TAILWINDCSS_NO_CSS_LAYER_RULE_NAME),
 }
 
 const unocssBundle = createPluginBundle({
