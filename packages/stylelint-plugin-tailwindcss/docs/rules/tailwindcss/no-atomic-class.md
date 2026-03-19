@@ -55,11 +55,6 @@ semantic class names in authored stylesheets.
 ### ❌ Bad
 
 ```css
-/* ❌ Bad: utility selectors belong in markup, not authored CSS. */
-.card {
-  padding: 16px;
-}
-
 /* ❌ Bad: this recreates Tailwind utilities inside the stylesheet. */
 .flex {
   display: flex;

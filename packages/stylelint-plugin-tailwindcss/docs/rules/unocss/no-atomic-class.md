@@ -50,11 +50,6 @@ should stay semantic.
 ### ❌ Bad
 
 ```css
-/* ❌ Bad: utility selectors should stay in markup or templates. */
-.card {
-  padding: 16px;
-}
-
 /* ❌ Bad: this recreates UnoCSS utilities in authored CSS. */
 .flex {
   display: flex;
