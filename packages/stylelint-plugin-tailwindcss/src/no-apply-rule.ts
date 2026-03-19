@@ -3,7 +3,7 @@ import type { Rule as StylelintRule } from 'stylelint'
 import type stylelint from 'stylelint'
 import stylelintModule from 'stylelint'
 import { NO_APPLY_RULE_NAME } from './constants'
-import { createNoApplyMessages, noApplyMessages } from './messages'
+import { createNoApplyMessages } from './messages'
 
 type RuleResult = stylelint.PostcssResult
 

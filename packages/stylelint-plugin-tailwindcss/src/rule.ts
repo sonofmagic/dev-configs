@@ -4,7 +4,7 @@ import type stylelint from 'stylelint'
 import { collectUtilitySelectors } from 'postcss-tailwindcss'
 import stylelintModule from 'stylelint'
 import { NO_ATOMIC_CLASS_RULE_NAME } from './constants'
-import { createMessages, messages } from './messages'
+import { createMessages } from './messages'
 import { isTailwindUtilityClass } from './runtime'
 
 type RuleResult = stylelint.PostcssResult

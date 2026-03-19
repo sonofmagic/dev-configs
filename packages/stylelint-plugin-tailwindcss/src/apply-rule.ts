@@ -5,10 +5,7 @@ import { collectApplyCandidates } from 'postcss-tailwindcss'
 import stylelintModule from 'stylelint'
 import { NO_INVALID_APPLY_RULE_NAME } from './constants'
 import { isLikelyUtilityClass } from './heuristics'
-import {
-  createNoInvalidApplyMessages,
-  noInvalidApplyMessages,
-} from './messages'
+import { createNoInvalidApplyMessages } from './messages'
 import { isTailwindUtilityClass } from './runtime'
 
 type RuleResult = stylelint.PostcssResult

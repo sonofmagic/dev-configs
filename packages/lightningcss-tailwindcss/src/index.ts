@@ -130,10 +130,41 @@ function tokenToString(token: Token): string {
 }
 
 function tokenOrValueListToString(nodes: TokenOrValue[]): string {
+  function renderTokenOrValue(node: TokenOrValue): string {
+    switch (node.type) {
+      case 'token':
+        return tokenToString(node.value)
+      case 'function':
+        return `${node.value.name}(${tokenOrValueListToString(node.value.arguments)})`
+      case 'dashed-ident':
+      case 'animation-name':
+        return String(node.value)
+      case 'length':
+        return `${node.value.value}${node.value.unit}`
+      case 'angle':
+        return `${node.value.value}${node.value.type}`
+      case 'time':
+        return `${node.value.value}${node.value.type === 'seconds' ? 's' : 'ms'}`
+      case 'resolution':
+        return `${node.value.value}${node.value.type}`
+      case 'url':
+        return `url(${String(node.value.url)})`
+      case 'var':
+        return `var(${String(node.value.name)})`
+      case 'env':
+        return `env(${String(node.value.name)})`
+      case 'color':
+      case 'unresolved-color':
+        return JSON.stringify(node.value)
+      default:
+        return ''
+    }
+  }
+
   let output = ''
 
   for (const [index, node] of nodes.entries()) {
-    const rendered = tokenOrValueToString(node)
+    const rendered = renderTokenOrValue(node)
 
     if (
       node.type === 'token'
@@ -159,37 +190,6 @@ function tokenOrValueListToString(nodes: TokenOrValue[]): string {
   }
 
   return output
-}
-
-function tokenOrValueToString(node: TokenOrValue): string {
-  switch (node.type) {
-    case 'token':
-      return tokenToString(node.value)
-    case 'function':
-      return `${node.value.name}(${tokenOrValueListToString(node.value.arguments)})`
-    case 'dashed-ident':
-    case 'animation-name':
-      return String(node.value)
-    case 'length':
-      return `${node.value.value}${node.value.unit}`
-    case 'angle':
-      return `${node.value.value}${node.value.type}`
-    case 'time':
-      return `${node.value.value}${node.value.type === 'seconds' ? 's' : 'ms'}`
-    case 'resolution':
-      return `${node.value.value}${node.value.type}`
-    case 'url':
-      return `url(${String(node.value.url)})`
-    case 'var':
-      return `var(${String(node.value.name)})`
-    case 'env':
-      return `env(${String(node.value.name)})`
-    case 'color':
-    case 'unresolved-color':
-      return JSON.stringify(node.value)
-    default:
-      return ''
-  }
 }
 
 function splitCandidateList(input: string): string[] {

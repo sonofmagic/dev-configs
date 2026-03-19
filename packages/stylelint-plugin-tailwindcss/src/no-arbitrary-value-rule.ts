@@ -8,10 +8,7 @@ import {
 import stylelintModule from 'stylelint'
 import { NO_ARBITRARY_VALUE_RULE_NAME } from './constants'
 import { isArbitraryValueUtilityClass } from './heuristics'
-import {
-  createNoArbitraryValueMessages,
-  noArbitraryValueMessages,
-} from './messages'
+import { createNoArbitraryValueMessages } from './messages'
 
 type RuleResult = stylelint.PostcssResult
 

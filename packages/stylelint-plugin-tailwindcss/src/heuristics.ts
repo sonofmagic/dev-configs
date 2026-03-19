@@ -114,22 +114,10 @@ const NEGATIVE_UTILITY_RE = /^-[a-z]/
 const IMPORTANT_UTILITY_RE = /^![a-z]/
 const IMPORTANT_PREFIX_RE = /^!/
 const BARE_ARBITRARY_VALUE_RE = /^(?:-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|rpx|rem|em|%|vh|vw|vmin|vmax|dvh|dvw|deg|rad|turn|ms|s|fr|ch|ex|pt|pc|cm|mm|in)|#[0-9a-fA-F]{3,8}|\$[A-Za-z_][\w-]*|(?:calc|min|max|clamp|rgb|rgba|hsl|hsla|color|url|var)\(.+\))$/
+const LEADING_NEGATIVE_SIGN_RE = /^-/
 const SORTED_UTILITY_PREFIXES = [...UTILITY_PREFIXES].sort((left, right) => right.length - left.length)
 
 const heuristicCandidateCache = new Map<string, boolean>()
-
-function normalizeUtilityCandidate(className: string): string {
-  let normalized = className
-    .replace(IMPORTANT_PREFIX_RE, '')
-
-  normalized = stripVariantPrefixes(normalized)
-
-  if (normalized.startsWith('-')) {
-    normalized = normalized.slice(1)
-  }
-
-  return normalized
-}
 
 function stripVariantPrefixes(className: string): string {
   let normalized = className
@@ -175,6 +163,19 @@ function stripVariantPrefixes(className: string): string {
   }
 }
 
+function normalizeUtilityCandidate(className: string): string {
+  let normalized = className
+    .replace(IMPORTANT_PREFIX_RE, '')
+
+  normalized = stripVariantPrefixes(normalized)
+
+  if (normalized.startsWith('-')) {
+    normalized = normalized.slice(1)
+  }
+
+  return normalized
+}
+
 function isUnoCssBareArbitraryValue(value: string): boolean {
   return BARE_ARBITRARY_VALUE_RE.test(value)
 }
@@ -204,7 +205,7 @@ export function isArbitraryValueUtilityClass(className: string): boolean {
 
     const utilityValue = normalized
       .slice(matchedPrefix.length)
-      .replace(/^-/, '')
+      .replace(LEADING_NEGATIVE_SIGN_RE, '')
 
     return utilityValue.length > 0 && isUnoCssBareArbitraryValue(utilityValue)
   }
