@@ -1,8 +1,9 @@
 # `demo.scss`
 
-This file focuses on SCSS nesting and `@apply` policy checks for the
-`tailwindcss/*` namespace. The `unocss/*` rules are disabled at file
-level so the IDE output stays focused.
+This file focuses on SCSS nesting, `@apply`, `theme()`, and Tailwind
+directive policy checks for the `tailwindcss/*` namespace. The
+`unocss/*` rules are disabled at file level so the IDE output stays
+focused.
 
 Passing cases:
 
@@ -14,6 +15,12 @@ Failing cases:
 - `.button-with-apply` because `@apply` is disallowed
 - `.button-with-invalid-apply` because `bg-rd-500` is not a valid Tailwind candidate
 - `.button-with-arbitrary-apply` because arbitrary values are disallowed
+- `.button-with-theme` because any `theme(...)` usage is disallowed
+- `.button-with-invalid-theme` because it uses `theme(...)` and the theme path does not exist
+- `@import "tailwindcss"` because Tailwind entry imports are disallowed
+- `@tailwind utilities` because Tailwind directives are disallowed
+- `@screen md` because `@screen` is disallowed
+- `@layer utilities` because authored `@layer` directives are disallowed
 - utility selectors such as `.grid`, `.items-center`, `.md\:flex`, `.w-\[10px\]`
 
 Rules demonstrated:
@@ -22,3 +29,9 @@ Rules demonstrated:
 - `tailwindcss/no-invalid-apply`
 - `tailwindcss/no-atomic-class`
 - `tailwindcss/no-arbitrary-value`
+- `tailwindcss/no-theme-function`
+- `tailwindcss/no-invalid-theme-function`
+- `tailwindcss/no-import-directive`
+- `tailwindcss/no-tailwind-directive`
+- `tailwindcss/no-screen-directive`
+- `tailwindcss/no-css-layer`

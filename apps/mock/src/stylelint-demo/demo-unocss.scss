@@ -29,6 +29,11 @@
 .button-with-arbitrary-apply {
   @apply w-[10px] [mask-type:luminance];
 }
+
+/* should report: unocss/no-apply and unocss/no-variant-group */
+.button-with-variant-group {
+  @apply hover:(bg-red-500 text-white);
+}
 /* stylelint-enable comment-empty-line-before */
 
 /* stylelint-disable selector-class-pattern, comment-empty-line-before */

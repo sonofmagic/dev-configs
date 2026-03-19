@@ -18,6 +18,7 @@ Failing cases:
   `.bg-\$brand`, `.translate-x-50\%`, and `.\[mask-type\:luminance\]`
 - `@apply` usage
 - invalid utility-like `@apply` candidates such as `bg-rd-500`
+- UnoCSS variant groups such as `hover:(bg-red-500 text-white)`
 
 Rules demonstrated:
 
@@ -25,3 +26,4 @@ Rules demonstrated:
 - `unocss/no-invalid-apply`
 - `unocss/no-apply`
 - `unocss/no-arbitrary-value`
+- `unocss/no-variant-group`

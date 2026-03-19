@@ -5,6 +5,7 @@ export const PRESET_RECESS_ORDER = 'stylelint-config-recess-order'
 export const DEFAULT_IGNORE_AT_RULES = [
   'tailwind',
   'theme',
+  'screen',
   'apply',
   'source',
   'utility',

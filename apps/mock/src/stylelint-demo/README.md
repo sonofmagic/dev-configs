@@ -10,15 +10,19 @@ Expected behavior:
 - any `@apply` usage should fail with `tailwindcss/no-apply` or `unocss/no-apply`
 - invalid `@apply` candidates such as `bg-rd-500` should fail with `tailwindcss/no-invalid-apply` or `unocss/no-invalid-apply`
 - arbitrary values / arbitrary properties such as `.w-\[10px\]`, `.w-10px`, `.top--10px`, `.bg-\$brand`, `.text-rgb\(255\,0\,0\)`, `.translate-x-50\%`, `.\[mask-type\:luminance\]`, and `@apply w-[10px]` should fail with `tailwindcss/no-arbitrary-value` or `unocss/no-arbitrary-value`
+- `theme(...)` should fail with `tailwindcss/no-theme-function`
+- invalid theme paths such as `theme(colors.not-exist.123)` should fail with `tailwindcss/no-invalid-theme-function`
+- `@screen`, `@tailwind`, `@import "tailwindcss"`, and `@layer` should fail with the matching Tailwind directive rules
+- UnoCSS variant groups such as `hover:(bg-red-500 text-white)` should fail with `unocss/no-variant-group`
 - CSS, SCSS, and Vue SFC style blocks should all be checked
 
 Files:
 
 - `demo.css` focuses on Tailwind selector pass/fail pairs
-- `demo.scss` adds Tailwind `@apply` pass/fail comparisons and arbitrary value cases
+- `demo.scss` adds Tailwind `@apply`, `theme()`, and directive policy cases
 - `DemoStylelint.vue` shows the same Tailwind-focused rules inside Vue SFC `<style>` blocks
 - `demo-unocss.css` focuses on UnoCSS selector pass/fail pairs
-- `demo-unocss.scss` adds UnoCSS `@apply` pass/fail comparisons and arbitrary value cases
+- `demo-unocss.scss` adds UnoCSS `@apply`, arbitrary value, and variant-group cases
 - `demo-unocss.md` explains the UnoCSS-specific demo files
 - `demo-css.md`, `demo-scss.md`, `demo-vue.md` are the GitHub-targeted walkthrough pages linked from the demo component
 

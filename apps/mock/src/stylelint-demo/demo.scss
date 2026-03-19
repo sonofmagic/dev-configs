@@ -1,4 +1,7 @@
-/* stylelint-disable unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */
+/* stylelint-disable comment-empty-line-before, unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */
+/* should report: tailwindcss/no-import-directive */
+@import "tailwindcss";
+
 .demo-panel {
   padding: 16px;
 
@@ -16,9 +19,25 @@
   width: 240px;
 }
 
+/* should report: tailwindcss/no-tailwind-directive */
 @tailwind utilities;
 
-/* stylelint-disable comment-empty-line-before */
+/* stylelint-disable scss/at-rule-no-unknown */
+/* should report: tailwindcss/no-screen-directive */
+@screen md {
+  .screen-demo {
+    color: red;
+  }
+}
+/* stylelint-enable scss/at-rule-no-unknown */
+
+/* should report: tailwindcss/no-css-layer */
+@layer utilities {
+  .layer-demo {
+    color: red;
+  }
+}
+
 /* should report: tailwindcss/no-apply */
 .button-with-apply {
   @apply rounded-lg;
@@ -33,9 +52,18 @@
 .button-with-arbitrary-apply {
   @apply w-[10px] [mask-type:luminance];
 }
-/* stylelint-enable comment-empty-line-before */
 
-/* stylelint-disable selector-class-pattern, comment-empty-line-before */
+/* should report: tailwindcss/no-theme-function */
+.button-with-theme {
+  color: theme(colors.gray.900 / 75%);
+}
+
+/* should report: tailwindcss/no-theme-function and tailwindcss/no-invalid-theme-function */
+.button-with-invalid-theme {
+  color: theme(colors.not-exist.123);
+}
+
+/* stylelint-disable selector-class-pattern */
 /* should report: tailwindcss/no-atomic-class */
 .grid {
   display: grid;
@@ -55,5 +83,5 @@
 .w-\[10px\] {
   width: 10px;
 }
-/* stylelint-enable selector-class-pattern, comment-empty-line-before */
-/* stylelint-enable unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */
+/* stylelint-enable selector-class-pattern */
+/* stylelint-enable comment-empty-line-before, unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */

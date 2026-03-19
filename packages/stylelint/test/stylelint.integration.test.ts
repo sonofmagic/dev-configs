@@ -8,11 +8,18 @@ import {
   noApplyRuleName,
   noArbitraryValueRuleName,
   noAtomicClassRuleName,
+  noCssLayerRuleName,
+  noImportDirectiveRuleName,
   noInvalidApplyRuleName,
+  noInvalidThemeFunctionRuleName,
+  noScreenDirectiveRuleName,
+  noTailwindDirectiveRuleName,
+  noThemeFunctionRuleName,
   unocssNoApplyRuleName,
   unocssNoArbitraryValueRuleName,
   unocssNoAtomicClassRuleName,
   unocssNoInvalidApplyRuleName,
+  unocssNoVariantGroupRuleName,
 } from 'stylelint-plugin-tailwindcss'
 import { PRESET_RECESS_ORDER, PRESET_VUE_SCSS } from '@/constants'
 import { createStylelintConfig, icebreaker } from '@/index'
@@ -71,8 +78,9 @@ describe('stylelint integration', () => {
     })
 
     const warnings = result.results[0]?.warnings ?? []
-    expect(result.errored).toBe(false)
-    expect(warnings).toEqual([])
+    expect(result.errored).toBe(true)
+    expect(warnings.some(warning => warning.rule === noTailwindDirectiveRuleName)).toBe(true)
+    expect(warnings.some(warning => warning.text.includes('unocss'))).toBe(false)
   })
 
   it('reports Tailwind utility selector declarations by default', async () => {
@@ -232,11 +240,7 @@ describe('stylelint integration', () => {
     const warningTexts = warnings.map(warning => warning.text)
 
     expect(result.errored).toBe(true)
-    expect(warnings).toHaveLength(6)
-    expect(warningTexts.some(text => text.includes('w-10px'))).toBe(true)
-    expect(warningTexts.some(text => text.includes('top--10px'))).toBe(true)
-    expect(warningTexts.some(text => text.includes('bg-$brand'))).toBe(true)
-    expect(warningTexts.some(text => text.includes('translate-x-50%'))).toBe(true)
+    expect(warnings).toHaveLength(2)
     expect(warningTexts.some(text => text.includes('w-[10px]'))).toBe(true)
     expect(warningTexts.some(text => text.includes('[mask-type:luminance]'))).toBe(true)
   })
@@ -277,6 +281,77 @@ describe('stylelint integration', () => {
     expect(warningTexts.some(text => text.includes('translate-x-50%'))).toBe(true)
     expect(warningTexts.some(text => text.includes('w-[10px]'))).toBe(true)
     expect(warningTexts.some(text => text.includes('[mask-type:luminance]'))).toBe(true)
+  })
+
+  it('reports theme() usage and invalid theme paths by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  color: theme(colors.gray.900 / 75%);',
+        '  background: theme(colors.not-exist.123);',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const themeWarnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noThemeFunctionRuleName,
+    )
+    const invalidThemeWarnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noInvalidThemeFunctionRuleName,
+    )
+
+    expect(themeWarnings).toHaveLength(2)
+    expect(invalidThemeWarnings).toHaveLength(1)
+    expect(invalidThemeWarnings[0]?.text).toContain('colors.not-exist.123')
+  })
+
+  it('reports Tailwind directives by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '@import "tailwindcss";',
+        '@tailwind utilities;',
+        '@screen md {',
+        '  .demo {',
+        '    color: red;',
+        '  }',
+        '}',
+        '@layer utilities {',
+        '  .demo {',
+        '    color: red;',
+        '  }',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.scss'),
+      customSyntax: 'postcss-scss',
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+
+    expect(warnings.some(warning => warning.rule === noImportDirectiveRuleName)).toBe(true)
+    expect(warnings.some(warning => warning.rule === noTailwindDirectiveRuleName)).toBe(true)
+    expect(warnings.some(warning => warning.rule === noScreenDirectiveRuleName)).toBe(true)
+    expect(warnings.some(warning => warning.rule === noCssLayerRuleName)).toBe(true)
+  })
+
+  it('reports UnoCSS variant groups by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply hover:(bg-red-500 text-white);',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === unocssNoVariantGroupRuleName,
+    )
+
+    expect(warnings).toHaveLength(1)
   })
 
   it('replaces ignore units and reports rpx when removed', async () => {
