@@ -37,37 +37,37 @@
   width: 10px;
 }
 
-/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+/* should report: tailwindcss/no-atomic-class */
 .w-10px {
   width: 10px;
 }
 
-/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+/* should report: tailwindcss/no-atomic-class */
 .w-50\% {
   width: 50%;
 }
 
-/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+/* should report: tailwindcss/no-atomic-class */
 .top--10px {
   top: -10px;
 }
 
-/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+/* should report: tailwindcss/no-atomic-class */
 .bg-\$brand {
   background: var(--brand);
 }
 
-/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+/* should report: tailwindcss/no-atomic-class */
 .text-rgb\(255\,0\,0\) {
   color: rgb(255 0 0);
 }
 
-/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+/* should report: tailwindcss/no-atomic-class */
 .translate-x-50\% {
   translate: 50% 0;
 }
 
-/* should report: tailwindcss/no-atomic-class and tailwindcss/no-arbitrary-value */
+/* should report: tailwindcss/no-atomic-class */
 .outline-\#fff {
   outline-color: #fff;
 }

@@ -335,17 +335,10 @@ describe('stylelint-plugin-tailwindcss', () => {
 
     const warnings = result.results[0]?.warnings ?? []
     expect(result.errored).toBe(true)
-    expect(warnings).toHaveLength(9)
+    expect(warnings).toHaveLength(2)
     expect(warnings[0]?.rule).toBe(noArbitraryValueRuleName)
     expect(warnings[0]?.text).toContain('w-[10px]')
-    expect(warnings[1]?.text).toContain('w-10px')
-    expect(warnings[2]?.text).toContain('w-50%')
-    expect(warnings[3]?.text).toContain('top--10px')
-    expect(warnings[4]?.text).toContain('bg-$brand')
-    expect(warnings[5]?.text).toContain('text-rgb(255,0,0)')
-    expect(warnings[6]?.text).toContain('translate-x-50%')
-    expect(warnings[7]?.text).toContain('outline-#fff')
-    expect(warnings[8]?.text).toContain('[mask-type:luminance]')
+    expect(warnings[1]?.text).toContain('[mask-type:luminance]')
   })
 
   it('reports arbitrary value @apply candidates when no-arbitrary-value is enabled', async () => {
@@ -366,18 +359,40 @@ describe('stylelint-plugin-tailwindcss', () => {
 
     const warnings = result.results[0]?.warnings ?? []
     expect(result.errored).toBe(true)
-    expect(warnings).toHaveLength(10)
+    expect(warnings).toHaveLength(2)
     expect(warnings[0]?.rule).toBe(noArbitraryValueRuleName)
     expect(warnings[0]?.text).toContain('w-[10px]')
-    expect(warnings[1]?.text).toContain('w-10px')
-    expect(warnings[2]?.text).toContain('w-50%')
-    expect(warnings[3]?.text).toContain('top--10px')
-    expect(warnings[4]?.text).toContain('bg-$brand')
-    expect(warnings[5]?.text).toContain('text-rgb(255,0,0)')
-    expect(warnings[6]?.text).toContain('translate-x-50%')
-    expect(warnings[7]?.text).toContain('outline-#fff')
-    expect(warnings[8]?.text).toContain('[&>*]:w-10px')
-    expect(warnings[9]?.text).toContain('[mask-type:luminance]')
+    expect(warnings[1]?.text).toContain('[mask-type:luminance]')
+  })
+
+  it('reports unocss bare arbitrary value selectors only in the unocss namespace', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.w-10px {',
+        '  width: 10px;',
+        '}',
+        '',
+        '.w-50\\% {',
+        '  width: 50%;',
+        '}',
+        '',
+        '.top--10px {',
+        '  top: -10px;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: unocssRecommended,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME,
+    )
+
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(3)
+    expect(warnings[0]?.text).toContain('w-10px')
+    expect(warnings[1]?.text).toContain('w-50%')
+    expect(warnings[2]?.text).toContain('top--10px')
   })
 
   it('ignores semantic selectors when no-arbitrary-value is enabled', async () => {

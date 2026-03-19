@@ -189,7 +189,7 @@ export function getNormalizedUtilityCandidate(className: string): string {
   return normalizeUtilityCandidate(className)
 }
 
-export function isArbitraryValueUtilityClass(className: string): boolean {
+export function isTailwindArbitraryValueUtilityClass(className: string): boolean {
   const normalized = normalizeUtilityCandidate(className)
 
   if (normalized.startsWith('[') && normalized.endsWith(']')) {
@@ -198,20 +198,34 @@ export function isArbitraryValueUtilityClass(className: string): boolean {
 
   const arbitraryStartIndex = normalized.indexOf('[')
   if (arbitraryStartIndex === -1) {
-    const matchedPrefix = getMatchedUtilityPrefix(normalized)
-    if (!matchedPrefix) {
-      return false
-    }
-
-    const utilityValue = normalized
-      .slice(matchedPrefix.length)
-      .replace(LEADING_NEGATIVE_SIGN_RE, '')
-
-    return utilityValue.length > 0 && isUnoCssBareArbitraryValue(utilityValue)
+    return false
   }
 
   const utilityPrefix = normalized.slice(0, arbitraryStartIndex)
   return UTILITY_PREFIXES.some(prefix => utilityPrefix === prefix || utilityPrefix.startsWith(prefix))
+}
+
+export function isUnoCssArbitraryValueUtilityClass(className: string): boolean {
+  const normalized = normalizeUtilityCandidate(className)
+
+  if (isTailwindArbitraryValueUtilityClass(className)) {
+    return true
+  }
+
+  const matchedPrefix = getMatchedUtilityPrefix(normalized)
+  if (!matchedPrefix) {
+    return false
+  }
+
+  const utilityValue = normalized
+    .slice(matchedPrefix.length)
+    .replace(LEADING_NEGATIVE_SIGN_RE, '')
+
+  return utilityValue.length > 0 && isUnoCssBareArbitraryValue(utilityValue)
+}
+
+export function isArbitraryValueUtilityClass(className: string): boolean {
+  return isUnoCssArbitraryValueUtilityClass(className)
 }
 
 export function isHeuristicUtilityClass(className: string): boolean {

@@ -7,13 +7,19 @@ import {
 } from 'postcss-tailwindcss'
 import stylelintModule from 'stylelint'
 import { NO_ARBITRARY_VALUE_RULE_NAME } from './constants'
-import { isArbitraryValueUtilityClass } from './heuristics'
+import {
+  isTailwindArbitraryValueUtilityClass,
+  isUnoCssArbitraryValueUtilityClass,
+} from './heuristics'
 import { createNoArbitraryValueMessages } from './messages'
 
 type RuleResult = stylelint.PostcssResult
 
 export function createNoArbitraryValueRuleFunction(ruleName: string) {
   const ruleMessages = createNoArbitraryValueMessages(ruleName)
+  const isArbitraryValueUtilityClass = ruleName.startsWith('unocss/')
+    ? isUnoCssArbitraryValueUtilityClass
+    : isTailwindArbitraryValueUtilityClass
   return ((primary: unknown) => {
     return async (root: PostcssRoot, result: RuleResult) => {
       const validOptions = stylelintModule.utils.validateOptions(result, ruleName, {

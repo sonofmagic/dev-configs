@@ -3,7 +3,8 @@ function shellQuote(file) {
 }
 
 function isStylelintDemoFile(file) {
-  return file.startsWith('apps/mock/src/stylelint-demo/')
+  return file.includes('/apps/mock/src/stylelint-demo/')
+    || file.startsWith('apps/mock/src/stylelint-demo/')
 }
 
 function createStylelintCommand(files) {

@@ -161,7 +161,6 @@ import {
   tailwindBase,
   tailwindRecommended,
   unocssBase,
-  unocssRecommended,
   unocssNoApplyPlugin,
   unocssNoApplyRuleName,
   unocssNoArbitraryValuePlugin,
@@ -170,6 +169,7 @@ import {
   unocssNoAtomicClassRuleName,
   unocssNoInvalidApplyPlugin,
   unocssNoInvalidApplyRuleName,
+  unocssRecommended,
 } from 'stylelint-plugin-tailwindcss'
 ```
 
@@ -180,7 +180,7 @@ import {
 - `tailwindcss/no-apply`
   Reports every `@apply` directive.
 - `tailwindcss/no-arbitrary-value`
-  Reports arbitrary values and arbitrary properties in selectors and `@apply` candidates, such as `w-[10px]`, `[mask-type:luminance]`, and common UnoCSS bare-value forms like `w-10px`, `w-50%`, `top--10px`, `bg-$brand`, `text-rgb(255,0,0)`, `translate-x-50%`, `outline-#fff`, and `[&>*]:w-10px`.
+  Reports Tailwind-style arbitrary values and arbitrary properties in selectors and `@apply` candidates, such as `w-[10px]` and `[mask-type:luminance]`.
 - `unocss/no-atomic-class`
   Exported as `unocssNoAtomicClassRuleName`, with `unocssNoAtomicClassPlugin` as the matching plugin.
 - `unocss/no-invalid-apply`
@@ -189,6 +189,7 @@ import {
   Exported as `unocssNoApplyRuleName`, with `unocssNoApplyPlugin` as the matching plugin.
 - `unocss/no-arbitrary-value`
   Exported as `unocssNoArbitraryValueRuleName`, with `unocssNoArbitraryValuePlugin` as the matching plugin.
+  This namespace also reports UnoCSS bare-value forms such as `w-10px`, `w-50%`, `top--10px`, `bg-$brand`, `text-rgb(255,0,0)`, `translate-x-50%`, `outline-#fff`, and `[&>*]:w-10px`.
 
 ## With `@icebreakers/stylelint-config`
 
