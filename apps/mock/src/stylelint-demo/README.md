@@ -2,6 +2,14 @@
 
 Open these files in your IDE with the Stylelint extension enabled.
 
+These demos run under the app's normal `stylelint.config.mjs`, which uses the
+full `@icebreakers/stylelint-config` preset. In other words, they validate
+against the recommended rule set, not the plugin `base` preset.
+
+The Tailwind-focused and UnoCSS-focused files only disable the opposite
+namespace at file level so the diagnostics stay readable. They are not using a
+reduced preset.
+
 Expected behavior:
 
 - semantic selectors such as `.page-shell`, `.card__body`, `.demo-panel`, `.button-primary`, `.uno-shell`, and `.uno-demo-panel` should pass

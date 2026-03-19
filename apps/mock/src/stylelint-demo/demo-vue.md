@@ -2,7 +2,8 @@
 
 This file shows the same policy checks inside Vue SFC style blocks for
 the `tailwindcss/*` namespace. The `unocss/*` rules are disabled at file
-level so the IDE output stays focused.
+level so the IDE output stays focused. The file is still checked under
+the app's normal recommended preset, not the plugin `base` preset.
 
 Passing cases:
 

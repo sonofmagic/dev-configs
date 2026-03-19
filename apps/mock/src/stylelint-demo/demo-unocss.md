@@ -1,7 +1,8 @@
 # `demo-unocss.css` and `demo-unocss.scss`
 
 These files isolate the `unocss/*` namespace by disabling the
-`tailwindcss/*` rules at file level.
+`tailwindcss/*` rules at file level. They are still validated by the
+app's normal recommended preset, not the plugin `base` preset.
 
 Passing cases:
 
