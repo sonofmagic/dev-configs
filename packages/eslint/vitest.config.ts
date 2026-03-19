@@ -1,6 +1,8 @@
 import path from 'node:path'
 import { defineProject } from 'vitest/config'
 
+const PACKAGE_SRC_GLOB = `${path.resolve(__dirname, './src').replaceAll(path.sep, '/')}/**`
+
 export default defineProject({
   test: {
     alias: [
@@ -23,7 +25,7 @@ export default defineProject({
       all: true,
       skipFull: true,
       include: [
-        'src/**',
+        PACKAGE_SRC_GLOB,
       ],
       exclude: [
         '**/*.d.ts',
