@@ -38,6 +38,7 @@
   "scripts": {
     "dev": "tsdown --watch --sourcemap",
     "build": "tsdown",
+    "lint": "eslint src test test-d",
     "test": "vitest run",
     "test:types": "tsd",
     "test:dev": "vitest",
