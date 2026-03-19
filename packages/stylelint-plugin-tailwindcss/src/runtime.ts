@@ -21,6 +21,7 @@ const tailwindV3CandidateCache = new Map<string, Map<string, boolean>>()
 const detectedVersionCache = new Map<string, Promise<TailwindResolutionMode>>()
 const tailwindV4DesignSystemCache = new Map<string, Promise<TailwindV4DesignSystem>>()
 const tailwindV4CandidateCacheByRuntime = new Map<string, Map<string, boolean>>()
+const tailwindThemePathCacheByRuntime = new Map<string, Map<string, boolean>>()
 
 function createContextFromFile(filePath: string) {
   return createRequire(filePath)
@@ -106,6 +107,7 @@ async function getTailwindV3RuntimeContext(fromFile?: string): Promise<TailwindR
     return {
       candidateRuleContext: createContext(config),
       generateRules,
+      resolvedConfig: config as Record<string, unknown>,
     }
   })()
 
@@ -242,4 +244,147 @@ export async function isTailwindUtilityClass(className: string, fromFile?: strin
   return majorVersion === 4
     ? isTailwindUtilityClassV4(className, fromFile)
     : isTailwindUtilityClassV3(className, fromFile)
+}
+
+function splitThemePath(path: string): string[] {
+  const segments: string[] = []
+  let current = ''
+  let bracketDepth = 0
+
+  for (const char of path) {
+    if (char === '[') {
+      bracketDepth += 1
+      current += char
+      continue
+    }
+
+    if (char === ']') {
+      bracketDepth = Math.max(0, bracketDepth - 1)
+      current += char
+      continue
+    }
+
+    if (char === '.' && bracketDepth === 0) {
+      if (current) {
+        segments.push(current)
+      }
+      current = ''
+      continue
+    }
+
+    current += char
+  }
+
+  if (current) {
+    segments.push(current)
+  }
+
+  return segments.flatMap((segment) => {
+    const nested: string[] = []
+    let currentSegment = ''
+
+    for (let index = 0; index < segment.length; index += 1) {
+      const char = segment[index]
+
+      if (char === '[') {
+        if (currentSegment) {
+          nested.push(currentSegment)
+          currentSegment = ''
+        }
+
+        const endIndex = segment.indexOf(']', index)
+        if (endIndex === -1) {
+          currentSegment += segment.slice(index)
+          break
+        }
+
+        nested.push(segment.slice(index + 1, endIndex))
+        index = endIndex
+        continue
+      }
+
+      currentSegment += char
+    }
+
+    if (currentSegment) {
+      nested.push(currentSegment)
+    }
+
+    return nested
+  }).filter(Boolean)
+}
+
+function getThemePathValue(source: unknown, path: string): unknown {
+  let current = source
+
+  for (const segment of splitThemePath(path)) {
+    if (current === null || current === undefined) {
+      return undefined
+    }
+
+    if (typeof current !== 'object') {
+      return undefined
+    }
+
+    current = (current as Record<string, unknown>)[segment]
+  }
+
+  return current
+}
+
+async function isTailwindThemePathV3(path: string, fromFile?: string): Promise<boolean> {
+  const runtime = resolveTailwindRuntime({
+    cwd: resolveRuntimeCwd(fromFile),
+  })
+  const cacheKey = runtime.packageJsonPath ?? 'default'
+  const cache = tailwindThemePathCacheByRuntime.get(cacheKey) ?? new Map<string, boolean>()
+
+  if (tailwindThemePathCacheByRuntime.get(cacheKey) === undefined) {
+    tailwindThemePathCacheByRuntime.set(cacheKey, cache)
+  }
+
+  const cached = cache.get(path)
+  if (cached !== undefined) {
+    return cached
+  }
+
+  const context = await getTailwindV3RuntimeContext(fromFile)
+  const matched = getThemePathValue(context.resolvedConfig.theme, path) !== undefined
+
+  cache.set(path, matched)
+  return matched
+}
+
+async function isTailwindThemePathV4(path: string, fromFile?: string): Promise<boolean> {
+  const runtime = resolveTailwindRuntime({
+    cwd: resolveRuntimeCwd(fromFile),
+  })
+  const cacheKey = runtime.packageJsonPath ?? 'default'
+  const cache = tailwindThemePathCacheByRuntime.get(cacheKey) ?? new Map<string, boolean>()
+
+  if (tailwindThemePathCacheByRuntime.get(cacheKey) === undefined) {
+    tailwindThemePathCacheByRuntime.set(cacheKey, cache)
+  }
+
+  const cached = cache.get(path)
+  if (cached !== undefined) {
+    return cached
+  }
+
+  const designSystem = await getTailwindV4DesignSystem(fromFile)
+  const matched = designSystem.resolveThemeValue(path) !== undefined
+
+  cache.set(path, matched)
+  return matched
+}
+
+export async function isTailwindThemePath(path: string, fromFile?: string): Promise<boolean> {
+  const majorVersion = await detectTailwindMajorVersion(fromFile)
+  if (majorVersion === 'heuristic') {
+    return false
+  }
+
+  return majorVersion === 4
+    ? isTailwindThemePathV4(path, fromFile)
+    : isTailwindThemePathV3(path, fromFile)
 }

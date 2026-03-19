@@ -20,10 +20,16 @@
 - `tailwindcss/no-invalid-apply`
 - `tailwindcss/no-apply`
 - `tailwindcss/no-arbitrary-value`
+- `tailwindcss/no-theme-function`
+- `tailwindcss/no-screen-directive`
+- `tailwindcss/no-tailwind-directive`
+- `tailwindcss/no-import-directive`
+- `tailwindcss/no-css-layer`
 - `unocss/no-atomic-class`
 - `unocss/no-invalid-apply`
 - `unocss/no-apply`
 - `unocss/no-arbitrary-value`
+- `unocss/no-variant-group`
 
 ## 会拦截什么
 
@@ -156,8 +162,18 @@ import {
   noArbitraryValueRuleName,
   noAtomicClassPlugin,
   noAtomicClassRuleName,
+  noCssLayerPlugin,
+  noCssLayerRuleName,
+  noImportDirectivePlugin,
+  noImportDirectiveRuleName,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
+  noScreenDirectivePlugin,
+  noScreenDirectiveRuleName,
+  noTailwindDirectivePlugin,
+  noTailwindDirectiveRuleName,
+  noThemeFunctionPlugin,
+  noThemeFunctionRuleName,
   tailwindBase,
   tailwindRecommended,
   unocssBase,
@@ -169,6 +185,8 @@ import {
   unocssNoAtomicClassRuleName,
   unocssNoInvalidApplyPlugin,
   unocssNoInvalidApplyRuleName,
+  unocssNoVariantGroupPlugin,
+  unocssNoVariantGroupRuleName,
   unocssRecommended,
 } from 'stylelint-plugin-tailwindcss'
 ```
@@ -181,6 +199,16 @@ import {
   只要出现 `@apply` 就报错。
 - `tailwindcss/no-arbitrary-value`
   检查 Tailwind 风格的 arbitrary value / arbitrary property，例如 `w-[10px]`、`[mask-type:luminance]`。
+- `tailwindcss/no-theme-function`
+  检查声明值和 at-rule 参数里的 `theme(...)` 调用。
+- `tailwindcss/no-screen-directive`
+  检查 `@screen` 指令。
+- `tailwindcss/no-tailwind-directive`
+  检查 `@tailwind` 指令。
+- `tailwindcss/no-import-directive`
+  检查 `@import "tailwindcss"` 这类入口导入。
+- `tailwindcss/no-css-layer`
+  检查手写的 `@layer` 指令。
 - `unocss/no-atomic-class`
   对应导出名为 `unocssNoAtomicClassRuleName`，匹配插件为 `unocssNoAtomicClassPlugin`。
 - `unocss/no-invalid-apply`
@@ -190,6 +218,9 @@ import {
 - `unocss/no-arbitrary-value`
   对应导出名为 `unocssNoArbitraryValueRuleName`，匹配插件为 `unocssNoArbitraryValuePlugin`。
   这个命名空间还会检查 UnoCSS 常见的裸值写法，例如 `w-10px`、`w-50%`、`top--10px`、`bg-$brand`、`text-rgb(255,0,0)`、`translate-x-50%`、`outline-#fff`、`[&>*]:w-10px`。
+- `unocss/no-variant-group`
+  对应导出名为 `unocssNoVariantGroupRuleName`，匹配插件为 `unocssNoVariantGroupPlugin`。
+  会检查 `hover:(bg-red-500 text-white)` 这类 UnoCSS variant group 写法。
 
 ## 配合 `@icebreakers/stylelint-config`
 

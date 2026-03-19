@@ -11,8 +11,14 @@ import defaultConfig, {
   noArbitraryValueRuleName,
   noAtomicClassPlugin,
   noAtomicClassRuleName,
+  noCssLayerRuleName,
+  noImportDirectiveRuleName,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
+  noInvalidThemeFunctionRuleName,
+  noScreenDirectiveRuleName,
+  noTailwindDirectiveRuleName,
+  noThemeFunctionRuleName,
   recommended,
   tailwindBase,
   tailwindRecommended,
@@ -20,6 +26,7 @@ import defaultConfig, {
   UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME,
   UNOCSS_NO_ATOMIC_CLASS_RULE_NAME,
   UNOCSS_NO_INVALID_APPLY_RULE_NAME,
+  UNOCSS_NO_VARIANT_GROUP_RULE_NAME,
   unocssBase,
   unocssRecommended,
 } from '@/index'
@@ -57,10 +64,17 @@ describe('stylelint-plugin-tailwindcss', () => {
       [noInvalidApplyRuleName]: true,
       [noApplyRuleName]: true,
       [noArbitraryValueRuleName]: true,
+      [noThemeFunctionRuleName]: true,
+      [noInvalidThemeFunctionRuleName]: true,
+      [noScreenDirectiveRuleName]: true,
+      [noTailwindDirectiveRuleName]: true,
+      [noImportDirectiveRuleName]: true,
+      [noCssLayerRuleName]: true,
       [UNOCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
       [UNOCSS_NO_INVALID_APPLY_RULE_NAME]: true,
       [UNOCSS_NO_APPLY_RULE_NAME]: true,
       [UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
+      [UNOCSS_NO_VARIANT_GROUP_RULE_NAME]: true,
     })
     expect(tailwindBase.rules).toEqual({
       [noAtomicClassRuleName]: true,
@@ -71,6 +85,12 @@ describe('stylelint-plugin-tailwindcss', () => {
       [noInvalidApplyRuleName]: true,
       [noApplyRuleName]: true,
       [noArbitraryValueRuleName]: true,
+      [noThemeFunctionRuleName]: true,
+      [noInvalidThemeFunctionRuleName]: true,
+      [noScreenDirectiveRuleName]: true,
+      [noTailwindDirectiveRuleName]: true,
+      [noImportDirectiveRuleName]: true,
+      [noCssLayerRuleName]: true,
     })
     expect(unocssBase.rules).toEqual({
       [UNOCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
@@ -81,6 +101,7 @@ describe('stylelint-plugin-tailwindcss', () => {
       [UNOCSS_NO_INVALID_APPLY_RULE_NAME]: true,
       [UNOCSS_NO_APPLY_RULE_NAME]: true,
       [UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
+      [UNOCSS_NO_VARIANT_GROUP_RULE_NAME]: true,
     })
   })
 
@@ -238,6 +259,114 @@ describe('stylelint-plugin-tailwindcss', () => {
     expect(warnings[0]?.text).toContain('bg-rd-500')
   })
 
+  it('reports theme() calls when no-theme-function is enabled', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  color: theme(colors.gray.900 / 75%);',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: tailwindRecommended,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noThemeFunctionRuleName,
+    )
+
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('colors.gray.900 / 75%')
+  })
+
+  it('reports invalid theme() calls when no-invalid-theme-function is enabled', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  color: theme(colors.not-exist.123);',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: tailwindRecommended,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noInvalidThemeFunctionRuleName,
+    )
+
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('colors.not-exist.123')
+  })
+
+  it('reports @screen directives when no-screen-directive is enabled', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '@screen md {',
+        '  .button {',
+        '    color: red;',
+        '  }',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: tailwindRecommended,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noScreenDirectiveRuleName,
+    )
+
+    expect(warnings).toHaveLength(1)
+  })
+
+  it('reports @tailwind directives when no-tailwind-directive is enabled', async () => {
+    const result = await stylelint.lint({
+      code: '@tailwind utilities;',
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: tailwindRecommended,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noTailwindDirectiveRuleName,
+    )
+
+    expect(warnings).toHaveLength(1)
+  })
+
+  it('reports tailwind imports when no-import-directive is enabled', async () => {
+    const result = await stylelint.lint({
+      code: '@import "tailwindcss";',
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: tailwindRecommended,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noImportDirectiveRuleName,
+    )
+
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('tailwindcss')
+  })
+
+  it('reports @layer directives when no-css-layer is enabled', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '@layer utilities {',
+        '  .button {',
+        '    color: red;',
+        '  }',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: tailwindRecommended,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === noCssLayerRuleName,
+    )
+
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('utilities')
+  })
+
   it('ignores semantic @apply candidates that do not look utility-like', async () => {
     const result = await stylelint.lint({
       code: [
@@ -393,6 +522,25 @@ describe('stylelint-plugin-tailwindcss', () => {
     expect(warnings[0]?.text).toContain('w-10px')
     expect(warnings[1]?.text).toContain('w-50%')
     expect(warnings[2]?.text).toContain('top--10px')
+  })
+
+  it('reports unocss variant groups only in the unocss namespace', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply hover:(bg-red-500 text-white);',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: unocssRecommended,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === UNOCSS_NO_VARIANT_GROUP_RULE_NAME,
+    )
+
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('hover:(bg-red-500 text-white)')
   })
 
   it('ignores semantic selectors when no-arbitrary-value is enabled', async () => {

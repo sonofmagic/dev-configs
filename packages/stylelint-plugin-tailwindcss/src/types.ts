@@ -4,6 +4,7 @@ export type TailwindResolutionMode = TailwindMajorVersion | 'heuristic'
 export interface TailwindRuntimeContextV3 {
   candidateRuleContext: object
   generateRules: (candidates: Set<string>, context: object) => unknown[]
+  resolvedConfig: Record<string, unknown>
 }
 
 export interface TailwindV4DesignSystem {

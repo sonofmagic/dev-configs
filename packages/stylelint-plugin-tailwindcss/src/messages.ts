@@ -41,6 +41,60 @@ export function createNoArbitraryValueMessages(ruleName: string) {
   })
 }
 
+export function createNoThemeFunctionMessages(ruleName: string) {
+  const framework = getFrameworkDisplayName(ruleName)
+  return stylelint.utils.ruleMessages(ruleName, {
+    rejected: (raw: string) =>
+      `Unexpected ${framework} theme() call "${raw}"`,
+  })
+}
+
+export function createNoInvalidThemeFunctionMessages(ruleName: string) {
+  const framework = getFrameworkDisplayName(ruleName)
+  return stylelint.utils.ruleMessages(ruleName, {
+    rejected: (raw: string) =>
+      `Unexpected invalid ${framework} theme() call "${raw}"`,
+  })
+}
+
+export function createNoScreenDirectiveMessages(ruleName: string) {
+  const framework = getFrameworkDisplayName(ruleName)
+  return stylelint.utils.ruleMessages(ruleName, {
+    rejected: () => `Unexpected ${framework} @screen directive`,
+  })
+}
+
+export function createNoTailwindDirectiveMessages(ruleName: string) {
+  const framework = getFrameworkDisplayName(ruleName)
+  return stylelint.utils.ruleMessages(ruleName, {
+    rejected: (name: string) => `Unexpected ${framework} @${name} directive`,
+  })
+}
+
+export function createNoImportDirectiveMessages(ruleName: string) {
+  const framework = getFrameworkDisplayName(ruleName)
+  return stylelint.utils.ruleMessages(ruleName, {
+    rejected: (target: string) =>
+      `Unexpected ${framework} import directive "${target}"`,
+  })
+}
+
+export function createNoCssLayerMessages(ruleName: string) {
+  const framework = getFrameworkDisplayName(ruleName)
+  return stylelint.utils.ruleMessages(ruleName, {
+    rejected: (layerName: string) =>
+      `Unexpected ${framework} @layer directive "${layerName}"`,
+  })
+}
+
+export function createNoVariantGroupMessages(ruleName: string) {
+  const framework = getFrameworkDisplayName(ruleName)
+  return stylelint.utils.ruleMessages(ruleName, {
+    rejected: (candidate: string) =>
+      `Unexpected ${framework} variant group "${candidate}"`,
+  })
+}
+
 export const messages = createMessages(NO_ATOMIC_CLASS_RULE_NAME)
 
 export const noInvalidApplyMessages = createNoInvalidApplyMessages(

@@ -12,17 +12,31 @@ import {
   TAILWINDCSS_NO_APPLY_RULE_NAME,
   TAILWINDCSS_NO_ARBITRARY_VALUE_RULE_NAME,
   TAILWINDCSS_NO_ATOMIC_CLASS_RULE_NAME,
+  TAILWINDCSS_NO_CSS_LAYER_RULE_NAME,
+  TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME,
   TAILWINDCSS_NO_INVALID_APPLY_RULE_NAME,
+  TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME,
+  TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME,
+  TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME,
+  TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME,
   UNOCSS_NO_APPLY_RULE_NAME,
   UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME,
   UNOCSS_NO_ATOMIC_CLASS_RULE_NAME,
   UNOCSS_NO_INVALID_APPLY_RULE_NAME,
+  UNOCSS_NO_VARIANT_GROUP_RULE_NAME,
 } from './constants'
 import {
   createMessages,
   createNoApplyMessages,
   createNoArbitraryValueMessages,
+  createNoCssLayerMessages,
+  createNoImportDirectiveMessages,
   createNoInvalidApplyMessages,
+  createNoInvalidThemeFunctionMessages,
+  createNoScreenDirectiveMessages,
+  createNoTailwindDirectiveMessages,
+  createNoThemeFunctionMessages,
+  createNoVariantGroupMessages,
   messages,
   noApplyMessages,
   noArbitraryValueMessages,
@@ -33,6 +47,27 @@ import {
   createNoArbitraryValueRuleFunction,
   noArbitraryValueRuleFunction,
 } from './no-arbitrary-value-rule'
+import {
+  noCssLayerRuleFunction,
+} from './no-css-layer-rule'
+import {
+  noImportDirectiveRuleFunction,
+} from './no-import-directive-rule'
+import {
+  noInvalidThemeFunctionRuleFunction,
+} from './no-invalid-theme-function-rule'
+import {
+  noScreenDirectiveRuleFunction,
+} from './no-screen-directive-rule'
+import {
+  noTailwindDirectiveRuleFunction,
+} from './no-tailwind-directive-rule'
+import {
+  noThemeFunctionRuleFunction,
+} from './no-theme-function-rule'
+import {
+  createNoVariantGroupRuleFunction,
+} from './no-variant-group-rule'
 import { createRuleFunction, ruleFunction } from './rule'
 
 interface StylelintPluginConfig {
@@ -45,6 +80,7 @@ function createPluginBundle(names: {
   noArbitraryValue: string
   noAtomicClass: string
   noInvalidApply: string
+  noVariantGroup?: string
 }) {
   const noAtomicClassRuleFunction = createRuleFunction(names.noAtomicClass)
   noAtomicClassRuleFunction.ruleName = names.noAtomicClass
@@ -76,6 +112,20 @@ function createPluginBundle(names: {
     url: 'https://github.com/sonofmagic/dev-configs',
   }
 
+  const noVariantGroupRule = names.noVariantGroup
+    ? createNoVariantGroupRuleFunction(names.noVariantGroup)
+    : undefined
+
+  if (noVariantGroupRule && names.noVariantGroup) {
+    noVariantGroupRule.ruleName = names.noVariantGroup
+    noVariantGroupRule.messages = createNoVariantGroupMessages(
+      names.noVariantGroup,
+    ) as Rule['messages']
+    noVariantGroupRule.meta = {
+      url: 'https://github.com/sonofmagic/dev-configs',
+    }
+  }
+
   return {
     noApplyPlugin: stylelint.createPlugin(names.noApply, noApplyRule),
     noApplyRule,
@@ -91,6 +141,15 @@ function createPluginBundle(names: {
       noInvalidApplyRule,
     ),
     noInvalidApplyRule,
+    ...(noVariantGroupRule && names.noVariantGroup
+      ? {
+          noVariantGroupPlugin: stylelint.createPlugin(
+            names.noVariantGroup,
+            noVariantGroupRule,
+          ),
+          noVariantGroupRule,
+        }
+      : {}),
   }
 }
 
@@ -118,11 +177,13 @@ function createRecommendedConfig(plugins: {
   noArbitraryValuePlugin: Plugin
   noAtomicClassPlugin: Plugin
   noInvalidApplyPlugin: Plugin
+  extraPlugins?: Plugin[]
 }, names: {
   noApply: string
   noArbitraryValue: string
   noAtomicClass: string
   noInvalidApply: string
+  extraRules?: string[]
 }): StylelintPluginConfig {
   return {
     plugins: [
@@ -130,12 +191,14 @@ function createRecommendedConfig(plugins: {
       plugins.noInvalidApplyPlugin,
       plugins.noApplyPlugin,
       plugins.noArbitraryValuePlugin,
+      ...(plugins.extraPlugins ?? []),
     ],
     rules: {
       [names.noAtomicClass]: true,
       [names.noInvalidApply]: true,
       [names.noApply]: true,
       [names.noArbitraryValue]: true,
+      ...Object.fromEntries((names.extraRules ?? []).map(ruleName => [ruleName, true])),
     },
   }
 }
@@ -147,6 +210,13 @@ export { noArbitraryValueMessages } from './messages'
 export { noInvalidApplyMessages } from './messages'
 export { noApplyRuleFunction } from './no-apply-rule'
 export { noArbitraryValueRuleFunction } from './no-arbitrary-value-rule'
+export { noCssLayerRuleFunction } from './no-css-layer-rule'
+export { noImportDirectiveRuleFunction } from './no-import-directive-rule'
+export { noInvalidThemeFunctionRuleFunction } from './no-invalid-theme-function-rule'
+export { noScreenDirectiveRuleFunction } from './no-screen-directive-rule'
+export { noTailwindDirectiveRuleFunction } from './no-tailwind-directive-rule'
+export { noThemeFunctionRuleFunction } from './no-theme-function-rule'
+export { noVariantGroupRuleFunction } from './no-variant-group-rule'
 export { ruleFunction } from './rule'
 export { isTailwindUtilityClass } from './runtime'
 
@@ -169,6 +239,30 @@ const noArbitraryValuePlugin = stylelint.createPlugin(
   NO_ARBITRARY_VALUE_RULE_NAME,
   noArbitraryValueRuleFunction,
 )
+const noThemeFunctionPlugin = stylelint.createPlugin(
+  TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME,
+  noThemeFunctionRuleFunction,
+)
+const noScreenDirectivePlugin = stylelint.createPlugin(
+  TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME,
+  noScreenDirectiveRuleFunction,
+)
+const noTailwindDirectivePlugin = stylelint.createPlugin(
+  TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME,
+  noTailwindDirectiveRuleFunction,
+)
+const noImportDirectivePlugin = stylelint.createPlugin(
+  TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME,
+  noImportDirectiveRuleFunction,
+)
+const noInvalidThemeFunctionPlugin = stylelint.createPlugin(
+  TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME,
+  noInvalidThemeFunctionRuleFunction,
+)
+const noCssLayerPlugin = stylelint.createPlugin(
+  TAILWINDCSS_NO_CSS_LAYER_RULE_NAME,
+  noCssLayerRuleFunction,
+)
 
 noInvalidApplyRuleFunction.ruleName = NO_INVALID_APPLY_RULE_NAME
 noInvalidApplyRuleFunction.messages = noInvalidApplyMessages as Rule['messages']
@@ -188,11 +282,60 @@ noArbitraryValueRuleFunction.meta = {
   url: 'https://github.com/sonofmagic/dev-configs',
 }
 
+noThemeFunctionRuleFunction.ruleName = TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME
+noThemeFunctionRuleFunction.messages = createNoThemeFunctionMessages(
+  TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME,
+) as Rule['messages']
+noThemeFunctionRuleFunction.meta = {
+  url: 'https://github.com/sonofmagic/dev-configs',
+}
+
+noScreenDirectiveRuleFunction.ruleName = TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME
+noScreenDirectiveRuleFunction.messages = createNoScreenDirectiveMessages(
+  TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME,
+) as Rule['messages']
+noScreenDirectiveRuleFunction.meta = {
+  url: 'https://github.com/sonofmagic/dev-configs',
+}
+
+noTailwindDirectiveRuleFunction.ruleName = TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME
+noTailwindDirectiveRuleFunction.messages = createNoTailwindDirectiveMessages(
+  TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME,
+) as Rule['messages']
+noTailwindDirectiveRuleFunction.meta = {
+  url: 'https://github.com/sonofmagic/dev-configs',
+}
+
+noImportDirectiveRuleFunction.ruleName = TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME
+noImportDirectiveRuleFunction.messages = createNoImportDirectiveMessages(
+  TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME,
+) as Rule['messages']
+noImportDirectiveRuleFunction.meta = {
+  url: 'https://github.com/sonofmagic/dev-configs',
+}
+
+noInvalidThemeFunctionRuleFunction.ruleName = TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME
+noInvalidThemeFunctionRuleFunction.messages = createNoInvalidThemeFunctionMessages(
+  TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME,
+) as Rule['messages']
+noInvalidThemeFunctionRuleFunction.meta = {
+  url: 'https://github.com/sonofmagic/dev-configs',
+}
+
+noCssLayerRuleFunction.ruleName = TAILWINDCSS_NO_CSS_LAYER_RULE_NAME
+noCssLayerRuleFunction.messages = createNoCssLayerMessages(
+  TAILWINDCSS_NO_CSS_LAYER_RULE_NAME,
+) as Rule['messages']
+noCssLayerRuleFunction.meta = {
+  url: 'https://github.com/sonofmagic/dev-configs',
+}
+
 const unocssBundle = createPluginBundle({
   noApply: UNOCSS_NO_APPLY_RULE_NAME,
   noArbitraryValue: UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME,
   noAtomicClass: UNOCSS_NO_ATOMIC_CLASS_RULE_NAME,
   noInvalidApply: UNOCSS_NO_INVALID_APPLY_RULE_NAME,
+  noVariantGroup: UNOCSS_NO_VARIANT_GROUP_RULE_NAME,
 })
 
 const base: StylelintPluginConfig = {
@@ -216,20 +359,34 @@ const recommended: StylelintPluginConfig = {
     noInvalidApplyPlugin,
     noApplyPlugin,
     noArbitraryValuePlugin,
+    noThemeFunctionPlugin,
+    noInvalidThemeFunctionPlugin,
+    noScreenDirectivePlugin,
+    noTailwindDirectivePlugin,
+    noImportDirectivePlugin,
+    noCssLayerPlugin,
     unocssBundle.noAtomicClassPlugin,
     unocssBundle.noInvalidApplyPlugin,
     unocssBundle.noApplyPlugin,
     unocssBundle.noArbitraryValuePlugin,
+    ...(unocssBundle.noVariantGroupPlugin ? [unocssBundle.noVariantGroupPlugin] : []),
   ],
   rules: {
     [TAILWINDCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
     [TAILWINDCSS_NO_INVALID_APPLY_RULE_NAME]: true,
     [TAILWINDCSS_NO_APPLY_RULE_NAME]: true,
     [TAILWINDCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
+    [TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME]: true,
+    [TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME]: true,
+    [TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME]: true,
+    [TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME]: true,
+    [TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME]: true,
+    [TAILWINDCSS_NO_CSS_LAYER_RULE_NAME]: true,
     [UNOCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
     [UNOCSS_NO_INVALID_APPLY_RULE_NAME]: true,
     [UNOCSS_NO_APPLY_RULE_NAME]: true,
     [UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
+    [UNOCSS_NO_VARIANT_GROUP_RULE_NAME]: true,
   },
 }
 
@@ -250,12 +407,28 @@ const tailwindRecommended = createRecommendedConfig(
     noArbitraryValuePlugin,
     noAtomicClassPlugin,
     noInvalidApplyPlugin,
+    extraPlugins: [
+      noThemeFunctionPlugin,
+      noInvalidThemeFunctionPlugin,
+      noScreenDirectivePlugin,
+      noTailwindDirectivePlugin,
+      noImportDirectivePlugin,
+      noCssLayerPlugin,
+    ],
   },
   {
     noApply: TAILWINDCSS_NO_APPLY_RULE_NAME,
     noArbitraryValue: TAILWINDCSS_NO_ARBITRARY_VALUE_RULE_NAME,
     noAtomicClass: TAILWINDCSS_NO_ATOMIC_CLASS_RULE_NAME,
     noInvalidApply: TAILWINDCSS_NO_INVALID_APPLY_RULE_NAME,
+    extraRules: [
+      TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME,
+      TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME,
+      TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME,
+      TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME,
+      TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME,
+      TAILWINDCSS_NO_CSS_LAYER_RULE_NAME,
+    ],
   },
 )
 
@@ -276,12 +449,16 @@ const unocssRecommended = createRecommendedConfig(
     noArbitraryValuePlugin: unocssBundle.noArbitraryValuePlugin,
     noAtomicClassPlugin: unocssBundle.noAtomicClassPlugin,
     noInvalidApplyPlugin: unocssBundle.noInvalidApplyPlugin,
+    extraPlugins: unocssBundle.noVariantGroupPlugin
+      ? [unocssBundle.noVariantGroupPlugin]
+      : [],
   },
   {
     noApply: UNOCSS_NO_APPLY_RULE_NAME,
     noArbitraryValue: UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME,
     noAtomicClass: UNOCSS_NO_ATOMIC_CLASS_RULE_NAME,
     noInvalidApply: UNOCSS_NO_INVALID_APPLY_RULE_NAME,
+    extraRules: [UNOCSS_NO_VARIANT_GROUP_RULE_NAME],
   },
 )
 
@@ -289,6 +466,7 @@ const unocssNoAtomicClassPlugin = unocssBundle.noAtomicClassPlugin
 const unocssNoInvalidApplyPlugin = unocssBundle.noInvalidApplyPlugin
 const unocssNoApplyPlugin = unocssBundle.noApplyPlugin
 const unocssNoArbitraryValuePlugin = unocssBundle.noArbitraryValuePlugin
+const unocssNoVariantGroupPlugin = unocssBundle.noVariantGroupPlugin
 
 export {
   base,
@@ -298,20 +476,39 @@ export {
   NO_ARBITRARY_VALUE_RULE_NAME as noArbitraryValueRuleName,
   noAtomicClassPlugin,
   NO_ATOMIC_CLASS_RULE_NAME as noAtomicClassRuleName,
+  noCssLayerPlugin,
+  TAILWINDCSS_NO_CSS_LAYER_RULE_NAME as noCssLayerRuleName,
+  noImportDirectivePlugin,
+  TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME as noImportDirectiveRuleName,
   noInvalidApplyPlugin,
   NO_INVALID_APPLY_RULE_NAME as noInvalidApplyRuleName,
+  noInvalidThemeFunctionPlugin,
+  TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME as noInvalidThemeFunctionRuleName,
+  noScreenDirectivePlugin,
+  TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME as noScreenDirectiveRuleName,
+  noTailwindDirectivePlugin,
+  TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME as noTailwindDirectiveRuleName,
+  noThemeFunctionPlugin,
+  TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME as noThemeFunctionRuleName,
   recommended,
   tailwindBase,
   TAILWINDCSS_NO_APPLY_RULE_NAME,
   TAILWINDCSS_NO_ARBITRARY_VALUE_RULE_NAME,
   TAILWINDCSS_NO_ATOMIC_CLASS_RULE_NAME,
+  TAILWINDCSS_NO_CSS_LAYER_RULE_NAME,
+  TAILWINDCSS_NO_IMPORT_DIRECTIVE_RULE_NAME,
   TAILWINDCSS_NO_INVALID_APPLY_RULE_NAME,
+  TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME,
+  TAILWINDCSS_NO_SCREEN_DIRECTIVE_RULE_NAME,
+  TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME,
+  TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME,
   tailwindRecommended,
   unocssBundle as unoBundle,
   UNOCSS_NO_APPLY_RULE_NAME,
   UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME,
   UNOCSS_NO_ATOMIC_CLASS_RULE_NAME,
   UNOCSS_NO_INVALID_APPLY_RULE_NAME,
+  UNOCSS_NO_VARIANT_GROUP_RULE_NAME,
   unocssBase,
   unocssBundle,
   unocssNoApplyPlugin,
@@ -322,6 +519,8 @@ export {
   UNOCSS_NO_ATOMIC_CLASS_RULE_NAME as unocssNoAtomicClassRuleName,
   unocssNoInvalidApplyPlugin,
   UNOCSS_NO_INVALID_APPLY_RULE_NAME as unocssNoInvalidApplyRuleName,
+  unocssNoVariantGroupPlugin,
+  UNOCSS_NO_VARIANT_GROUP_RULE_NAME as unocssNoVariantGroupRuleName,
   unocssBundle as unocssPlugins,
   unocssRecommended,
   unocssBundle as unoPlugins,

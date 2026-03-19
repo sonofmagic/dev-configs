@@ -20,10 +20,16 @@ It is designed for teams that want:
 - `tailwindcss/no-invalid-apply`
 - `tailwindcss/no-apply`
 - `tailwindcss/no-arbitrary-value`
+- `tailwindcss/no-theme-function`
+- `tailwindcss/no-screen-directive`
+- `tailwindcss/no-tailwind-directive`
+- `tailwindcss/no-import-directive`
+- `tailwindcss/no-css-layer`
 - `unocss/no-atomic-class`
 - `unocss/no-invalid-apply`
 - `unocss/no-apply`
 - `unocss/no-arbitrary-value`
+- `unocss/no-variant-group`
 
 ## What The Rule Reports
 
@@ -156,8 +162,18 @@ import {
   noArbitraryValueRuleName,
   noAtomicClassPlugin,
   noAtomicClassRuleName,
+  noCssLayerPlugin,
+  noCssLayerRuleName,
+  noImportDirectivePlugin,
+  noImportDirectiveRuleName,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
+  noScreenDirectivePlugin,
+  noScreenDirectiveRuleName,
+  noTailwindDirectivePlugin,
+  noTailwindDirectiveRuleName,
+  noThemeFunctionPlugin,
+  noThemeFunctionRuleName,
   tailwindBase,
   tailwindRecommended,
   unocssBase,
@@ -169,6 +185,8 @@ import {
   unocssNoAtomicClassRuleName,
   unocssNoInvalidApplyPlugin,
   unocssNoInvalidApplyRuleName,
+  unocssNoVariantGroupPlugin,
+  unocssNoVariantGroupRuleName,
   unocssRecommended,
 } from 'stylelint-plugin-tailwindcss'
 ```
@@ -181,6 +199,16 @@ import {
   Reports every `@apply` directive.
 - `tailwindcss/no-arbitrary-value`
   Reports Tailwind-style arbitrary values and arbitrary properties in selectors and `@apply` candidates, such as `w-[10px]` and `[mask-type:luminance]`.
+- `tailwindcss/no-theme-function`
+  Reports any `theme(...)` usage in declarations and at-rule params.
+- `tailwindcss/no-screen-directive`
+  Reports any `@screen` directive.
+- `tailwindcss/no-tailwind-directive`
+  Reports any `@tailwind` directive.
+- `tailwindcss/no-import-directive`
+  Reports `@import "tailwindcss"`-style entry imports.
+- `tailwindcss/no-css-layer`
+  Reports authored `@layer` directives.
 - `unocss/no-atomic-class`
   Exported as `unocssNoAtomicClassRuleName`, with `unocssNoAtomicClassPlugin` as the matching plugin.
 - `unocss/no-invalid-apply`
@@ -190,6 +218,9 @@ import {
 - `unocss/no-arbitrary-value`
   Exported as `unocssNoArbitraryValueRuleName`, with `unocssNoArbitraryValuePlugin` as the matching plugin.
   This namespace also reports UnoCSS bare-value forms such as `w-10px`, `w-50%`, `top--10px`, `bg-$brand`, `text-rgb(255,0,0)`, `translate-x-50%`, `outline-#fff`, and `[&>*]:w-10px`.
+- `unocss/no-variant-group`
+  Exported as `unocssNoVariantGroupRuleName`, with `unocssNoVariantGroupPlugin` as the matching plugin.
+  Reports UnoCSS variant groups such as `hover:(bg-red-500 text-white)`.
 
 ## With `@icebreakers/stylelint-config`
 
