@@ -2,6 +2,11 @@
 
 Disallows invalid Tailwind utility candidates inside `@apply`.
 
+## Included In
+
+- `base`: yes
+- `recommended`: yes
+
 Reports examples like:
 
 - `@apply bg-rd-500`

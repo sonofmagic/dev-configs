@@ -2,6 +2,11 @@
 
 Disallows `theme(...)` calls that reference missing Tailwind theme paths.
 
+## Included In
+
+- `base`: no
+- `recommended`: yes
+
 Reports examples like:
 
 - `theme(colors.not-exist.123)`

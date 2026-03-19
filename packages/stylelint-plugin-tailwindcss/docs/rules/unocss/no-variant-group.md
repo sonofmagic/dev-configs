@@ -2,6 +2,11 @@
 
 Disallows UnoCSS variant groups.
 
+## Included In
+
+- `base`: no
+- `recommended`: yes
+
 Reports examples like:
 
 - `hover:(bg-red-500 text-white)`

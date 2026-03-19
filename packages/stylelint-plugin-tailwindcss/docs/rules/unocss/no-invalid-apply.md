@@ -3,6 +3,11 @@
 Disallows invalid utility-like candidates inside `@apply` when they look like
 UnoCSS or utility-first shorthand.
 
+## Included In
+
+- `base`: yes
+- `recommended`: yes
+
 Reports examples like:
 
 - `@apply bg-rd-500`

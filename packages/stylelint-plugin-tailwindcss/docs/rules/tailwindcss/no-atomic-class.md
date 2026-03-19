@@ -2,6 +2,11 @@
 
 Disallows authored Tailwind utility selectors in stylesheets.
 
+## Included In
+
+- `base`: yes
+- `recommended`: yes
+
 Reports examples like:
 
 - `.flex`

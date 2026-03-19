@@ -2,6 +2,11 @@
 
 Disallows any UnoCSS-oriented `@apply` usage.
 
+## Included In
+
+- `base`: no
+- `recommended`: yes
+
 Reports examples like:
 
 - `@apply rounded-lg px-4`

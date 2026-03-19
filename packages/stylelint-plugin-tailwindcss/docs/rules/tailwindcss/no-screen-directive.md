@@ -2,6 +2,11 @@
 
 Disallows the Tailwind `@screen` directive.
 
+## Included In
+
+- `base`: no
+- `recommended`: yes
+
 Reports examples like:
 
 - `@screen md { ... }`

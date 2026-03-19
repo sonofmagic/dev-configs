@@ -2,6 +2,11 @@
 
 Disallows any `theme(...)` usage in declarations and at-rule params.
 
+## Included In
+
+- `base`: no
+- `recommended`: yes
+
 Reports examples like:
 
 - `color: theme(colors.gray.900 / 75%)`

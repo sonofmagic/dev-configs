@@ -2,6 +2,11 @@
 
 Disallows authored `@layer` directives.
 
+## Included In
+
+- `base`: no
+- `recommended`: yes
+
 Reports examples like:
 
 - `@layer utilities { ... }`

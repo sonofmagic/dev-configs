@@ -2,6 +2,11 @@
 
 Disallows Tailwind entry imports such as `@import "tailwindcss"`.
 
+## Included In
+
+- `base`: no
+- `recommended`: yes
+
 Reports examples like:
 
 - `@import "tailwindcss"`

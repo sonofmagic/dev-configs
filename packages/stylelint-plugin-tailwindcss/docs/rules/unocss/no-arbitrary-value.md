@@ -2,6 +2,11 @@
 
 Disallows UnoCSS arbitrary values, arbitrary properties, and bare-value forms.
 
+## Included In
+
+- `base`: no
+- `recommended`: yes
+
 Reports examples like:
 
 - `w-[10px]`

@@ -2,6 +2,11 @@
 
 Disallows Tailwind-style arbitrary values and arbitrary properties.
 
+## Included In
+
+- `base`: no
+- `recommended`: yes
+
 Reports examples like:
 
 - `w-[10px]`

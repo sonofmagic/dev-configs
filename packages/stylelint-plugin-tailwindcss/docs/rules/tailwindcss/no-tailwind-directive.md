@@ -2,6 +2,11 @@
 
 Disallows Tailwind entry directives inside authored stylesheets.
 
+## Included In
+
+- `base`: no
+- `recommended`: yes
+
 Reports examples like:
 
 - `@tailwind base`
