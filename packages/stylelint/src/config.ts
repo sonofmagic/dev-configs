@@ -12,6 +12,10 @@ import {
   noAtomicClassRuleName,
   noInvalidApplyRuleName,
   recommended as tailwindcssRecommended,
+  unocssNoApplyRuleName,
+  unocssNoArbitraryValueRuleName,
+  unocssNoAtomicClassRuleName,
+  unocssNoInvalidApplyRuleName,
 } from 'stylelint-plugin-tailwindcss'
 import { PRESET_RECESS_ORDER, PRESET_STANDARD_SCSS, PRESET_VUE_SCSS } from './constants'
 import { normalizeExtends, resolveIgnoreList, toArray, unique } from './utils'
@@ -141,6 +145,10 @@ export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOpti
       [noInvalidApplyRuleName]: true,
       [noApplyRuleName]: true,
       [noArbitraryValueRuleName]: true,
+      [unocssNoAtomicClassRuleName]: true,
+      [unocssNoInvalidApplyRuleName]: true,
+      [unocssNoApplyRuleName]: true,
+      [unocssNoArbitraryValueRuleName]: true,
       ...rules,
     },
   }

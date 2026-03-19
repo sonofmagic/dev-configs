@@ -92,11 +92,15 @@ tailwindcss/no-atomic-class
 tailwindcss/no-invalid-apply
 tailwindcss/no-apply
 tailwindcss/no-arbitrary-value
+unocss/no-atomic-class
+unocss/no-invalid-apply
+unocss/no-apply
+unocss/no-arbitrary-value
 ```
 
 这些规则会：
 
-- 拦截在样式文件中直接声明 Tailwind utility selector，但不会影响正常的语义化类名，例如 BEM / OOCSS 风格命名
+- 拦截在样式文件中直接声明 Tailwind / UnoCSS utility selector，但不会影响正常的语义化类名，例如 BEM / OOCSS 风格命名
 - 拦截无效的 `@apply` utility candidate
 - 直接禁止 `@apply`
 - 拦截 `w-[10px]`、`[mask-type:luminance]` 这类 arbitrary value / arbitrary property

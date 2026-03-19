@@ -1,6 +1,8 @@
 # `DemoStylelint.vue`
 
-This file shows the same policy checks inside Vue SFC style blocks.
+This file shows the same policy checks inside Vue SFC style blocks for
+the `tailwindcss/*` namespace. The `unocss/*` rules are disabled at file
+level so the IDE output stays focused.
 
 Passing cases:
 

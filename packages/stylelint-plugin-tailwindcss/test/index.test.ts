@@ -14,6 +14,14 @@ import defaultConfig, {
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
   recommended,
+  tailwindBase,
+  tailwindRecommended,
+  UNOCSS_NO_APPLY_RULE_NAME,
+  UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME,
+  UNOCSS_NO_ATOMIC_CLASS_RULE_NAME,
+  UNOCSS_NO_INVALID_APPLY_RULE_NAME,
+  unocssBase,
+  unocssRecommended,
 } from '@/index'
 
 const FIXTURE_DIR = path.resolve(__dirname, '..', 'fixtures')
@@ -33,10 +41,14 @@ describe('stylelint-plugin-tailwindcss', () => {
       plugins: [
         noAtomicClassPlugin,
         noInvalidApplyPlugin,
+        unocssBase.plugins[0],
+        unocssBase.plugins[1],
       ],
       rules: {
         [noAtomicClassRuleName]: true,
         [noInvalidApplyRuleName]: true,
+        [UNOCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
+        [UNOCSS_NO_INVALID_APPLY_RULE_NAME]: true,
       },
     })
     expect(recommended).toEqual(defaultConfig)
@@ -45,6 +57,30 @@ describe('stylelint-plugin-tailwindcss', () => {
       [noInvalidApplyRuleName]: true,
       [noApplyRuleName]: true,
       [noArbitraryValueRuleName]: true,
+      [UNOCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
+      [UNOCSS_NO_INVALID_APPLY_RULE_NAME]: true,
+      [UNOCSS_NO_APPLY_RULE_NAME]: true,
+      [UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
+    })
+    expect(tailwindBase.rules).toEqual({
+      [noAtomicClassRuleName]: true,
+      [noInvalidApplyRuleName]: true,
+    })
+    expect(tailwindRecommended.rules).toEqual({
+      [noAtomicClassRuleName]: true,
+      [noInvalidApplyRuleName]: true,
+      [noApplyRuleName]: true,
+      [noArbitraryValueRuleName]: true,
+    })
+    expect(unocssBase.rules).toEqual({
+      [UNOCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
+      [UNOCSS_NO_INVALID_APPLY_RULE_NAME]: true,
+    })
+    expect(unocssRecommended.rules).toEqual({
+      [UNOCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
+      [UNOCSS_NO_INVALID_APPLY_RULE_NAME]: true,
+      [UNOCSS_NO_APPLY_RULE_NAME]: true,
+      [UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
     })
   })
 
@@ -62,6 +98,48 @@ describe('stylelint-plugin-tailwindcss', () => {
     const warnings = result.results[0]?.warnings ?? []
     expect(result.errored).toBe(true)
     expect(warnings.some(warning => warning.rule === noApplyRuleName)).toBe(true)
+  })
+
+  it('supports disabling one namespace while keeping the other', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply rounded-lg;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: {
+        ...recommended,
+        rules: {
+          ...recommended.rules,
+          [UNOCSS_NO_APPLY_RULE_NAME]: false,
+          [UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME]: false,
+          [UNOCSS_NO_ATOMIC_CLASS_RULE_NAME]: false,
+          [UNOCSS_NO_INVALID_APPLY_RULE_NAME]: false,
+        },
+      },
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+    expect(warnings.some(warning => warning.rule === noApplyRuleName)).toBe(true)
+    expect(warnings.some(warning => warning.rule === UNOCSS_NO_APPLY_RULE_NAME)).toBe(false)
+  })
+
+  it('reports with the unocss namespace when only unocss rules are enabled', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply rounded-lg;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: unocssRecommended,
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+    expect(result.errored).toBe(true)
+    expect(warnings.some(warning => warning.rule === UNOCSS_NO_APPLY_RULE_NAME)).toBe(true)
+    expect(warnings.some(warning => warning.text.includes('UnoCSS'))).toBe(true)
   })
 
   it('reports declared utility selectors', async () => {

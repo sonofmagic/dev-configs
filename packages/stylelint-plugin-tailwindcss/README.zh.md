@@ -20,6 +20,10 @@
 - `tailwindcss/no-invalid-apply`
 - `tailwindcss/no-apply`
 - `tailwindcss/no-arbitrary-value`
+- `unocss/no-atomic-class`
+- `unocss/no-invalid-apply`
+- `unocss/no-apply`
+- `unocss/no-arbitrary-value`
 
 ## 会拦截什么
 
@@ -74,6 +78,11 @@ import { recommended } from 'stylelint-plugin-tailwindcss'
 export default recommended
 ```
 
+现在 `recommended` 默认同时启用两套命名空间：
+
+- `tailwindcss/*`
+- `unocss/*`
+
 最小基础配置：
 
 ```ts
@@ -86,6 +95,56 @@ export default base
 
 - `tailwindcss/no-atomic-class`
 - `tailwindcss/no-invalid-apply`
+- `unocss/no-atomic-class`
+- `unocss/no-invalid-apply`
+
+只保留 Tailwind 规则：
+
+```ts
+import { tailwindRecommended } from 'stylelint-plugin-tailwindcss'
+
+export default tailwindRecommended
+```
+
+只保留 UnoCSS 规则：
+
+```ts
+import { unocssRecommended } from 'stylelint-plugin-tailwindcss'
+
+export default unocssRecommended
+```
+
+保留默认双开，但关闭整组 UnoCSS：
+
+```ts
+import { recommended } from 'stylelint-plugin-tailwindcss'
+
+export default {
+  ...recommended,
+  rules: {
+    ...recommended.rules,
+    'unocss/no-atomic-class': false,
+    'unocss/no-invalid-apply': false,
+    'unocss/no-apply': false,
+    'unocss/no-arbitrary-value': false,
+  },
+}
+```
+
+按单条规则逐个关闭：
+
+```ts
+import { recommended } from 'stylelint-plugin-tailwindcss'
+
+export default {
+  ...recommended,
+  rules: {
+    ...recommended.rules,
+    'tailwindcss/no-apply': false,
+    'unocss/no-arbitrary-value': false,
+  },
+}
+```
 
 推荐使用的规则名和插件导出：
 
@@ -99,6 +158,18 @@ import {
   noAtomicClassRuleName,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
+  tailwindBase,
+  tailwindRecommended,
+  unocssBase,
+  unocssRecommended,
+  unocssNoApplyPlugin,
+  unocssNoApplyRuleName,
+  unocssNoArbitraryValuePlugin,
+  unocssNoArbitraryValueRuleName,
+  unocssNoAtomicClassPlugin,
+  unocssNoAtomicClassRuleName,
+  unocssNoInvalidApplyPlugin,
+  unocssNoInvalidApplyRuleName,
 } from 'stylelint-plugin-tailwindcss'
 ```
 
@@ -110,6 +181,14 @@ import {
   只要出现 `@apply` 就报错。
 - `tailwindcss/no-arbitrary-value`
   检查 selector 和 `@apply` 里的 arbitrary value / arbitrary property，例如 `w-[10px]`、`[mask-type:luminance]`，以及 UnoCSS 常见的裸值写法 `w-10px`、`w-50%`、`top--10px`、`bg-$brand`、`text-rgb(255,0,0)`、`translate-x-50%`、`outline-#fff`、`[&>*]:w-10px`。
+- `unocss/no-atomic-class`
+  对应导出名为 `unocssNoAtomicClassRuleName`，匹配插件为 `unocssNoAtomicClassPlugin`。
+- `unocss/no-invalid-apply`
+  对应导出名为 `unocssNoInvalidApplyRuleName`，匹配插件为 `unocssNoInvalidApplyPlugin`。
+- `unocss/no-apply`
+  对应导出名为 `unocssNoApplyRuleName`，匹配插件为 `unocssNoApplyPlugin`。
+- `unocss/no-arbitrary-value`
+  对应导出名为 `unocssNoArbitraryValueRuleName`，匹配插件为 `unocssNoArbitraryValuePlugin`。
 
 ## 配合 `@icebreakers/stylelint-config`
 

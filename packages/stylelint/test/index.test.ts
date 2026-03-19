@@ -43,7 +43,19 @@ function normalizeConfigForSnapshot(config: ReturnType<typeof icebreaker>) {
       if (index === 2) {
         return 'stylelint-plugin-tailwindcss/no-apply'
       }
-      return 'stylelint-plugin-tailwindcss/no-arbitrary-value'
+      if (index === 3) {
+        return 'stylelint-plugin-tailwindcss/no-arbitrary-value'
+      }
+      if (index === 4) {
+        return 'stylelint-plugin-tailwindcss/unocss/no-atomic-class'
+      }
+      if (index === 5) {
+        return 'stylelint-plugin-tailwindcss/unocss/no-invalid-apply'
+      }
+      if (index === 6) {
+        return 'stylelint-plugin-tailwindcss/unocss/no-apply'
+      }
+      return 'stylelint-plugin-tailwindcss/unocss/no-arbitrary-value'
     }),
   }
 }
@@ -83,7 +95,7 @@ describe('index', () => {
       expect.stringContaining(PRESET_VUE_SCSS),
       expect.stringContaining(PRESET_RECESS_ORDER),
     ])
-    expect(config.plugins).toHaveLength(4)
+    expect(config.plugins).toHaveLength(8)
 
     expect(normalizeConfigForSnapshot(config)).toMatchSnapshot()
   })
@@ -139,7 +151,7 @@ describe('index', () => {
       },
     })
 
-    expect(config.plugins).toHaveLength(5)
+    expect(config.plugins).toHaveLength(9)
     expect(config.rules?.['selector-class-pattern']).toBeNull()
   })
 })

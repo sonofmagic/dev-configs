@@ -41,6 +41,15 @@
             vue sfc demo guide
           </a>
         </li>
+        <li>
+          <a
+            href="https://github.com/sonofmagic/dev-configs/blob/main/apps/mock/src/stylelint-demo/demo-unocss.md"
+            target="_blank"
+            rel="noreferrer"
+          >
+            unocss demo guide
+          </a>
+        </li>
       </ul>
     </article>
   </section>
@@ -50,6 +59,7 @@
 </script>
 
 <style scoped>
+/* stylelint-disable unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */
 .demo-shell {
   padding: 20px;
 }
@@ -91,9 +101,11 @@
   width: 10px;
 }
 /* stylelint-enable selector-class-pattern, comment-empty-line-before */
+/* stylelint-enable unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */
 </style>
 
 <style lang="scss" scoped>
+/* stylelint-disable unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */
 .demo-stack {
   gap: 12px;
 }
@@ -125,4 +137,5 @@
   mask-type: luminance;
 }
 /* stylelint-enable selector-class-pattern, comment-empty-line-before */
+/* stylelint-enable unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */
 </style>

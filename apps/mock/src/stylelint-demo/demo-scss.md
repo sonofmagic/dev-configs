@@ -1,6 +1,8 @@
 # `demo.scss`
 
-This file focuses on SCSS nesting and `@apply` policy checks.
+This file focuses on SCSS nesting and `@apply` policy checks for the
+`tailwindcss/*` namespace. The `unocss/*` rules are disabled at file
+level so the IDE output stays focused.
 
 Passing cases:
 

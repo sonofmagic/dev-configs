@@ -1,6 +1,8 @@
 # `demo.css`
 
-This file focuses on authored selector examples.
+This file focuses on authored selector examples for the `tailwindcss/*`
+namespace. The `unocss/*` rules are disabled at file level so the IDE
+output stays focused.
 
 Passing cases:
 

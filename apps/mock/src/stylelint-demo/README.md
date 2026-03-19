@@ -4,18 +4,22 @@ Open these files in your IDE with the Stylelint extension enabled.
 
 Expected behavior:
 
-- semantic selectors such as `.page-shell`, `.card__body`, `.demo-panel`, `.button-primary` should pass
-- Tailwind utility selectors such as `.flex`, `.grid`, `.hover\:bg-red-500`, `.w-\[10px\]` should fail with `tailwindcss/no-atomic-class`
-- any `@apply` usage should fail with `tailwindcss/no-apply`
-- invalid `@apply` candidates such as `bg-rd-500` should fail with `tailwindcss/no-invalid-apply`
-- arbitrary values / arbitrary properties such as `.w-\[10px\]`, `.w-10px`, `.top--10px`, `.bg-\$brand`, `.text-rgb\(255\,0\,0\)`, `.translate-x-50\%`, `.\[mask-type\:luminance\]`, and `@apply w-[10px]` should fail with `tailwindcss/no-arbitrary-value`
+- semantic selectors such as `.page-shell`, `.card__body`, `.demo-panel`, `.button-primary`, `.uno-shell`, and `.uno-demo-panel` should pass
+- Tailwind utility selectors such as `.flex`, `.grid`, `.hover\:bg-red-500`, `.w-\[10px\]` should fail with `tailwindcss/no-atomic-class` in the Tailwind-focused demo files
+- UnoCSS utility selectors such as `.flex`, `.grid`, `.hover\:bg-red-500`, `.w-\[10px\]` should fail with `unocss/no-atomic-class` in the UnoCSS-focused demo files
+- any `@apply` usage should fail with `tailwindcss/no-apply` or `unocss/no-apply`
+- invalid `@apply` candidates such as `bg-rd-500` should fail with `tailwindcss/no-invalid-apply` or `unocss/no-invalid-apply`
+- arbitrary values / arbitrary properties such as `.w-\[10px\]`, `.w-10px`, `.top--10px`, `.bg-\$brand`, `.text-rgb\(255\,0\,0\)`, `.translate-x-50\%`, `.\[mask-type\:luminance\]`, and `@apply w-[10px]` should fail with `tailwindcss/no-arbitrary-value` or `unocss/no-arbitrary-value`
 - CSS, SCSS, and Vue SFC style blocks should all be checked
 
 Files:
 
-- `demo.css` focuses on selector pass/fail pairs
-- `demo.scss` adds `@apply` pass/fail comparisons and arbitrary value cases
-- `DemoStylelint.vue` shows the same rules inside Vue SFC `<style>` blocks
+- `demo.css` focuses on Tailwind selector pass/fail pairs
+- `demo.scss` adds Tailwind `@apply` pass/fail comparisons and arbitrary value cases
+- `DemoStylelint.vue` shows the same Tailwind-focused rules inside Vue SFC `<style>` blocks
+- `demo-unocss.css` focuses on UnoCSS selector pass/fail pairs
+- `demo-unocss.scss` adds UnoCSS `@apply` pass/fail comparisons and arbitrary value cases
+- `demo-unocss.md` explains the UnoCSS-specific demo files
 - `demo-css.md`, `demo-scss.md`, `demo-vue.md` are the GitHub-targeted walkthrough pages linked from the demo component
 
 Terminal check:

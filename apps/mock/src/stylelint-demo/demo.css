@@ -1,3 +1,4 @@
+/* stylelint-disable unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */
 .page-shell {
   display: block;
   padding: 24px;
@@ -76,3 +77,4 @@
   mask-type: luminance;
 }
 /* stylelint-enable selector-class-pattern, comment-empty-line-before */
+/* stylelint-enable unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */

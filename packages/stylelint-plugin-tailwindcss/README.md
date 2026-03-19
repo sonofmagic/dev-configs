@@ -20,6 +20,10 @@ It is designed for teams that want:
 - `tailwindcss/no-invalid-apply`
 - `tailwindcss/no-apply`
 - `tailwindcss/no-arbitrary-value`
+- `unocss/no-atomic-class`
+- `unocss/no-invalid-apply`
+- `unocss/no-apply`
+- `unocss/no-arbitrary-value`
 
 ## What The Rule Reports
 
@@ -74,6 +78,11 @@ import { recommended } from 'stylelint-plugin-tailwindcss'
 export default recommended
 ```
 
+`recommended` now enables both namespaces by default:
+
+- `tailwindcss/*`
+- `unocss/*`
+
 Minimal base config:
 
 ```ts
@@ -86,6 +95,56 @@ export default base
 
 - `tailwindcss/no-atomic-class`
 - `tailwindcss/no-invalid-apply`
+- `unocss/no-atomic-class`
+- `unocss/no-invalid-apply`
+
+Tailwind-only config:
+
+```ts
+import { tailwindRecommended } from 'stylelint-plugin-tailwindcss'
+
+export default tailwindRecommended
+```
+
+UnoCSS-only config:
+
+```ts
+import { unocssRecommended } from 'stylelint-plugin-tailwindcss'
+
+export default unocssRecommended
+```
+
+Disable one namespace while keeping the other:
+
+```ts
+import { recommended } from 'stylelint-plugin-tailwindcss'
+
+export default {
+  ...recommended,
+  rules: {
+    ...recommended.rules,
+    'unocss/no-atomic-class': false,
+    'unocss/no-invalid-apply': false,
+    'unocss/no-apply': false,
+    'unocss/no-arbitrary-value': false,
+  },
+}
+```
+
+Disable individual rules one by one:
+
+```ts
+import { recommended } from 'stylelint-plugin-tailwindcss'
+
+export default {
+  ...recommended,
+  rules: {
+    ...recommended.rules,
+    'tailwindcss/no-apply': false,
+    'unocss/no-arbitrary-value': false,
+  },
+}
+```
 
 Preferred exported rule names and plugins:
 
@@ -99,6 +158,18 @@ import {
   noAtomicClassRuleName,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
+  tailwindBase,
+  tailwindRecommended,
+  unocssBase,
+  unocssRecommended,
+  unocssNoApplyPlugin,
+  unocssNoApplyRuleName,
+  unocssNoArbitraryValuePlugin,
+  unocssNoArbitraryValueRuleName,
+  unocssNoAtomicClassPlugin,
+  unocssNoAtomicClassRuleName,
+  unocssNoInvalidApplyPlugin,
+  unocssNoInvalidApplyRuleName,
 } from 'stylelint-plugin-tailwindcss'
 ```
 
@@ -110,6 +181,14 @@ import {
   Reports every `@apply` directive.
 - `tailwindcss/no-arbitrary-value`
   Reports arbitrary values and arbitrary properties in selectors and `@apply` candidates, such as `w-[10px]`, `[mask-type:luminance]`, and common UnoCSS bare-value forms like `w-10px`, `w-50%`, `top--10px`, `bg-$brand`, `text-rgb(255,0,0)`, `translate-x-50%`, `outline-#fff`, and `[&>*]:w-10px`.
+- `unocss/no-atomic-class`
+  Exported as `unocssNoAtomicClassRuleName`, with `unocssNoAtomicClassPlugin` as the matching plugin.
+- `unocss/no-invalid-apply`
+  Exported as `unocssNoInvalidApplyRuleName`, with `unocssNoInvalidApplyPlugin` as the matching plugin.
+- `unocss/no-apply`
+  Exported as `unocssNoApplyRuleName`, with `unocssNoApplyPlugin` as the matching plugin.
+- `unocss/no-arbitrary-value`
+  Exported as `unocssNoArbitraryValueRuleName`, with `unocssNoArbitraryValuePlugin` as the matching plugin.
 
 ## With `@icebreakers/stylelint-config`
 

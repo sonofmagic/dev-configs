@@ -94,11 +94,15 @@ tailwindcss/no-atomic-class
 tailwindcss/no-invalid-apply
 tailwindcss/no-apply
 tailwindcss/no-arbitrary-value
+unocss/no-atomic-class
+unocss/no-invalid-apply
+unocss/no-apply
+unocss/no-arbitrary-value
 ```
 
 These rules:
 
-- report Tailwind utility selectors declared in authored stylesheets while still allowing semantic selectors such as BEM/OOCSS class names
+- report Tailwind and UnoCSS utility selectors declared in authored stylesheets while still allowing semantic selectors such as BEM/OOCSS class names
 - report invalid utility-like `@apply` candidates
 - disallow `@apply` entirely
 - disallow arbitrary values / arbitrary properties such as `w-[10px]` and `[mask-type:luminance]`

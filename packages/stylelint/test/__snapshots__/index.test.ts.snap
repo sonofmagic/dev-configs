@@ -13,6 +13,10 @@ exports[`index > common 1`] = `
     "stylelint-plugin-tailwindcss/no-invalid-apply",
     "stylelint-plugin-tailwindcss/no-apply",
     "stylelint-plugin-tailwindcss/no-arbitrary-value",
+    "stylelint-plugin-tailwindcss/unocss/no-atomic-class",
+    "stylelint-plugin-tailwindcss/unocss/no-invalid-apply",
+    "stylelint-plugin-tailwindcss/unocss/no-apply",
+    "stylelint-plugin-tailwindcss/unocss/no-arbitrary-value",
   ],
   "rules": {
     "at-rule-no-deprecated": [
@@ -81,6 +85,10 @@ exports[`index > common 1`] = `
         ],
       },
     ],
+    "unocss/no-apply": true,
+    "unocss/no-arbitrary-value": true,
+    "unocss/no-atomic-class": true,
+    "unocss/no-invalid-apply": true,
   },
 }
 `;

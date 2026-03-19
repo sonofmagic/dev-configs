@@ -9,6 +9,10 @@ import {
   noArbitraryValueRuleName,
   noAtomicClassRuleName,
   noInvalidApplyRuleName,
+  unocssNoApplyRuleName,
+  unocssNoArbitraryValueRuleName,
+  unocssNoAtomicClassRuleName,
+  unocssNoInvalidApplyRuleName,
 } from 'stylelint-plugin-tailwindcss'
 import { PRESET_RECESS_ORDER, PRESET_VUE_SCSS } from '@/constants'
 import { createStylelintConfig, icebreaker } from '@/index'
@@ -95,6 +99,30 @@ describe('stylelint integration', () => {
     expect(warnings[0]?.text).toContain('.flex')
   })
 
+  it('reports UnoCSS utility selector declarations by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.page-shell {',
+        '  display: block;',
+        '}',
+        '',
+        '.flex {',
+        '  display: flex;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === unocssNoAtomicClassRuleName,
+    )
+
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('.flex')
+  })
+
   it('reports invalid @apply candidates by default', async () => {
     const result = await stylelint.lint({
       code: [
@@ -115,6 +143,26 @@ describe('stylelint integration', () => {
     expect(warnings[0]?.text).toContain('bg-rd-500')
   })
 
+  it('reports invalid UnoCSS @apply candidates by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply bg-rd-500 rounded-lg;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === unocssNoInvalidApplyRuleName,
+    )
+
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('bg-rd-500')
+  })
+
   it('reports any @apply usage by default', async () => {
     const result = await stylelint.lint({
       code: [
@@ -128,6 +176,26 @@ describe('stylelint integration', () => {
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
       warning => warning.rule === noApplyRuleName,
+    )
+
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).toContain('@apply')
+  })
+
+  it('reports any UnoCSS @apply usage by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply rounded-lg px-4;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === unocssNoApplyRuleName,
     )
 
     expect(result.errored).toBe(true)
@@ -160,6 +228,44 @@ describe('stylelint integration', () => {
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
       warning => warning.rule === noArbitraryValueRuleName,
+    )
+    const warningTexts = warnings.map(warning => warning.text)
+
+    expect(result.errored).toBe(true)
+    expect(warnings).toHaveLength(6)
+    expect(warningTexts.some(text => text.includes('w-10px'))).toBe(true)
+    expect(warningTexts.some(text => text.includes('top--10px'))).toBe(true)
+    expect(warningTexts.some(text => text.includes('bg-$brand'))).toBe(true)
+    expect(warningTexts.some(text => text.includes('translate-x-50%'))).toBe(true)
+    expect(warningTexts.some(text => text.includes('w-[10px]'))).toBe(true)
+    expect(warningTexts.some(text => text.includes('[mask-type:luminance]'))).toBe(true)
+  })
+
+  it('reports UnoCSS arbitrary values by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.button {',
+        '  @apply w-[10px] top--10px bg-$brand;',
+        '}',
+        '',
+        '.w-10px {',
+        '  width: 10px;',
+        '}',
+        '',
+        '.translate-x-50\\% {',
+        '  translate: 50% 0;',
+        '}',
+        '',
+        '.\\[mask-type\\:luminance\\] {',
+        '  mask-type: luminance;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === unocssNoArbitraryValueRuleName,
     )
     const warningTexts = warnings.map(warning => warning.text)
 
