@@ -7,48 +7,15 @@
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "never"
   },
-  // Silent the stylistic rules in you IDE, but still auto fix them
-  "eslint.rules.customizations": [
-    // close "style/* off"
-    // {
-    //   "rule": "style/*",
-    //   "severity": "off"
-    // },
+  // Keep all ESLint diagnostics visible in the editor, especially for demos/input bad examples.
+  "eslint.useFlatConfig": true,
+  "eslint.workingDirectories": [
     {
-      "rule": "format/*",
-      "severity": "off"
+      "mode": "auto"
     },
     {
-      "rule": "*-indent",
-      "severity": "off"
-    },
-    {
-      "rule": "*-spacing",
-      "severity": "off"
-    },
-    {
-      "rule": "*-spaces",
-      "severity": "off"
-    },
-    {
-      "rule": "*-order",
-      "severity": "off"
-    },
-    {
-      "rule": "*-dangle",
-      "severity": "off"
-    },
-    {
-      "rule": "*-newline",
-      "severity": "off"
-    },
-    {
-      "rule": "*quotes",
-      "severity": "off"
-    },
-    {
-      "rule": "*semi",
-      "severity": "off"
+      "directory": ".",
+      "changeProcessCWD": true
     }
   ],
   // Enable eslint for all supported languages
