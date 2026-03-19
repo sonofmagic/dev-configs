@@ -12,8 +12,6 @@ recommended defaults for:
 - `tailwindcss/no-theme-function`
 - `tailwindcss/no-invalid-theme-function`
 - `tailwindcss/no-screen-directive`
-- `tailwindcss/no-tailwind-directive`
-- `tailwindcss/no-import-directive`
 - `tailwindcss/no-css-layer`
 - `unocss/no-variant-group`
 

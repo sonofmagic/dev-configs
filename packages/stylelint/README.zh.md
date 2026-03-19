@@ -92,10 +92,15 @@ tailwindcss/no-atomic-class
 tailwindcss/no-invalid-apply
 tailwindcss/no-apply
 tailwindcss/no-arbitrary-value
+tailwindcss/no-theme-function
+tailwindcss/no-invalid-theme-function
+tailwindcss/no-screen-directive
+tailwindcss/no-css-layer
 unocss/no-atomic-class
 unocss/no-invalid-apply
 unocss/no-apply
 unocss/no-arbitrary-value
+unocss/no-variant-group
 ```
 
 这些规则会：
@@ -104,6 +109,12 @@ unocss/no-arbitrary-value
 - 拦截无效的 `@apply` utility candidate
 - 直接禁止 `@apply`
 - 拦截 `w-[10px]`、`[mask-type:luminance]` 这类 arbitrary value / arbitrary property
+- 拦截直接使用 `theme(...)` 以及无效的 Tailwind theme 路径
+- 拦截 Tailwind 的 `@screen` 与手写 `@layer`
+- 拦截 UnoCSS variant group，例如 `hover:(bg-red-500 text-white)`
+
+策略性更强的 Tailwind 入口规则 `tailwindcss/no-tailwind-directive` 和
+`tailwindcss/no-import-directive` 仍然会导出，但默认不包含在这个预设里。
 
 底层插件同时兼容 Tailwind CSS v3 和 v4，会根据使用方项目实际安装的 `tailwindcss` 主版本自动切换检测逻辑。
 

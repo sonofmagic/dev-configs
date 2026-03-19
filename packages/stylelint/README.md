@@ -94,10 +94,15 @@ tailwindcss/no-atomic-class
 tailwindcss/no-invalid-apply
 tailwindcss/no-apply
 tailwindcss/no-arbitrary-value
+tailwindcss/no-theme-function
+tailwindcss/no-invalid-theme-function
+tailwindcss/no-screen-directive
+tailwindcss/no-css-layer
 unocss/no-atomic-class
 unocss/no-invalid-apply
 unocss/no-apply
 unocss/no-arbitrary-value
+unocss/no-variant-group
 ```
 
 These rules:
@@ -106,6 +111,13 @@ These rules:
 - report invalid utility-like `@apply` candidates
 - disallow `@apply` entirely
 - disallow arbitrary values / arbitrary properties such as `w-[10px]` and `[mask-type:luminance]`
+- disallow raw `theme(...)` usage and invalid Tailwind theme paths
+- disallow Tailwind `@screen` and authored `@layer` usage
+- disallow UnoCSS variant groups such as `hover:(bg-red-500 text-white)`
+
+The policy-only Tailwind entry rules `tailwindcss/no-tailwind-directive` and
+`tailwindcss/no-import-directive` are still exported by the plugin, but they
+are not enabled by this preset by default.
 
 The underlying plugin supports both Tailwind CSS v3 and v4, and switches automatically based on the installed `tailwindcss` major version in the consuming project.
 

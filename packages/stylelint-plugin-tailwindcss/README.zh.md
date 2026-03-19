@@ -204,9 +204,9 @@ import {
 - `tailwindcss/no-screen-directive`
   检查 `@screen` 指令。
 - `tailwindcss/no-tailwind-directive`
-  检查 `@tailwind` 指令。
+  检查 `@tailwind` 指令。会导出，但默认不包含在 `recommended` 里。
 - `tailwindcss/no-import-directive`
-  检查 `@import "tailwindcss"` 这类入口导入。
+  检查 `@import "tailwindcss"` 这类入口导入。会导出，但默认不包含在 `recommended` 里。
 - `tailwindcss/no-css-layer`
   检查手写的 `@layer` 指令。
 - `unocss/no-atomic-class`

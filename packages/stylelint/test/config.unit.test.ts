@@ -42,7 +42,7 @@ describe('createIcebreakerStylelintConfig', () => {
       expect.stringContaining(PRESET_VUE_SCSS),
       expect.stringContaining(PRESET_RECESS_ORDER),
     ])
-    expect(config.plugins).toHaveLength(15)
+    expect(config.plugins).toHaveLength(13)
     expect(config.overrides).toEqual([])
     expect(config.rules?.['selector-class-pattern']).toBeDefined()
     expect(config.rules?.['tailwindcss/no-atomic-class']).toBe(true)
@@ -52,8 +52,6 @@ describe('createIcebreakerStylelintConfig', () => {
     expect(config.rules?.['tailwindcss/no-theme-function']).toBe(true)
     expect(config.rules?.['tailwindcss/no-invalid-theme-function']).toBe(true)
     expect(config.rules?.['tailwindcss/no-screen-directive']).toBe(true)
-    expect(config.rules?.['tailwindcss/no-tailwind-directive']).toBe(true)
-    expect(config.rules?.['tailwindcss/no-import-directive']).toBe(true)
     expect(config.rules?.['tailwindcss/no-css-layer']).toBe(true)
     expect(config.rules?.['unocss/no-atomic-class']).toBe(true)
     expect(config.rules?.['unocss/no-invalid-apply']).toBe(true)

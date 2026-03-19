@@ -9,11 +9,9 @@ import {
   noArbitraryValueRuleName,
   noAtomicClassRuleName,
   noCssLayerRuleName,
-  noImportDirectiveRuleName,
   noInvalidApplyRuleName,
   noInvalidThemeFunctionRuleName,
   noScreenDirectiveRuleName,
-  noTailwindDirectiveRuleName,
   noThemeFunctionRuleName,
   unocssNoApplyRuleName,
   unocssNoArbitraryValueRuleName,
@@ -63,14 +61,13 @@ describe('stylelint integration', () => {
     expect(mediaWarnings).toHaveLength(1)
   })
 
-  it('ignores rpx, page, and tailwind/unocss at-rules by default', async () => {
+  it('ignores rpx, page, and unocss at-rules by default', async () => {
     const result = await stylelint.lint({
       code: [
         'page {',
         '  width: 10rpx;',
         '}',
         '',
-        '@tailwind base;',
         '@unocss preflights;',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
@@ -78,8 +75,7 @@ describe('stylelint integration', () => {
     })
 
     const warnings = result.results[0]?.warnings ?? []
-    expect(result.errored).toBe(true)
-    expect(warnings.some(warning => warning.rule === noTailwindDirectiveRuleName)).toBe(true)
+    expect(result.errored).toBe(false)
     expect(warnings.some(warning => warning.text.includes('unocss'))).toBe(false)
   })
 
@@ -330,8 +326,6 @@ describe('stylelint integration', () => {
 
     const warnings = result.results[0]?.warnings ?? []
 
-    expect(warnings.some(warning => warning.rule === noImportDirectiveRuleName)).toBe(true)
-    expect(warnings.some(warning => warning.rule === noTailwindDirectiveRuleName)).toBe(true)
     expect(warnings.some(warning => warning.rule === noScreenDirectiveRuleName)).toBe(true)
     expect(warnings.some(warning => warning.rule === noCssLayerRuleName)).toBe(true)
   })

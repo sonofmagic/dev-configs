@@ -204,9 +204,9 @@ import {
 - `tailwindcss/no-screen-directive`
   Reports any `@screen` directive.
 - `tailwindcss/no-tailwind-directive`
-  Reports any `@tailwind` directive.
+  Reports any `@tailwind` directive. Exported, but not enabled by `recommended` by default.
 - `tailwindcss/no-import-directive`
-  Reports `@import "tailwindcss"`-style entry imports.
+  Reports `@import "tailwindcss"`-style entry imports. Exported, but not enabled by `recommended` by default.
 - `tailwindcss/no-css-layer`
   Reports authored `@layer` directives.
 - `unocss/no-atomic-class`

@@ -18,8 +18,6 @@ Failing cases:
 - `.button-with-arbitrary-apply` because arbitrary values are disallowed
 - `.button-with-theme` because any `theme(...)` usage is disallowed
 - `.button-with-invalid-theme` because it uses `theme(...)` and the theme path does not exist
-- `@import "tailwindcss"` because Tailwind entry imports are disallowed
-- `@tailwind utilities` because Tailwind directives are disallowed
 - `@screen md` because `@screen` is disallowed
 - `@layer utilities` because authored `@layer` directives are disallowed
 - utility selectors such as `.grid`, `.items-center`, `.md\:flex`, `.w-\[10px\]`
@@ -32,7 +30,5 @@ Rules demonstrated:
 - `tailwindcss/no-arbitrary-value`
 - `tailwindcss/no-theme-function`
 - `tailwindcss/no-invalid-theme-function`
-- `tailwindcss/no-import-directive`
-- `tailwindcss/no-tailwind-directive`
 - `tailwindcss/no-screen-directive`
 - `tailwindcss/no-css-layer`

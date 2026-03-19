@@ -5,7 +5,7 @@ Disallows Tailwind entry directives inside authored stylesheets.
 ## Included In
 
 - `base`: no
-- `recommended`: yes
+- `recommended`: no
 
 Reports examples like:
 

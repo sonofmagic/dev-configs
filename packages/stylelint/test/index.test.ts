@@ -68,12 +68,6 @@ function normalizeConfigForSnapshot(config: ReturnType<typeof icebreaker>) {
         return 'stylelint-plugin-tailwindcss/no-screen-directive'
       }
       if (index === 11) {
-        return 'stylelint-plugin-tailwindcss/no-tailwind-directive'
-      }
-      if (index === 12) {
-        return 'stylelint-plugin-tailwindcss/no-import-directive'
-      }
-      if (index === 13) {
         return 'stylelint-plugin-tailwindcss/no-css-layer'
       }
       return 'stylelint-plugin-tailwindcss/unocss/no-variant-group'
@@ -116,7 +110,7 @@ describe('index', () => {
       expect.stringContaining(PRESET_VUE_SCSS),
       expect.stringContaining(PRESET_RECESS_ORDER),
     ])
-    expect(config.plugins).toHaveLength(15)
+    expect(config.plugins).toHaveLength(13)
 
     expect(normalizeConfigForSnapshot(config)).toMatchSnapshot()
   })
@@ -172,7 +166,7 @@ describe('index', () => {
       },
     })
 
-    expect(config.plugins).toHaveLength(16)
+    expect(config.plugins).toHaveLength(14)
     expect(config.rules?.['selector-class-pattern']).toBeNull()
   })
 })

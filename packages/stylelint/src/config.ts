@@ -11,11 +11,9 @@ import {
   noArbitraryValueRuleName,
   noAtomicClassRuleName,
   noCssLayerRuleName,
-  noImportDirectiveRuleName,
   noInvalidApplyRuleName,
   noInvalidThemeFunctionRuleName,
   noScreenDirectiveRuleName,
-  noTailwindDirectiveRuleName,
   noThemeFunctionRuleName,
   recommended as tailwindcssRecommended,
   unocssNoApplyRuleName,
@@ -119,6 +117,12 @@ function resolveRules(options: IcebreakerStylelintOptions | undefined): NonNulla
         ignoreAtRules,
       },
     ],
+    'at-rule-no-unknown': [
+      true,
+      {
+        ignoreAtRules,
+      },
+    ],
     'scss/selector-no-redundant-nesting-selector': true,
     'scss/at-rule-no-unknown': [
       true,
@@ -155,8 +159,6 @@ export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOpti
       [noThemeFunctionRuleName]: true,
       [noInvalidThemeFunctionRuleName]: true,
       [noScreenDirectiveRuleName]: true,
-      [noTailwindDirectiveRuleName]: true,
-      [noImportDirectiveRuleName]: true,
       [noCssLayerRuleName]: true,
       [unocssNoAtomicClassRuleName]: true,
       [unocssNoInvalidApplyRuleName]: true,

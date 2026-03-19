@@ -1,5 +1,5 @@
 /* stylelint-disable comment-empty-line-before, unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */
-/* should report: tailwindcss/no-import-directive */
+/* valid Tailwind v4 entry import; not enabled by recommended on purpose */
 @import "tailwindcss";
 
 .demo-panel {
@@ -19,7 +19,7 @@
   width: 240px;
 }
 
-/* should report: tailwindcss/no-tailwind-directive */
+/* valid Tailwind v3 entry directive; not enabled by recommended on purpose */
 @tailwind utilities;
 
 /* stylelint-disable scss/at-rule-no-unknown */

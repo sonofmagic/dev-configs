@@ -20,7 +20,8 @@ Expected behavior:
 - arbitrary values / arbitrary properties such as `.w-\[10px\]`, `.w-10px`, `.top--10px`, `.bg-\$brand`, `.text-rgb\(255\,0\,0\)`, `.translate-x-50\%`, `.\[mask-type\:luminance\]`, and `@apply w-[10px]` should fail with `tailwindcss/no-arbitrary-value` or `unocss/no-arbitrary-value`
 - `theme(...)` should fail with `tailwindcss/no-theme-function`
 - invalid theme paths such as `theme(colors.not-exist.123)` should fail with `tailwindcss/no-invalid-theme-function`
-- `@screen`, `@tailwind`, `@import "tailwindcss"`, and `@layer` should fail with the matching Tailwind directive rules
+- `@screen` and `@layer` should fail with the matching Tailwind directive rules
+- `@tailwind` and `@import "tailwindcss"` remain legal examples because they are valid Tailwind entry syntax and are not enabled by the recommended preset
 - UnoCSS variant groups such as `hover:(bg-red-500 text-white)` should fail with `unocss/no-variant-group`
 - CSS, SCSS, and Vue SFC style blocks should all be checked
 
