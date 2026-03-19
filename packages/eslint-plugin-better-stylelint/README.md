@@ -65,3 +65,52 @@ not provide one, it falls back to the bundled `stylelint` dependency.
 - `src/core.ts` resolves the worker file by swapping `core.(ts|js)` to
   `worker.(ts|js)`, so removing the worker build entry will break runtime
   resolution.
+
+## FAQ
+
+### Does it automatically read `stylelint.config.js`?
+
+Yes. The bridge calls `stylelint.lint({ code, codeFilename, cwd })` and lets
+Stylelint handle config discovery. In practice that means common config entry
+points such as `stylelint.config.js`, `stylelint.config.cjs`,
+`stylelint.config.mjs`, `stylelint.config.ts`, and `package.json#stylelint`
+are discovered by Stylelint itself.
+
+### Does it support `extends`, `plugins`, and `customSyntax`?
+
+Yes, as long as your Stylelint config can resolve them from the project. The
+bridge does not bypass or replace Stylelint's normal config loading, so
+`extends`, plugin rules, and `customSyntax` continue to work the same way they
+would when you run Stylelint directly.
+
+### Which `stylelint` installation does it use?
+
+It prefers the consuming project's own `stylelint` installation. If the
+project does not provide one, the bridge falls back to the bundled `stylelint`
+dependency shipped with `eslint-plugin-better-stylelint`.
+
+For the most predictable behavior, install `stylelint` in the project root so
+your ESLint bridge, Stylelint CLI, and editor integrations all use the same
+version.
+
+### Will this affect IDE plugins?
+
+Usually the ESLint extension works as expected, because the bridge runs inside
+ESLint. The main thing to watch is consistency:
+
+- If the project has its own `stylelint`, the ESLint bridge and Stylelint IDE
+  extension should stay aligned.
+- If the project does not have its own `stylelint`, the ESLint bridge can still
+  work via the bundled fallback, but a standalone Stylelint IDE extension may
+  not behave exactly the same way.
+
+### How does it handle Vue SFCs?
+
+Each `<style>` block in a `.vue` file is linted separately. The bridge:
+
+- extracts the block content instead of linting the whole SFC as one string
+- generates a virtual filename based on the block `lang`, such as `css` or
+  `scss`
+- maps Stylelint diagnostics back to the original `.vue` line and column
+- includes block context such as `scoped`, `module`, and `lang` in the message
+  when that context helps identify the source block
