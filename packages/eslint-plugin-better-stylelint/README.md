@@ -7,6 +7,8 @@ This package provides:
 - ESLint processors for `*.css` and `*.scss`
 - an ESLint rule for `.vue` files that forwards Stylelint diagnostics from
   `<style>` blocks
+- a bundled `synckit` worker so `stylelint.lint()` can be invoked through a
+  synchronous ESLint bridge
 
 ## Why
 
@@ -52,4 +54,14 @@ export default [
 ```
 
 The plugin relies on the consuming project's Stylelint configuration and
-installed Stylelint binary.
+prefers the consuming project's `stylelint` installation. If the project does
+not provide one, it falls back to the bundled `stylelint` dependency.
+
+## Implementation Notes
+
+- The synchronous bridge is implemented with `synckit`, not by spawning the
+  Stylelint CLI.
+- The published package must include both `dist/index.js` and `dist/worker.js`.
+- `src/core.ts` resolves the worker file by swapping `core.(ts|js)` to
+  `worker.(ts|js)`, so removing the worker build entry will break runtime
+  resolution.

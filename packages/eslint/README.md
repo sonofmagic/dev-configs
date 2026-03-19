@@ -10,7 +10,7 @@
 
 - Node.js 18 or newer
 - ESLint 9 with flat config support
-- Install optional peer plugins when you turn on Tailwind (`eslint-plugin-tailwindcss` or `eslint-plugin-better-tailwindcss`), MDX (`eslint-plugin-mdx`), or UnoCSS (`@unocss/eslint-plugin`)
+- Install optional peer plugins when you turn on Tailwind (`eslint-plugin-tailwindcss` or `eslint-plugin-better-tailwindcss`), MDX (`eslint-plugin-mdx`), Stylelint bridge (`eslint-plugin-better-stylelint`), or UnoCSS (`@unocss/eslint-plugin`)
 
 ## Installation
 
@@ -76,6 +76,10 @@ export default icebreaker({
 
 Set `stylelint: true` to bridge Stylelint diagnostics into ESLint for
 `*.css`, `*.scss`, and `.vue` style blocks:
+
+```bash
+pnpm add -D eslint-plugin-better-stylelint
+```
 
 ```ts
 import { icebreaker } from '@icebreakers/eslint-config'

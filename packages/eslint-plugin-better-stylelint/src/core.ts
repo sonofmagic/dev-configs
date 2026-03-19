@@ -1,8 +1,8 @@
 import type { BetterStylelintMessage } from './types'
-import { spawnSync } from 'node:child_process'
-import { createRequire } from 'node:module'
+import { createHash } from 'node:crypto'
 import path from 'node:path'
-import process from 'node:process'
+import { fileURLToPath } from 'node:url'
+import { createSyncFn } from 'synckit'
 
 interface StylelintWarning {
   rule?: string
@@ -16,33 +16,39 @@ interface StylelintWarning {
 
 interface StylelintResult {
   warnings?: StylelintWarning[]
+  parseErrors?: StylelintWarning[]
 }
 
-function createProjectRequire(cwd: string) {
-  try {
-    return createRequire(path.join(cwd, 'package.json'))
-  }
-  catch {
-    return createRequire(import.meta.url)
-  }
+interface StylelintWorkerSuccess {
+  ok: true
+  result: StylelintResult
 }
 
-function resolveStylelintCli(cwd: string) {
-  const projectRequire = createProjectRequire(cwd)
-  const packageJsonPath = projectRequire.resolve('stylelint/package.json')
-  return path.join(path.dirname(packageJsonPath), 'bin', 'stylelint.mjs')
+interface StylelintWorkerFailure {
+  ok: false
+  error: string
 }
+
+type StylelintWorkerResponse = StylelintWorkerSuccess | StylelintWorkerFailure
+type RunStylelintWorker = (
+  code: string,
+  filename: string,
+  cwd: string,
+) => StylelintWorkerResponse
+
+const MAX_CACHE_ENTRIES = 100
+const CORE_TS_PATTERN = /core\.ts$/u
+const CORE_JS_PATTERN = /core\.js$/u
+const resultCache = new Map<string, BetterStylelintMessage[]>()
+let runStylelintWorker: RunStylelintWorker | undefined
 
 function normalizeStylelintResults(
-  output: string,
+  result: StylelintResult,
 ): BetterStylelintMessage[] {
-  if (!output.trim()) {
-    return []
-  }
-
-  const parsed = JSON.parse(output) as StylelintResult[]
-  const firstResult = parsed[0]
-  const warnings = firstResult?.warnings ?? []
+  const warnings = [
+    ...(result.warnings ?? []),
+    ...(result.parseErrors ?? []),
+  ]
 
   return warnings.map(warning => ({
     ruleId: warning.rule ?? 'stylelint',
@@ -56,59 +62,100 @@ function normalizeStylelintResults(
   }))
 }
 
+function createBridgeError(message: string): BetterStylelintMessage[] {
+  return [
+    {
+      ruleId: 'stylelint/bridge',
+      message,
+      line: 1,
+      column: 1,
+      severity: 2,
+      fatal: true,
+    },
+  ]
+}
+
+function cloneMessages(messages: BetterStylelintMessage[]): BetterStylelintMessage[] {
+  return messages.map(message => ({ ...message }))
+}
+
+function createCacheKey(code: string, filename: string, cwd: string): string {
+  const codeHash = createHash('sha1').update(code).digest('hex')
+  return `${cwd}\0${filename}\0${codeHash}`
+}
+
+function getCachedMessages(cacheKey: string): BetterStylelintMessage[] | undefined {
+  const cached = resultCache.get(cacheKey)
+
+  if (!cached) {
+    return undefined
+  }
+
+  resultCache.delete(cacheKey)
+  resultCache.set(cacheKey, cached)
+  return cloneMessages(cached)
+}
+
+function setCachedMessages(cacheKey: string, messages: BetterStylelintMessage[]): BetterStylelintMessage[] {
+  if (resultCache.has(cacheKey)) {
+    resultCache.delete(cacheKey)
+  }
+
+  resultCache.set(cacheKey, messages)
+
+  while (resultCache.size > MAX_CACHE_ENTRIES) {
+    const oldestKey = resultCache.keys().next().value
+    if (oldestKey === undefined) {
+      break
+    }
+    resultCache.delete(oldestKey)
+  }
+
+  return cloneMessages(messages)
+}
+
+function resolveWorkerPath() {
+  const currentFilePath = fileURLToPath(import.meta.url)
+  if (currentFilePath.endsWith('.ts')) {
+    return currentFilePath.replace(CORE_TS_PATTERN, 'worker.ts')
+  }
+  return currentFilePath.replace(CORE_JS_PATTERN, 'worker.js')
+}
+
+function getRunStylelintWorker(): RunStylelintWorker {
+  runStylelintWorker ??= createSyncFn<RunStylelintWorker>(resolveWorkerPath())
+  return runStylelintWorker
+}
+
 export function runStylelintSync(
   code: string,
   filename: string,
   cwd = path.dirname(filename),
 ): BetterStylelintMessage[] {
-  const stylelintCli = resolveStylelintCli(cwd)
-  const result = spawnSync(
-    process.execPath,
-    [
-      stylelintCli,
-      '--formatter',
-      'json',
-      '--stdin-filename',
-      filename,
-      '--stdin',
-      '--allow-empty-input',
-    ],
-    {
-      cwd,
-      encoding: 'utf8',
-      input: code,
-    },
-  )
+  const cacheKey = createCacheKey(code, filename, cwd)
+  const cached = getCachedMessages(cacheKey)
 
-  if (result.error) {
-    return [
-      {
-        ruleId: 'stylelint/bridge',
-        message: result.error.message,
-        line: 1,
-        column: 1,
-        severity: 2,
-        fatal: true,
-      },
-    ]
+  if (cached) {
+    return cached
   }
 
-  if (result.stdout.trim()) {
-    return normalizeStylelintResults(result.stdout)
+  const response = getRunStylelintWorker()(code, filename, cwd)
+
+  if (!response.ok) {
+    return setCachedMessages(cacheKey, createBridgeError(response.error))
   }
 
-  if (result.status && result.stderr.trim()) {
-    return [
-      {
-        ruleId: 'stylelint/bridge',
-        message: result.stderr.trim(),
-        line: 1,
-        column: 1,
-        severity: 2,
-        fatal: true,
-      },
-    ]
-  }
+  return setCachedMessages(cacheKey, normalizeStylelintResults(response.result))
+}
 
-  return []
+export function __clearStylelintResultCache() {
+  resultCache.clear()
+}
+
+export function __getStylelintResultCacheSize() {
+  return resultCache.size
+}
+
+export function __resetStylelintWorker() {
+  runStylelintWorker = undefined
 }

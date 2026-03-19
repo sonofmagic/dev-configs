@@ -8,7 +8,7 @@
 
 - Node.js 18 或更高版本
 - 支持 Flat Config 的 ESLint 9
-- 如需启用 Tailwind、MDX、UnoCSS 等，可安装对应的可选依赖：`eslint-plugin-tailwindcss` / `eslint-plugin-better-tailwindcss`、`eslint-plugin-mdx`、`@unocss/eslint-plugin`
+- 如需启用 Tailwind、MDX、Stylelint 桥接、UnoCSS 等，可安装对应的可选依赖：`eslint-plugin-tailwindcss` / `eslint-plugin-better-tailwindcss`、`eslint-plugin-mdx`、`eslint-plugin-better-stylelint`、`@unocss/eslint-plugin`
 
 ## 安装
 
@@ -77,6 +77,10 @@ export default icebreaker({
 - `*.css`
 - `*.scss`
 - `.vue` 文件里的 `<style>` 块
+
+```bash
+pnpm add -D eslint-plugin-better-stylelint
+```
 
 ```ts
 import { icebreaker } from '@icebreakers/eslint-config'

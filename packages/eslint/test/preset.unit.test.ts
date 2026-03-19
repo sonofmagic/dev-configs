@@ -3,12 +3,14 @@ import {
   resolveMdxPresets,
   resolveNestPresets,
   resolveQueryPresets,
+  resolveStylelintBridgePresets,
   resolveTailwindPresets,
 } from '@/features'
 import { getPresets } from '@/preset'
 
 vi.mock('@/features', () => {
   return {
+    resolveStylelintBridgePresets: vi.fn(() => [{ name: 'stylelint' }]),
     resolveTailwindPresets: vi.fn(() => [{ name: 'tailwind' }]),
     resolveMdxPresets: vi.fn(() => [{ name: 'mdx' }]),
     resolveNestPresets: vi.fn(() => [{ name: 'nestjs' }]),
@@ -17,6 +19,7 @@ vi.mock('@/features', () => {
   }
 })
 
+const resolveStylelintBridgePresetsMock = vi.mocked(resolveStylelintBridgePresets)
 const resolveTailwindPresetsMock = vi.mocked(resolveTailwindPresets)
 const resolveMdxPresetsMock = vi.mocked(resolveMdxPresets)
 const resolveNestPresetsMock = vi.mocked(resolveNestPresets)
@@ -42,6 +45,7 @@ describe('getPresets', () => {
 
     expect(resolved.formatters).not.toBe(false)
     expect(base.rules?.['pnpm/json-enforce-catalog']).toBe('off')
+    expect(resolveStylelintBridgePresetsMock).toHaveBeenCalledWith(undefined)
   })
 
   it('appends feature presets in the expected order', () => {
@@ -57,6 +61,7 @@ describe('getPresets', () => {
     const base = toConfigObject(baseConfig)
 
     expect(base.rules?.['unicorn/prefer-number-properties']).toBe('warn')
+    expect(resolveStylelintBridgePresetsMock).toHaveBeenCalledWith(undefined)
     expect(resolveTailwindPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveMdxPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveNestPresetsMock).toHaveBeenCalledWith(true)
@@ -68,6 +73,7 @@ describe('getPresets', () => {
       .filter((name): name is string => typeof name === 'string')
 
     expect(presetNames).toEqual([
+      'stylelint',
       'tailwind',
       'mdx',
       'nestjs',

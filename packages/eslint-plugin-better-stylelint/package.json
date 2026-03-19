@@ -49,6 +49,15 @@
     "eslint": "^9.0.0",
     "stylelint": "^17.4.0"
   },
+  "peerDependenciesMeta": {
+    "stylelint": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "stylelint": "^17.4.0",
+    "synckit": "^0.11.12"
+  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
