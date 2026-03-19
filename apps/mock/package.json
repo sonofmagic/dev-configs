@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "stylelint": "npx @icebreakers/stylelint-config",
-    "lint:styles:demo": "stylelint --config stylelint.demo.config.mjs \"src/stylelint-demo/**/*.{css,scss,vue}\""
+    "lint:styles:demo": "stylelint \"src/stylelint-demo/**/*.{css,scss,vue}\""
   },
   "dependencies": {
     "@icebreakers/stylelint-config": "workspace:*"
