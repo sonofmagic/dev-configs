@@ -8,6 +8,10 @@ export default defineProject({
         find: '@',
         replacement: path.resolve(__dirname, './src'),
       },
+      {
+        find: 'eslint-plugin-better-stylelint',
+        replacement: path.resolve(__dirname, '../eslint-plugin-better-stylelint/src/index.ts'),
+      },
     ],
     globals: true,
     hookTimeout: 60_000,

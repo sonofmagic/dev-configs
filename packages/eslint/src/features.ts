@@ -50,6 +50,50 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
   ]
 }
 
+export function resolveStylelintBridgePresets(option: UserDefinedOptions['stylelint']): UserConfigItem[] {
+  if (!option) {
+    return []
+  }
+
+  const stylelintOptions = typeof option === 'object'
+    ? option
+    : {}
+
+  const pluginPromise = interopDefault(import('eslint-plugin-better-stylelint'))
+
+  return [
+    pluginPromise.then((plugin) => {
+      return {
+        files: ['**/*.{css,pcss,postcss}'],
+        plugins: {
+          stylelint: plugin,
+        },
+        processor: 'stylelint/css',
+      } satisfies TypedFlatConfigItem
+    }),
+    pluginPromise.then((plugin) => {
+      return {
+        files: ['**/*.{scss,sass}'],
+        plugins: {
+          stylelint: plugin,
+        },
+        processor: 'stylelint/scss',
+      } satisfies TypedFlatConfigItem
+    }),
+    pluginPromise.then((plugin) => {
+      return {
+        files: ['**/*.vue'],
+        plugins: {
+          stylelint: plugin,
+        },
+        rules: {
+          'stylelint/stylelint': ['error', stylelintOptions],
+        },
+      } satisfies TypedFlatConfigItem
+    }),
+  ]
+}
+
 export function resolveMdxPresets(isEnabled: UserDefinedOptions['mdx']): UserConfigItem[] {
   if (!isEnabled) {
     return []

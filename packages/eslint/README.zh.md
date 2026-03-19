@@ -70,6 +70,35 @@ export default icebreaker({
 - `formatters`：默认启用格式化辅助规则。
 - `test`：放宽 Vitest / Jest 常见规则，例如关闭 `test/prefer-lowercase-title`。
 
+### Stylelint 桥接
+
+设置 `stylelint: true` 后，会把 Stylelint 诊断桥接到 ESLint，用于：
+
+- `*.css`
+- `*.scss`
+- `.vue` 文件里的 `<style>` 块
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  vue: true,
+  stylelint: true,
+})
+```
+
+如果 Stylelint 需要从其它目录解析配置，也可以传：
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  stylelint: {
+    cwd: '/path/to/project',
+  },
+})
+```
+
 ### NestJS 项目
 
 建议在 Nest 项目中同时开启 `typescript` 与 `nestjs`，以便应用以下定制：

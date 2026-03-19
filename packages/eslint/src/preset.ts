@@ -1,5 +1,5 @@
 import type { UserConfigItem, UserDefinedOptions } from './types'
-import { resolveAccessibilityPresets, resolveMdxPresets, resolveNestPresets, resolveQueryPresets, resolveTailwindPresets } from './features'
+import { resolveAccessibilityPresets, resolveMdxPresets, resolveNestPresets, resolveQueryPresets, resolveStylelintBridgePresets, resolveTailwindPresets } from './features'
 import { createBaseRuleSet, resolveUserOptions } from './options'
 
 export function getPresets(options?: UserDefinedOptions, mode?: 'legacy'): [UserDefinedOptions, ...UserConfigItem[]] {
@@ -17,6 +17,7 @@ export function getPresets(options?: UserDefinedOptions, mode?: 'legacy'): [User
   ]
 
   presets.push(
+    ...resolveStylelintBridgePresets(resolved.stylelint),
     ...resolveTailwindPresets(resolved.tailwindcss),
     ...resolveMdxPresets(resolved.mdx),
     ...resolveNestPresets(resolved.nestjs),

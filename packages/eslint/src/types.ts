@@ -18,6 +18,9 @@ export interface TailwindcssOption {
 }
 
 export type TailwindcssConfig = boolean | TailwindcssOption
+export type StylelintBridgeConfig = boolean | {
+  cwd?: string
+}
 
 export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
   /**
@@ -25,6 +28,11 @@ export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
    * @default false
    */
   tailwindcss?: TailwindcssConfig
+  /**
+   * Bridge Stylelint diagnostics into ESLint for style files.
+   * @default false
+   */
+  stylelint?: StylelintBridgeConfig
   /**
    * Enable MDX support
    * @default false

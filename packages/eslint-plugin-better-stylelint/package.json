@@ -1,0 +1,62 @@
+{
+  "name": "eslint-plugin-better-stylelint",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Bridge Stylelint diagnostics into ESLint for style files and Vue SFCs",
+  "author": "ice breaker <1324318532@qq.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sonofmagic/dev-configs.git",
+    "directory": "packages/eslint-plugin-better-stylelint"
+  },
+  "bugs": {
+    "url": "https://github.com/sonofmagic/dev-configs/issues"
+  },
+  "keywords": [
+    "dev-configs",
+    "eslint",
+    "stylelint",
+    "eslint-plugin"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsdown --watch --sourcemap",
+    "build": "tsdown",
+    "lint": "eslint src test test-d",
+    "test": "vitest run",
+    "test:types": "tsd",
+    "test:dev": "vitest",
+    "release": "pnpm publish",
+    "sync": "cnpm sync eslint-plugin-better-stylelint",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0",
+    "stylelint": "^17.4.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "tsd": {
+    "directory": "test-d",
+    "compilerOptions": {
+      "skipLibCheck": true
+    }
+  }
+}

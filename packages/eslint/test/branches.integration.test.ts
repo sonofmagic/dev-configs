@@ -138,4 +138,25 @@ describe('eslint branch config behavior', () => {
     expect(jsonRuleDisabled).toBe(true)
     expect(tsRuleEnabled).toBe(true)
   })
+
+  it('wires stylelint bridge processors and vue rule when enabled', async () => {
+    const configs = await icebreaker({
+      vue: true,
+      stylelint: true,
+    }).toConfigs()
+
+    const bridgeConfigs = stripUnsupportedRules(configs)
+    const cssBridgeConfig = bridgeConfigs.find(config =>
+      Array.isArray(config.files)
+      && config.files.includes('**/*.{css,pcss,postcss}'),
+    )
+    const vueBridgeConfig = bridgeConfigs.find(config =>
+      Array.isArray(config.files)
+      && config.files.includes('**/*.vue')
+      && config.rules?.['stylelint/stylelint'],
+    )
+
+    expect(cssBridgeConfig?.processor).toBe('stylelint/css')
+    expect(vueBridgeConfig?.rules?.['stylelint/stylelint']).toEqual(['error', {}])
+  })
 })

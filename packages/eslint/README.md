@@ -72,6 +72,23 @@ export default icebreaker({
 - `formatters` – keeps the built-in formatting rules enabled by default.
 - `test` – relaxes certain Vitest/Jest style rules (`test/prefer-lowercase-title`).
 
+### Stylelint Bridge
+
+Set `stylelint: true` to bridge Stylelint diagnostics into ESLint for
+`*.css`, `*.scss`, and `.vue` style blocks:
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  vue: true,
+  stylelint: true,
+})
+```
+
+You can also pass `stylelint: { cwd: '/path/to/project' }` if Stylelint should
+resolve its config from a different working directory.
+
 ### NestJS Projects
 
 Enable `nestjs: true` together with the TypeScript preset to apply rules tailored for Nest idioms:

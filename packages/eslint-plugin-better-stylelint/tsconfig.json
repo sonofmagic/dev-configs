@@ -3,9 +3,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "eslint-plugin-better-stylelint": [
-        "../eslint-plugin-better-stylelint/src/index.ts"
-      ],
       "@/*": [
         "src/*"
       ]
@@ -13,7 +10,6 @@
   },
   "include": [
     "src",
-    "test",
-    "../eslint-plugin-better-stylelint/src"
+    "test"
   ]
 }

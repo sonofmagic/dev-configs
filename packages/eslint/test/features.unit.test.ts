@@ -5,6 +5,7 @@ import {
   resolveMdxPresets,
   resolveNestPresets,
   resolveQueryPresets,
+  resolveStylelintBridgePresets,
   resolveTailwindPresets,
 } from '@/features'
 
@@ -225,5 +226,51 @@ describe('resolveQueryPresets', () => {
   it('resolves the tanstack query recommended preset when enabled', async () => {
     const [preset] = resolveQueryPresets(true)
     await expect(preset).resolves.toMatchObject({ name: 'tanstack-query-flat' })
+  })
+})
+
+describe('resolveStylelintBridgePresets', () => {
+  it('returns empty array when disabled', () => {
+    expect(resolveStylelintBridgePresets(false)).toEqual([])
+  })
+
+  it('returns async presets for css, scss, and vue when enabled', async () => {
+    vi.doMock('eslint-plugin-better-stylelint', () => {
+      return {
+        default: {
+          meta: {
+            name: 'stylelint',
+            version: '0.0.1',
+          },
+          processors: {
+            css: {},
+            scss: {},
+          },
+          rules: {
+            stylelint: {},
+          },
+        },
+      }
+    })
+
+    const presets = resolveStylelintBridgePresets({ cwd: '/tmp/project' })
+    expect(presets).toHaveLength(3)
+
+    const [cssPreset, scssPreset, vuePreset] = await Promise.all(presets as Promise<TypedFlatConfigItem>[])
+
+    expect(cssPreset).toMatchObject({
+      files: ['**/*.{css,pcss,postcss}'],
+      processor: 'stylelint/css',
+    })
+    expect(scssPreset).toMatchObject({
+      files: ['**/*.{scss,sass}'],
+      processor: 'stylelint/scss',
+    })
+    expect(vuePreset).toMatchObject({
+      files: ['**/*.vue'],
+      rules: {
+        'stylelint/stylelint': ['error', { cwd: '/tmp/project' }],
+      },
+    })
   })
 })
