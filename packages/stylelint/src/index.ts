@@ -6,6 +6,7 @@ export type {
   IcebreakerStylelintOptions,
   IgnoreListOptions,
   PresetToggles,
+  TailwindcssPresetLevel,
 } from './types'
 
 function mergeConfigs(base: StylelintConfig, overrides?: StylelintConfig): StylelintConfig {

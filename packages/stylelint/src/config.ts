@@ -15,7 +15,9 @@ import {
   noInvalidThemeFunctionRuleName,
   noScreenDirectiveRuleName,
   noThemeFunctionRuleName,
+  base as tailwindcssBase,
   recommended as tailwindcssRecommended,
+  strict as tailwindcssStrict,
   unocssNoApplyRuleName,
   unocssNoArbitraryValueRuleName,
   unocssNoAtomicClassRuleName,
@@ -142,29 +144,43 @@ function resolveRules(options: IcebreakerStylelintOptions | undefined): NonNulla
   return rules
 }
 
+function resolveTailwindcssPreset(options: IcebreakerStylelintOptions | undefined) {
+  switch (options?.tailwindcssPreset) {
+    case 'recommended':
+      return tailwindcssRecommended
+    case 'strict':
+      return tailwindcssStrict
+    default:
+      return tailwindcssBase
+  }
+}
+
 export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOptions = {}): StylelintConfig {
   const extendsConfig = resolveExtends(options)
   const overrides = resolveOverrides(options)
   const rules = resolveRules(options)
+  const tailwindcssPreset = resolveTailwindcssPreset(options)
 
   return {
     ...(extendsConfig !== undefined ? { extends: extendsConfig } : {}),
-    plugins: [...(tailwindcssRecommended.plugins ?? [])],
+    plugins: [...(tailwindcssPreset.plugins ?? [])],
     overrides,
     rules: {
-      [noAtomicClassRuleName]: true,
-      [noInvalidApplyRuleName]: true,
-      [noApplyRuleName]: true,
-      [noArbitraryValueRuleName]: true,
-      [noThemeFunctionRuleName]: true,
-      [noInvalidThemeFunctionRuleName]: true,
-      [noScreenDirectiveRuleName]: true,
-      [noCssLayerRuleName]: true,
-      [unocssNoAtomicClassRuleName]: true,
-      [unocssNoInvalidApplyRuleName]: true,
-      [unocssNoApplyRuleName]: true,
-      [unocssNoArbitraryValueRuleName]: true,
-      [unocssNoVariantGroupRuleName]: true,
+      ...(tailwindcssPreset.rules ?? {
+        [noAtomicClassRuleName]: true,
+        [noInvalidApplyRuleName]: true,
+        [noApplyRuleName]: true,
+        [noArbitraryValueRuleName]: true,
+        [noThemeFunctionRuleName]: true,
+        [noInvalidThemeFunctionRuleName]: true,
+        [noScreenDirectiveRuleName]: true,
+        [noCssLayerRuleName]: true,
+        [unocssNoAtomicClassRuleName]: true,
+        [unocssNoInvalidApplyRuleName]: true,
+        [unocssNoApplyRuleName]: true,
+        [unocssNoArbitraryValueRuleName]: true,
+        [unocssNoVariantGroupRuleName]: true,
+      }),
       ...rules,
     },
   }

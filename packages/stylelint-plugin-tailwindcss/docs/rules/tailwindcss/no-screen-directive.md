@@ -5,7 +5,8 @@ Disallows the Tailwind `@screen` directive.
 ## Included In
 
 - `base`: no
-- `recommended`: yes
+- `recommended`: no
+- `strict`: yes
 
 Reports examples like:
 
@@ -13,6 +14,8 @@ Reports examples like:
 
 Use this rule when breakpoint usage should stay on native `@media` or a
 centralized responsive abstraction.
+
+This rule is exported, but not enabled by the default `recommended` preset.
 
 ## Why
 

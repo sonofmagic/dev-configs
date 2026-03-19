@@ -5,7 +5,8 @@ Disallows any `theme(...)` usage in declarations and at-rule params.
 ## Included In
 
 - `base`: no
-- `recommended`: yes
+- `recommended`: no
+- `strict`: yes
 
 Reports examples like:
 
@@ -14,6 +15,8 @@ Reports examples like:
 
 Use this rule when token access should be mediated through CSS variables or
 other project-specific abstractions.
+
+This rule is exported, but not enabled by the default `recommended` preset.
 
 ## Why
 

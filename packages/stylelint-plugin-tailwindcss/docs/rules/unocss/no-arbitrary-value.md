@@ -6,6 +6,7 @@ Disallows UnoCSS arbitrary values, arbitrary properties, and bare-value forms.
 
 - `base`: no
 - `recommended`: yes
+- `strict`: yes
 
 Reports examples like:
 

@@ -6,6 +6,7 @@ Disallows Tailwind entry imports such as `@import "tailwindcss"`.
 
 - `base`: no
 - `recommended`: no
+- `strict`: yes
 
 Reports examples like:
 

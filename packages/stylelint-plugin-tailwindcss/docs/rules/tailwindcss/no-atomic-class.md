@@ -6,6 +6,7 @@ Disallows authored Tailwind utility selectors in stylesheets.
 
 - `base`: yes
 - `recommended`: yes
+- `strict`: yes
 
 Reports examples like:
 

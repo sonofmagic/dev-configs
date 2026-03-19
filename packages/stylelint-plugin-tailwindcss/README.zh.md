@@ -1,71 +1,16 @@
 # stylelint-plugin-tailwindcss
 
-面向 Tailwind CSS 与 utility-first 选择器约束的 Stylelint 插件。
+一个面向“禁止手写样式逐渐 utility-first 化”的 Stylelint 插件。
 
-## 概览
+它主要约束两件事：
 
-这个包专注解决一个问题：
+- 不要在手写 CSS 里声明 `.flex`、`.grid`、`.text-center`、
+  `.hover\:bg-red-500` 这类原子类选择器
+- 当团队希望样式层更严格时，对 `@apply`、`theme(...)`、`@screen`
+  等 Tailwind 风格语法施加额外限制
 
-> 手写样式里，是否应该允许声明 `.flex`、`.grid`、`.text-center`、`.hover\:bg-red-500` 这类原子类选择器？
-
-它适合下面这些团队约束：
-
-- utility class 只允许写在模板 / JSX / HTML 中
-- 手写 CSS / SCSS / Vue `<style>` 更偏语义化类名
-- 即使项目不用 Tailwind，而是用 UnoCSS 一类工具，也希望这条规则依然有价值
-
-## 内置规则
-
-- `tailwindcss/no-atomic-class`
-- `tailwindcss/no-invalid-apply`
-- `tailwindcss/no-apply`
-- `tailwindcss/no-arbitrary-value`
-- `tailwindcss/no-theme-function`
-- `tailwindcss/no-screen-directive`
-- `tailwindcss/no-tailwind-directive`
-- `tailwindcss/no-import-directive`
-- `tailwindcss/no-css-layer`
-- `unocss/no-atomic-class`
-- `unocss/no-invalid-apply`
-- `unocss/no-apply`
-- `unocss/no-arbitrary-value`
-- `unocss/no-variant-group`
-
-## 会拦截什么
-
-这个规则会拦截类似下面这些选择器：
-
-- `.flex`
-- `.grid`
-- `.text-center`
-- `.hover\:bg-red-500`
-- `.w-\[10px\]`
-- `.md\:flex`
-- `.\!mt-4`
-
-它不会拦截这类语义化选择器：
-
-- `.page-shell`
-- `.card__body`
-- `.hero-banner--primary`
-
-## 检测模式
-
-插件支持三种模式：
-
-- Tailwind CSS v3：从使用方项目解析并基于真实安装的 Tailwind 运行时做精确校验
-- Tailwind CSS v4：从使用方项目解析并基于真实安装的 Tailwind 运行时做精确校验
-- 没有安装 Tailwind：自动退化成启发式 utility-first 类名检测，对 UnoCSS 一类项目同样有用
-
-也就是说，这个包能覆盖两类项目：
-
-1. Tailwind 项目
-   会从使用方项目解析真实安装的 `tailwindcss`，并按真实运行时做判断。
-
-2. 没有安装 Tailwind 的 utility-first 项目
-   不会因为缺少 `tailwindcss` 就失效，而是退化成常见原子类命名的启发式检测。
-
-所以虽然包名是 `stylelint-plugin-tailwindcss`，它并不只对 Tailwind 项目有价值。
+虽然包名偏 Tailwind，但它也提供了并行的 `unocss/*` 命名空间，因此在
+UnoCSS 风格项目里也能复用同一套 Stylelint 工作流。
 
 ## 安装
 
@@ -73,9 +18,12 @@
 pnpm add -D stylelint stylelint-plugin-tailwindcss
 ```
 
-如果使用方项目本身装了 Tailwind，并且你希望得到精确判断，只需要照常在该项目里安装 `tailwindcss`。
+如果使用方项目安装了 `tailwindcss`，插件会尽量基于真实 Tailwind runtime
+做判断；如果没有安装，则自动退化成启发式 utility 检测。
 
-## 用法
+## 快速开始
+
+直接使用默认推荐 preset：
 
 ```ts
 // stylelint.config.ts
@@ -84,12 +32,7 @@ import { recommended } from 'stylelint-plugin-tailwindcss'
 export default recommended
 ```
 
-现在 `recommended` 默认同时启用两套命名空间：
-
-- `tailwindcss/*`
-- `unocss/*`
-
-最小基础配置：
+使用最小基础 preset：
 
 ```ts
 import { base } from 'stylelint-plugin-tailwindcss'
@@ -97,27 +40,23 @@ import { base } from 'stylelint-plugin-tailwindcss'
 export default base
 ```
 
-`base` 默认启用：
-
-- `tailwindcss/no-atomic-class`
-- `tailwindcss/no-invalid-apply`
-- `unocss/no-atomic-class`
-- `unocss/no-invalid-apply`
-
-只保留 Tailwind 规则：
+只启用单个命名空间：
 
 ```ts
-import { tailwindRecommended } from 'stylelint-plugin-tailwindcss'
+import {
+  tailwindRecommended,
+  tailwindStrict,
+  unocssRecommended,
+  unocssStrict,
+} from 'stylelint-plugin-tailwindcss'
 
 export default tailwindRecommended
-```
-
-只保留 UnoCSS 规则：
-
-```ts
-import { unocssRecommended } from 'stylelint-plugin-tailwindcss'
-
+// 或
 export default unocssRecommended
+// 或
+export default tailwindStrict
+// 或
+export default unocssStrict
 ```
 
 保留默认双开，但关闭整组 UnoCSS：
@@ -133,114 +72,196 @@ export default {
     'unocss/no-invalid-apply': false,
     'unocss/no-apply': false,
     'unocss/no-arbitrary-value': false,
+    'unocss/no-variant-group': false,
   },
 }
 ```
 
-按单条规则逐个关闭：
+## Preset 说明
 
-```ts
-import { recommended } from 'stylelint-plugin-tailwindcss'
+### `base`
 
-export default {
-  ...recommended,
-  rules: {
-    ...recommended.rules,
-    'tailwindcss/no-apply': false,
-    'unocss/no-arbitrary-value': false,
-  },
-}
-```
-
-推荐使用的规则名和插件导出：
-
-```ts
-import {
-  noApplyPlugin,
-  noApplyRuleName,
-  noArbitraryValuePlugin,
-  noArbitraryValueRuleName,
-  noAtomicClassPlugin,
-  noAtomicClassRuleName,
-  noCssLayerPlugin,
-  noCssLayerRuleName,
-  noImportDirectivePlugin,
-  noImportDirectiveRuleName,
-  noInvalidApplyPlugin,
-  noInvalidApplyRuleName,
-  noScreenDirectivePlugin,
-  noScreenDirectiveRuleName,
-  noTailwindDirectivePlugin,
-  noTailwindDirectiveRuleName,
-  noThemeFunctionPlugin,
-  noThemeFunctionRuleName,
-  tailwindBase,
-  tailwindRecommended,
-  unocssBase,
-  unocssNoApplyPlugin,
-  unocssNoApplyRuleName,
-  unocssNoArbitraryValuePlugin,
-  unocssNoArbitraryValueRuleName,
-  unocssNoAtomicClassPlugin,
-  unocssNoAtomicClassRuleName,
-  unocssNoInvalidApplyPlugin,
-  unocssNoInvalidApplyRuleName,
-  unocssNoVariantGroupPlugin,
-  unocssNoVariantGroupRuleName,
-  unocssRecommended,
-} from 'stylelint-plugin-tailwindcss'
-```
+最小噪音的起点。只开启两套命名空间中最核心的选择器检查和 invalid
+`@apply` 检查。
 
 - `tailwindcss/no-atomic-class`
-  对应导出名为 `noAtomicClassRuleName`，匹配插件为 `noAtomicClassPlugin`。
 - `tailwindcss/no-invalid-apply`
-  检查 `@apply` 里那些“看起来像 utility、但在当前 Tailwind 运行时里并不存在”的 candidate。
+- `unocss/no-atomic-class`
+- `unocss/no-invalid-apply`
+
+### `recommended`
+
+默认推荐 preset。会同时启用两套命名空间，但只包含更适合作为通用推荐层
+的低噪音规则。
+
+Tailwind 规则：
+
+- `tailwindcss/no-atomic-class`
+- `tailwindcss/no-invalid-apply`
+- `tailwindcss/no-apply`
+- `tailwindcss/no-arbitrary-value`
+- `tailwindcss/no-invalid-theme-function`
+
+UnoCSS 规则：
+
+- `unocss/no-atomic-class`
+- `unocss/no-invalid-apply`
+- `unocss/no-apply`
+- `unocss/no-arbitrary-value`
+- `unocss/no-variant-group`
+
+### `tailwindBase`
+
+只保留 Tailwind 命名空间的 `base`。
+
+### `tailwindRecommended`
+
+只保留 Tailwind 命名空间的 `recommended`。
+
+### `strict`
+
+最高约束层。在 `recommended` 的基础上，再额外开启更偏架构约束的
+Tailwind 规则。
+
+Tailwind 规则：
+
+- `tailwindcss/no-atomic-class`
+- `tailwindcss/no-invalid-apply`
+- `tailwindcss/no-apply`
+- `tailwindcss/no-arbitrary-value`
+- `tailwindcss/no-theme-function`
+- `tailwindcss/no-invalid-theme-function`
+- `tailwindcss/no-screen-directive`
+- `tailwindcss/no-tailwind-directive`
+- `tailwindcss/no-import-directive`
+- `tailwindcss/no-css-layer`
+
+UnoCSS 规则：
+
+- `unocss/no-atomic-class`
+- `unocss/no-invalid-apply`
+- `unocss/no-apply`
+- `unocss/no-arbitrary-value`
+- `unocss/no-variant-group`
+
+### `tailwindStrict`
+
+只保留 Tailwind 命名空间的 `strict`。
+
+### `unocssBase`
+
+只保留 UnoCSS 命名空间的 `base`。
+
+### `unocssRecommended`
+
+只保留 UnoCSS 命名空间的 `recommended`。
+
+### `unocssStrict`
+
+只保留 UnoCSS 命名空间的 `strict`。
+当前会刻意与 `unocssRecommended` 保持一致。
+
+## 会拦截什么
+
+会被识别为 utility 选择器的典型例子：
+
+- `.flex`
+- `.grid`
+- `.text-center`
+- `.hover\:bg-red-500`
+- `.md\:flex`
+- `.\!mt-4`
+- `.w-\[10px\]`
+
+下面这类语义化类名不会被当作 utility 选择器：
+
+- `.page-shell`
+- `.card__body`
+- `.hero-banner--primary`
+
+## 检测模式
+
+### Tailwind 感知模式
+
+如果使用方项目安装了 Tailwind，插件会解析该项目真实安装的
+`tailwindcss`，并尽量基于真实 runtime 做判断。
+
+### 启发式模式
+
+如果项目没有安装 Tailwind，插件不会直接失效，而是退化成 utility-first
+启发式检测，依然能拦下大量常见的 utility 选择器和 utility 风格的
+`@apply` candidate。
+
+这也是它在 UnoCSS 风格项目里依然有价值的原因。
+
+## 规则说明
+
+### Tailwind 规则
+
+- `tailwindcss/no-atomic-class`
+  检查手写的 utility 选择器。
+- `tailwindcss/no-invalid-apply`
+  检查那些“看起来像 utility、但又不被当前 Tailwind runtime 识别为合法
+  utility”的 `@apply` candidate。
 - `tailwindcss/no-apply`
   只要出现 `@apply` 就报错。
 - `tailwindcss/no-arbitrary-value`
-  检查 Tailwind 风格的 arbitrary value / arbitrary property，例如 `w-[10px]`、`[mask-type:luminance]`。
+  检查选择器或 `@apply` 中的 Tailwind 风格 arbitrary value /
+  arbitrary property，例如 `w-[10px]`、`[mask-type:luminance]`。
+- `tailwindcss/no-invalid-theme-function`
+  检查 lookup path 无效的 `theme(...)` 调用。
 - `tailwindcss/no-theme-function`
-  检查声明值和 at-rule 参数里的 `theme(...)` 调用。
+  检查所有 `theme(...)` 调用。会导出，但默认不包含在 `recommended`。
 - `tailwindcss/no-screen-directive`
-  检查 `@screen` 指令。
+  检查 `@screen`。会导出，但默认不包含在 `recommended`。
 - `tailwindcss/no-tailwind-directive`
-  检查 `@tailwind` 指令。会导出，但默认不包含在 `recommended` 里。
+  检查 `@tailwind`。会导出，但更适合迁移期或架构约束型 preset，因此默认
+  不包含在 `recommended`。
 - `tailwindcss/no-import-directive`
-  检查 `@import "tailwindcss"` 这类入口导入。会导出，但默认不包含在 `recommended` 里。
+  检查 `@import "tailwindcss"` 这类入口导入。会导出，但更适合迁移期或架构
+  约束型 preset，因此默认不包含在 `recommended`。
 - `tailwindcss/no-css-layer`
-  检查手写的 `@layer` 指令。
+  检查手写的 `@layer`。会导出，但默认不包含在 `recommended`，因为它也可能
+  命中原生 CSS cascade layers。
+
+### UnoCSS 规则
+
 - `unocss/no-atomic-class`
-  对应导出名为 `unocssNoAtomicClassRuleName`，匹配插件为 `unocssNoAtomicClassPlugin`。
+  检查手写的 utility 选择器。
 - `unocss/no-invalid-apply`
-  对应导出名为 `unocssNoInvalidApplyRuleName`，匹配插件为 `unocssNoInvalidApplyPlugin`。
+  检查那些“看起来像 utility、但又没通过插件 runtime / 启发式校验”的
+  `@apply` candidate。
+  它比 `unocss/no-apply` 更窄：像 `button-base` 这种语义 token 不会报，
+  但 `bg-rd-500` 这类拼错、又明显长得像 utility 的 token 会报。
+  `w-10px`、`text-rgb(255,0,0)` 这类 bare-value 形式在校验失败时也可能同
+  时命中这里。
 - `unocss/no-apply`
-  对应导出名为 `unocssNoApplyRuleName`，匹配插件为 `unocssNoApplyPlugin`。
+  只要出现 `@apply` 就报错。
 - `unocss/no-arbitrary-value`
-  对应导出名为 `unocssNoArbitraryValueRuleName`，匹配插件为 `unocssNoArbitraryValuePlugin`。
-  这个命名空间还会检查 UnoCSS 常见的裸值写法，例如 `w-10px`、`w-50%`、`top--10px`、`bg-$brand`、`text-rgb(255,0,0)`、`translate-x-50%`、`outline-#fff`、`[&>*]:w-10px`。
+  检查选择器或 `@apply` 中的 UnoCSS arbitrary value。
+  包括 `w-10px`、`w-50%`、`top--10px`、`bg-$brand`、
+  `text-rgb(255,0,0)`、`translate-x-50%`、`outline-#fff`、
+  `[&>*]:w-10px` 等裸值形式。
 - `unocss/no-variant-group`
-  对应导出名为 `unocssNoVariantGroupRuleName`，匹配插件为 `unocssNoVariantGroupPlugin`。
-  会检查 `hover:(bg-red-500 text-white)` 这类 UnoCSS variant group 写法。
+  检查 `hover:(bg-red-500 text-white)` 这类 UnoCSS variant group。
+
+## 导出内容
+
+这个包会导出：
+
+- preset 对象，例如 `base`、`recommended`、`tailwindRecommended`、
+  `unocssRecommended`
+- rule name，例如 `noAtomicClassRuleName`、
+  `unocssNoVariantGroupRuleName`
+- plugin 实例，例如 `noAtomicClassPlugin`、
+  `unocssNoVariantGroupPlugin`
+
+如果你要做更细粒度的组合，可以直接按需导入 rule name 和 plugin。
 
 ## 配合 `@icebreakers/stylelint-config`
 
-如果你已经在用 `@icebreakers/stylelint-config`，这个插件默认已经启用，不需要再手动注册。
-
-## 精确模式与启发式模式
-
-当项目安装了 Tailwind：
-
-- 判断更精确
-- 会基于使用方项目真实安装的 Tailwind 版本运行
-- v3 / v4 内部会走不同逻辑
-
-当项目没有安装 Tailwind：
-
-- 插件不会直接失效
-- 会自动退化成 utility-first 启发式检测
-- 精确度不如真实 Tailwind runtime，但对 UnoCSS 一类项目仍然足够有用
-
-换句话说，这个插件的设计目标是“优雅降级”，而不是“缺少 Tailwind 就完全没用”。
+如果你已经在使用 `@icebreakers/stylelint-config`，通常不需要再手动注册这个
+插件，因为该 preset 已经帮你接好了。
 
 ## 支持的文件类型
 
@@ -248,24 +269,15 @@ import {
 
 - `.css`
 - `.scss`
-- Vue SFC 的 `<style>`
-- Vue SFC 的 `<style lang="scss">`
+- Vue SFC `<style>`
+- Vue SFC `<style lang="scss">`
 
-## 演示
+## Demo
 
-本仓库里有一套可以直接在 IDE 里看到效果的演示，目录在：
+仓库里提供了 IDE 友好的示例，位于
+[`apps/mock/src/stylelint-demo`](/Users/yangqiming/Documents/GitHub/eslint-config/apps/mock/src/stylelint-demo)。
 
-- [apps/mock/src/stylelint-demo](/Users/icebreaker/Documents/GitHub/eslint-config/apps/mock/src/stylelint-demo)
+## 更多
 
-终端复现命令：
-
-```bash
-pnpm --dir apps/mock run lint:styles:demo
-```
-
-## 相关包
-
-- `postcss-tailwindcss`
-  这个插件会复用它来做 selector 收集和 Tailwind runtime 解析。
-- `@icebreakers/stylelint-config`
-  Monorepo 内默认启用了本插件。
+更严格的 preset 说明见
+[`docs/strict-preset.md`](/Users/yangqiming/Documents/GitHub/eslint-config/packages/stylelint-plugin-tailwindcss/docs/strict-preset.md)。

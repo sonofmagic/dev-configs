@@ -21,6 +21,26 @@ Failing cases:
 - invalid utility-like `@apply` candidates such as `bg-rd-500`
 - UnoCSS variant groups such as `hover:(bg-red-500 text-white)`
 
+`unocss/no-invalid-apply` boundaries in `demo-unocss.css`:
+
+- reports `.uno-apply-invalid-color` because `bg-rd-500` looks like a
+  utility token but is not recognized as a valid one
+- reports `.uno-apply-invalid-alignment` because `justify-betwen` and
+  `items-cneter` still look utility-like even though they are misspelled
+- does not report `.uno-apply-valid-spacing` because `rounded-lg` and `px-4`
+  are valid utility candidates
+- does not report `.uno-apply-semantic-token` because `button-base` does not
+  look like a utility token at all
+- does not report `.uno-apply-bracket-arbitrary` because bracket-form arbitrary
+  candidates such as `w-[10px]` and `[mask-type:luminance]` are handled by
+  `unocss/no-arbitrary-value`
+- does report `.uno-apply-bare-arbitrary` because bare-value forms such as
+  `w-10px`, `text-rgb(255,0,0)`, and `translate-x-50%` both look utility-like
+  and fail the validity check, so they hit `unocss/no-arbitrary-value` and
+  `unocss/no-invalid-apply`
+- does not report `.uno-apply-variant-group` because that example is covered
+  by `unocss/no-variant-group`
+
 Rules demonstrated:
 
 - `unocss/no-atomic-class`

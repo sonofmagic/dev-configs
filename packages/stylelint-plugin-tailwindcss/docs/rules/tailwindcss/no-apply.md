@@ -6,6 +6,7 @@ Disallows any Tailwind `@apply` usage.
 
 - `base`: no
 - `recommended`: yes
+- `strict`: yes
 
 Reports examples like:
 

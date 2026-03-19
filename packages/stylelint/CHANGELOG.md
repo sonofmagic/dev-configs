@@ -1,5 +1,15 @@
 # @icebreakers/stylelint-config
 
+## Next
+
+### Patch Changes
+
+- 🐛 **Lower the default bundled `stylelint-plugin-tailwindcss` policy layer to `base` and add an explicit `tailwindcssPreset` option with `base`, `recommended`, and `strict`.**
+  - Default configs now only enable the utility selector and invalid `@apply` checks from the plugin package.
+  - `createStylelintConfig({ tailwindcssPreset: 'recommended' })` restores the broader everyday rule layer.
+  - `createStylelintConfig({ tailwindcssPreset: 'strict' })` enables the stricter architecture-oriented Tailwind rules.
+  - Update tests, snapshots, and README docs to match the new default and upgrade paths.
+
 ## 2.0.7
 
 ### Patch Changes

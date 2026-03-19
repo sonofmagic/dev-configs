@@ -55,9 +55,13 @@ export interface IgnoreListOptions {
   addUnits?: string[]
 }
 
+export type TailwindcssPresetLevel = 'base' | 'recommended' | 'strict'
+
 export interface IcebreakerStylelintOptions {
   /** Toggle built-in preset bundles. */
   presets?: PresetToggles
+  /** Control the bundled Tailwind/UnoCSS policy layer. */
+  tailwindcssPreset?: TailwindcssPresetLevel
   /** Append extra extends entries. */
   extends?: StylelintConfig['extends']
   /** Append override entries. */

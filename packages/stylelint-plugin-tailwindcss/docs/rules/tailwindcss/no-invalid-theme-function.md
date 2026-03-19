@@ -6,6 +6,7 @@ Disallows `theme(...)` calls that reference missing Tailwind theme paths.
 
 - `base`: no
 - `recommended`: yes
+- `strict`: yes
 
 Reports examples like:
 

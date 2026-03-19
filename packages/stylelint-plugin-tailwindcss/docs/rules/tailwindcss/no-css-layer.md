@@ -5,7 +5,8 @@ Disallows authored `@layer` directives.
 ## Included In
 
 - `base`: no
-- `recommended`: yes
+- `recommended`: no
+- `strict`: yes
 
 Reports examples like:
 
@@ -14,6 +15,9 @@ Reports examples like:
 
 Use this rule when layer composition should stay centralized rather than spread
 across feature stylesheets.
+
+This rule is exported, but not enabled by the default `recommended` preset
+because it can also match native CSS cascade layers.
 
 ## Why
 

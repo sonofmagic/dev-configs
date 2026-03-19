@@ -6,6 +6,7 @@ Disallows any UnoCSS-oriented `@apply` usage.
 
 - `base`: no
 - `recommended`: yes
+- `strict`: yes
 
 Reports examples like:
 

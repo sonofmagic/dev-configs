@@ -44,6 +44,7 @@ Use `createStylelintConfig` for fine-grained control over preset toggles, ignore
 import { createStylelintConfig } from '@icebreakers/stylelint-config'
 
 export default createStylelintConfig({
+  tailwindcssPreset: 'recommended',
   presets: {
     vue: false, // disable Vue rules for pure SCSS projects
   },
@@ -71,6 +72,7 @@ export default createStylelintConfig({
 - `presets.scss` – include `stylelint-config-standard-scss` (default `true`)
 - `presets.vue` – include `stylelint-config-recommended-vue/scss` (default `true`)
 - `presets.order` – include `stylelint-config-recess-order` (default `true`)
+- `tailwindcssPreset` – choose the bundled utility-policy layer: `'base'` (default), `'recommended'`, or `'strict'`
 - `ignores.*` – replace the default ignore lists (units, selector types, at-rules)
 - `ignores.add*` – append to the default ignore allowlists
 - `extends` – append additional Stylelint configs after the presets
@@ -87,37 +89,56 @@ Defaults include:
 
 ## Tailwind Utility Selector Guard
 
-This preset enables `stylelint-plugin-tailwindcss` by default with:
+By default this preset enables the plugin's `base` policy layer:
 
 ```txt
 tailwindcss/no-atomic-class
 tailwindcss/no-invalid-apply
-tailwindcss/no-apply
-tailwindcss/no-arbitrary-value
-tailwindcss/no-theme-function
-tailwindcss/no-invalid-theme-function
-tailwindcss/no-screen-directive
-tailwindcss/no-css-layer
 unocss/no-atomic-class
 unocss/no-invalid-apply
-unocss/no-apply
-unocss/no-arbitrary-value
-unocss/no-variant-group
 ```
 
-These rules:
+These default rules:
 
 - report Tailwind and UnoCSS utility selectors declared in authored stylesheets while still allowing semantic selectors such as BEM/OOCSS class names
 - report invalid utility-like `@apply` candidates
-- disallow `@apply` entirely
-- disallow arbitrary values / arbitrary properties such as `w-[10px]` and `[mask-type:luminance]`
-- disallow raw `theme(...)` usage and invalid Tailwind theme paths
-- disallow Tailwind `@screen` and authored `@layer` usage
-- disallow UnoCSS variant groups such as `hover:(bg-red-500 text-white)`
 
-The policy-only Tailwind entry rules `tailwindcss/no-tailwind-directive` and
-`tailwindcss/no-import-directive` are still exported by the plugin, but they
-are not enabled by this preset by default.
+If you want the broader everyday policy layer, switch to:
+
+```ts
+import { createStylelintConfig } from '@icebreakers/stylelint-config'
+
+export default createStylelintConfig({
+  tailwindcssPreset: 'recommended',
+})
+```
+
+That adds:
+
+- `tailwindcss/no-apply`
+- `tailwindcss/no-arbitrary-value`
+- `tailwindcss/no-invalid-theme-function`
+- `unocss/no-apply`
+- `unocss/no-arbitrary-value`
+- `unocss/no-variant-group`
+
+If you want the stricter architecture-oriented Tailwind policy layer, switch to:
+
+```ts
+import { createStylelintConfig } from '@icebreakers/stylelint-config'
+
+export default createStylelintConfig({
+  tailwindcssPreset: 'strict',
+})
+```
+
+That adds these Tailwind-only rules on top of the default policy:
+
+- `tailwindcss/no-theme-function`
+- `tailwindcss/no-screen-directive`
+- `tailwindcss/no-tailwind-directive`
+- `tailwindcss/no-import-directive`
+- `tailwindcss/no-css-layer`
 
 The underlying plugin supports both Tailwind CSS v3 and v4, and switches automatically based on the installed `tailwindcss` major version in the consuming project.
 

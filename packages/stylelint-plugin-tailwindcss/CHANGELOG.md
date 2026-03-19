@@ -1,5 +1,15 @@
 # stylelint-plugin-tailwindcss
 
+## Next
+
+### Patch Changes
+
+- 🐛 **Split the built-in presets into clearer policy tiers and add `strict`, `tailwindStrict`, and `unocssStrict`.**
+  - Keep `base` focused on utility selector and invalid `@apply` checks.
+  - Keep `recommended` as the lower-noise general-purpose layer.
+  - Add `strict` for the more architecture-oriented Tailwind rules, including `no-theme-function`, `no-screen-directive`, `no-tailwind-directive`, `no-import-directive`, and `no-css-layer`.
+  - Refresh the package docs, rule docs, and demo examples to explain the new preset boundaries, especially around `unocss/no-invalid-apply`.
+
 ## 0.0.3
 
 ### Patch Changes

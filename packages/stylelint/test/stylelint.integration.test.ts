@@ -135,7 +135,9 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker() as StylelintConfig,
+      config: createStylelintConfig({
+        tailwindcssPreset: 'base',
+      }) as StylelintConfig,
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -155,7 +157,9 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker() as StylelintConfig,
+      config: createStylelintConfig({
+        tailwindcssPreset: 'base',
+      }) as StylelintConfig,
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -167,7 +171,7 @@ describe('stylelint integration', () => {
     expect(warnings[0]?.text).toContain('bg-rd-500')
   })
 
-  it('reports any @apply usage by default', async () => {
+  it('reports any @apply usage with the recommended bundled Tailwind preset', async () => {
     const result = await stylelint.lint({
       code: [
         '.button {',
@@ -175,7 +179,9 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker() as StylelintConfig,
+      config: createStylelintConfig({
+        tailwindcssPreset: 'recommended',
+      }) as StylelintConfig,
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -187,7 +193,7 @@ describe('stylelint integration', () => {
     expect(warnings[0]?.text).toContain('@apply')
   })
 
-  it('reports any UnoCSS @apply usage by default', async () => {
+  it('reports any UnoCSS @apply usage with the recommended bundled Tailwind preset', async () => {
     const result = await stylelint.lint({
       code: [
         '.button {',
@@ -195,7 +201,9 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker() as StylelintConfig,
+      config: createStylelintConfig({
+        tailwindcssPreset: 'recommended',
+      }) as StylelintConfig,
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -207,7 +215,7 @@ describe('stylelint integration', () => {
     expect(warnings[0]?.text).toContain('@apply')
   })
 
-  it('reports arbitrary values by default', async () => {
+  it('reports arbitrary values with the recommended bundled Tailwind preset', async () => {
     const result = await stylelint.lint({
       code: [
         '.button {',
@@ -227,7 +235,9 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker() as StylelintConfig,
+      config: createStylelintConfig({
+        tailwindcssPreset: 'recommended',
+      }) as StylelintConfig,
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -241,7 +251,7 @@ describe('stylelint integration', () => {
     expect(warningTexts.some(text => text.includes('[mask-type:luminance]'))).toBe(true)
   })
 
-  it('reports UnoCSS arbitrary values by default', async () => {
+  it('reports UnoCSS arbitrary values with the recommended bundled Tailwind preset', async () => {
     const result = await stylelint.lint({
       code: [
         '.button {',
@@ -261,7 +271,9 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker() as StylelintConfig,
+      config: createStylelintConfig({
+        tailwindcssPreset: 'recommended',
+      }) as StylelintConfig,
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -279,7 +291,7 @@ describe('stylelint integration', () => {
     expect(warningTexts.some(text => text.includes('[mask-type:luminance]'))).toBe(true)
   })
 
-  it('reports theme() usage and invalid theme paths by default', async () => {
+  it('reports invalid theme() paths with the recommended bundled Tailwind preset', async () => {
     const result = await stylelint.lint({
       code: [
         '.button {',
@@ -288,7 +300,9 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker() as StylelintConfig,
+      config: createStylelintConfig({
+        tailwindcssPreset: 'recommended',
+      }) as StylelintConfig,
     })
 
     const themeWarnings = (result.results[0]?.warnings ?? []).filter(
@@ -298,12 +312,12 @@ describe('stylelint integration', () => {
       warning => warning.rule === noInvalidThemeFunctionRuleName,
     )
 
-    expect(themeWarnings).toHaveLength(2)
+    expect(themeWarnings).toHaveLength(0)
     expect(invalidThemeWarnings).toHaveLength(1)
     expect(invalidThemeWarnings[0]?.text).toContain('colors.not-exist.123')
   })
 
-  it('reports Tailwind directives by default', async () => {
+  it('does not report Tailwind directives by default', async () => {
     const result = await stylelint.lint({
       code: [
         '@import "tailwindcss";',
@@ -326,11 +340,11 @@ describe('stylelint integration', () => {
 
     const warnings = result.results[0]?.warnings ?? []
 
-    expect(warnings.some(warning => warning.rule === noScreenDirectiveRuleName)).toBe(true)
-    expect(warnings.some(warning => warning.rule === noCssLayerRuleName)).toBe(true)
+    expect(warnings.some(warning => warning.rule === noScreenDirectiveRuleName)).toBe(false)
+    expect(warnings.some(warning => warning.rule === noCssLayerRuleName)).toBe(false)
   })
 
-  it('reports UnoCSS variant groups by default', async () => {
+  it('reports UnoCSS variant groups with the recommended bundled Tailwind preset', async () => {
     const result = await stylelint.lint({
       code: [
         '.button {',
@@ -338,7 +352,9 @@ describe('stylelint integration', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker() as StylelintConfig,
+      config: createStylelintConfig({
+        tailwindcssPreset: 'recommended',
+      }) as StylelintConfig,
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -346,6 +362,24 @@ describe('stylelint integration', () => {
     )
 
     expect(warnings).toHaveLength(1)
+  })
+
+  it('supports the strict bundled Tailwind preset layer', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '@import "tailwindcss";',
+        '@tailwind utilities;',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: createStylelintConfig({
+        tailwindcssPreset: 'strict',
+      }) as StylelintConfig,
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+
+    expect(warnings.some(warning => warning.rule === 'tailwindcss/no-import-directive')).toBe(true)
+    expect(warnings.some(warning => warning.rule === 'tailwindcss/no-tailwind-directive')).toBe(true)
   })
 
   it('replaces ignore units and reports rpx when removed', async () => {

@@ -6,6 +6,7 @@ Disallows invalid Tailwind utility candidates inside `@apply`.
 
 - `base`: yes
 - `recommended`: yes
+- `strict`: yes
 
 Reports examples like:
 

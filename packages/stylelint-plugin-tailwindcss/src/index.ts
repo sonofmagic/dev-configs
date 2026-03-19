@@ -370,9 +370,38 @@ const recommended: StylelintPluginConfig = {
     noInvalidApplyPlugin,
     noApplyPlugin,
     noArbitraryValuePlugin,
+    noInvalidThemeFunctionPlugin,
+    unocssBundle.noAtomicClassPlugin,
+    unocssBundle.noInvalidApplyPlugin,
+    unocssBundle.noApplyPlugin,
+    unocssBundle.noArbitraryValuePlugin,
+    ...(unocssBundle.noVariantGroupPlugin ? [unocssBundle.noVariantGroupPlugin] : []),
+  ],
+  rules: {
+    [TAILWINDCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
+    [TAILWINDCSS_NO_INVALID_APPLY_RULE_NAME]: true,
+    [TAILWINDCSS_NO_APPLY_RULE_NAME]: true,
+    [TAILWINDCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
+    [TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME]: true,
+    [UNOCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
+    [UNOCSS_NO_INVALID_APPLY_RULE_NAME]: true,
+    [UNOCSS_NO_APPLY_RULE_NAME]: true,
+    [UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
+    [UNOCSS_NO_VARIANT_GROUP_RULE_NAME]: true,
+  },
+}
+
+const strict: StylelintPluginConfig = {
+  plugins: [
+    noAtomicClassPlugin,
+    noInvalidApplyPlugin,
+    noApplyPlugin,
+    noArbitraryValuePlugin,
     noThemeFunctionPlugin,
     noInvalidThemeFunctionPlugin,
     noScreenDirectivePlugin,
+    noTailwindDirectivePlugin,
+    noImportDirectivePlugin,
     noCssLayerPlugin,
     unocssBundle.noAtomicClassPlugin,
     unocssBundle.noInvalidApplyPlugin,
@@ -417,9 +446,32 @@ const tailwindRecommended = createRecommendedConfig(
     noAtomicClassPlugin,
     noInvalidApplyPlugin,
     extraPlugins: [
+      noInvalidThemeFunctionPlugin,
+    ],
+  },
+  {
+    noApply: TAILWINDCSS_NO_APPLY_RULE_NAME,
+    noArbitraryValue: TAILWINDCSS_NO_ARBITRARY_VALUE_RULE_NAME,
+    noAtomicClass: TAILWINDCSS_NO_ATOMIC_CLASS_RULE_NAME,
+    noInvalidApply: TAILWINDCSS_NO_INVALID_APPLY_RULE_NAME,
+    extraRules: [
+      TAILWINDCSS_NO_INVALID_THEME_FUNCTION_RULE_NAME,
+    ],
+  },
+)
+
+const tailwindStrict = createRecommendedConfig(
+  {
+    noApplyPlugin,
+    noArbitraryValuePlugin,
+    noAtomicClassPlugin,
+    noInvalidApplyPlugin,
+    extraPlugins: [
       noThemeFunctionPlugin,
       noInvalidThemeFunctionPlugin,
       noScreenDirectivePlugin,
+      noTailwindDirectivePlugin,
+      noImportDirectivePlugin,
       noCssLayerPlugin,
     ],
   },
@@ -469,6 +521,8 @@ const unocssRecommended = createRecommendedConfig(
   },
 )
 
+const unocssStrict = unocssRecommended
+
 const unocssNoAtomicClassPlugin = unocssBundle.noAtomicClassPlugin
 const unocssNoInvalidApplyPlugin = unocssBundle.noInvalidApplyPlugin
 const unocssNoApplyPlugin = unocssBundle.noApplyPlugin
@@ -498,6 +552,7 @@ export {
   noThemeFunctionPlugin,
   TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME as noThemeFunctionRuleName,
   recommended,
+  strict,
   tailwindBase,
   TAILWINDCSS_NO_APPLY_RULE_NAME,
   TAILWINDCSS_NO_ARBITRARY_VALUE_RULE_NAME,
@@ -510,6 +565,7 @@ export {
   TAILWINDCSS_NO_TAILWIND_DIRECTIVE_RULE_NAME,
   TAILWINDCSS_NO_THEME_FUNCTION_RULE_NAME,
   tailwindRecommended,
+  tailwindStrict,
   unocssBundle as unoBundle,
   UNOCSS_NO_APPLY_RULE_NAME,
   UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME,
@@ -530,6 +586,7 @@ export {
   UNOCSS_NO_VARIANT_GROUP_RULE_NAME as unocssNoVariantGroupRuleName,
   unocssBundle as unocssPlugins,
   unocssRecommended,
+  unocssStrict,
   unocssBundle as unoPlugins,
 }
 export type { Warning }

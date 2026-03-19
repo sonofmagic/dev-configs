@@ -11,17 +11,25 @@ import defaultConfig, {
   noArbitraryValueRuleName,
   noAtomicClassPlugin,
   noAtomicClassRuleName,
+  noCssLayerPlugin,
   noCssLayerRuleName,
+  noImportDirectivePlugin,
   noImportDirectiveRuleName,
   noInvalidApplyPlugin,
   noInvalidApplyRuleName,
+  noInvalidThemeFunctionPlugin,
   noInvalidThemeFunctionRuleName,
+  noScreenDirectivePlugin,
   noScreenDirectiveRuleName,
+  noTailwindDirectivePlugin,
   noTailwindDirectiveRuleName,
+  noThemeFunctionPlugin,
   noThemeFunctionRuleName,
   recommended,
+  strict,
   tailwindBase,
   tailwindRecommended,
+  tailwindStrict,
   UNOCSS_NO_APPLY_RULE_NAME,
   UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME,
   UNOCSS_NO_ATOMIC_CLASS_RULE_NAME,
@@ -29,6 +37,7 @@ import defaultConfig, {
   UNOCSS_NO_VARIANT_GROUP_RULE_NAME,
   unocssBase,
   unocssRecommended,
+  unocssStrict,
 } from '@/index'
 
 const FIXTURE_DIR = path.resolve(__dirname, '..', 'fixtures')
@@ -43,7 +52,7 @@ describe('stylelint-plugin-tailwindcss', () => {
     await expect(isTailwindUtilityClass('card__body')).resolves.toBe(false)
   })
 
-  it('exports base and recommended configs', () => {
+  it('exports base, recommended, and strict configs', () => {
     expect(base).toEqual({
       plugins: [
         noAtomicClassPlugin,
@@ -64,6 +73,29 @@ describe('stylelint-plugin-tailwindcss', () => {
       [noInvalidApplyRuleName]: true,
       [noApplyRuleName]: true,
       [noArbitraryValueRuleName]: true,
+      [noInvalidThemeFunctionRuleName]: true,
+      [UNOCSS_NO_ATOMIC_CLASS_RULE_NAME]: true,
+      [UNOCSS_NO_INVALID_APPLY_RULE_NAME]: true,
+      [UNOCSS_NO_APPLY_RULE_NAME]: true,
+      [UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
+      [UNOCSS_NO_VARIANT_GROUP_RULE_NAME]: true,
+    })
+    expect(tailwindBase.rules).toEqual({
+      [noAtomicClassRuleName]: true,
+      [noInvalidApplyRuleName]: true,
+    })
+    expect(tailwindRecommended.rules).toEqual({
+      [noAtomicClassRuleName]: true,
+      [noInvalidApplyRuleName]: true,
+      [noApplyRuleName]: true,
+      [noArbitraryValueRuleName]: true,
+      [noInvalidThemeFunctionRuleName]: true,
+    })
+    expect(strict.rules).toEqual({
+      [noAtomicClassRuleName]: true,
+      [noInvalidApplyRuleName]: true,
+      [noApplyRuleName]: true,
+      [noArbitraryValueRuleName]: true,
       [noThemeFunctionRuleName]: true,
       [noInvalidThemeFunctionRuleName]: true,
       [noScreenDirectiveRuleName]: true,
@@ -76,11 +108,7 @@ describe('stylelint-plugin-tailwindcss', () => {
       [UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
       [UNOCSS_NO_VARIANT_GROUP_RULE_NAME]: true,
     })
-    expect(tailwindBase.rules).toEqual({
-      [noAtomicClassRuleName]: true,
-      [noInvalidApplyRuleName]: true,
-    })
-    expect(tailwindRecommended.rules).toEqual({
+    expect(tailwindStrict.rules).toEqual({
       [noAtomicClassRuleName]: true,
       [noInvalidApplyRuleName]: true,
       [noApplyRuleName]: true,
@@ -103,6 +131,7 @@ describe('stylelint-plugin-tailwindcss', () => {
       [UNOCSS_NO_ARBITRARY_VALUE_RULE_NAME]: true,
       [UNOCSS_NO_VARIANT_GROUP_RULE_NAME]: true,
     })
+    expect(unocssStrict).toEqual(unocssRecommended)
   })
 
   it('works with the exported recommended config directly', async () => {
@@ -144,6 +173,35 @@ describe('stylelint-plugin-tailwindcss', () => {
     const warnings = result.results[0]?.warnings ?? []
     expect(warnings.some(warning => warning.rule === noApplyRuleName)).toBe(true)
     expect(warnings.some(warning => warning.rule === UNOCSS_NO_APPLY_RULE_NAME)).toBe(false)
+  })
+
+  it('reports the Tailwind architecture rules when strict is used', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '@import "tailwindcss";',
+        '@tailwind utilities;',
+        '@screen md {',
+        '  .button {',
+        '    color: theme(colors.gray.900 / 75%);',
+        '  }',
+        '}',
+        '@layer utilities {',
+        '  .button {',
+        '    color: red;',
+        '  }',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: strict,
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+
+    expect(warnings.some(warning => warning.rule === noImportDirectiveRuleName)).toBe(true)
+    expect(warnings.some(warning => warning.rule === noTailwindDirectiveRuleName)).toBe(true)
+    expect(warnings.some(warning => warning.rule === noScreenDirectiveRuleName)).toBe(true)
+    expect(warnings.some(warning => warning.rule === noThemeFunctionRuleName)).toBe(true)
+    expect(warnings.some(warning => warning.rule === noCssLayerRuleName)).toBe(true)
   })
 
   it('reports with the unocss namespace when only unocss rules are enabled', async () => {
@@ -267,7 +325,12 @@ describe('stylelint-plugin-tailwindcss', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: tailwindRecommended,
+      config: {
+        plugins: [noThemeFunctionPlugin],
+        rules: {
+          [noThemeFunctionRuleName]: true,
+        },
+      },
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -278,6 +341,35 @@ describe('stylelint-plugin-tailwindcss', () => {
     expect(warnings[0]?.text).toContain('colors.gray.900 / 75%')
   })
 
+  it('does not enable the opinionated Tailwind migration rules in tailwindRecommended', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '@import "tailwindcss";',
+        '@tailwind utilities;',
+        '@screen md {',
+        '  .button {',
+        '    color: theme(colors.gray.900 / 75%);',
+        '  }',
+        '}',
+        '@layer utilities {',
+        '  .button {',
+        '    color: red;',
+        '  }',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: tailwindRecommended,
+    })
+
+    const warnings = result.results[0]?.warnings ?? []
+
+    expect(warnings.some(warning => warning.rule === noTailwindDirectiveRuleName)).toBe(false)
+    expect(warnings.some(warning => warning.rule === noImportDirectiveRuleName)).toBe(false)
+    expect(warnings.some(warning => warning.rule === noScreenDirectiveRuleName)).toBe(false)
+    expect(warnings.some(warning => warning.rule === noThemeFunctionRuleName)).toBe(false)
+    expect(warnings.some(warning => warning.rule === noCssLayerRuleName)).toBe(false)
+  })
+
   it('reports invalid theme() calls when no-invalid-theme-function is enabled', async () => {
     const result = await stylelint.lint({
       code: [
@@ -286,7 +378,12 @@ describe('stylelint-plugin-tailwindcss', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: tailwindRecommended,
+      config: {
+        plugins: [noInvalidThemeFunctionPlugin],
+        rules: {
+          [noInvalidThemeFunctionRuleName]: true,
+        },
+      },
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -307,7 +404,12 @@ describe('stylelint-plugin-tailwindcss', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: tailwindRecommended,
+      config: {
+        plugins: [noScreenDirectivePlugin],
+        rules: {
+          [noScreenDirectiveRuleName]: true,
+        },
+      },
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -321,7 +423,12 @@ describe('stylelint-plugin-tailwindcss', () => {
     const result = await stylelint.lint({
       code: '@tailwind utilities;',
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: tailwindRecommended,
+      config: {
+        plugins: [noTailwindDirectivePlugin],
+        rules: {
+          [noTailwindDirectiveRuleName]: true,
+        },
+      },
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -329,13 +436,20 @@ describe('stylelint-plugin-tailwindcss', () => {
     )
 
     expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).not.toContain('Unknown rule')
+    expect(warnings[0]?.text).toContain('@tailwind')
   })
 
   it('reports tailwind imports when no-import-directive is enabled', async () => {
     const result = await stylelint.lint({
       code: '@import "tailwindcss";',
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: tailwindRecommended,
+      config: {
+        plugins: [noImportDirectivePlugin],
+        rules: {
+          [noImportDirectiveRuleName]: true,
+        },
+      },
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -343,6 +457,7 @@ describe('stylelint-plugin-tailwindcss', () => {
     )
 
     expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.text).not.toContain('Unknown rule')
     expect(warnings[0]?.text).toContain('tailwindcss')
   })
 
@@ -356,7 +471,12 @@ describe('stylelint-plugin-tailwindcss', () => {
         '}',
       ].join('\n'),
       codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: tailwindRecommended,
+      config: {
+        plugins: [noCssLayerPlugin],
+        rules: {
+          [noCssLayerRuleName]: true,
+        },
+      },
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(

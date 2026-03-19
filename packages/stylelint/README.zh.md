@@ -42,6 +42,7 @@ export default icebreaker()
 import { createStylelintConfig } from '@icebreakers/stylelint-config'
 
 export default createStylelintConfig({
+  tailwindcssPreset: 'recommended',
   presets: {
     vue: false, // 纯 SCSS 项目无需 Vue 规则
   },
@@ -69,6 +70,7 @@ export default createStylelintConfig({
 - `presets.scss`：是否包含 `stylelint-config-standard-scss`，默认开启
 - `presets.vue`：是否包含 `stylelint-config-recommended-vue/scss`，默认开启
 - `presets.order`：是否包含 `stylelint-config-recess-order`，默认开启
+- `tailwindcssPreset`：选择内置 utility 策略层，支持 `'base'`（默认）、`'recommended'` 或 `'strict'`
 - `ignores.*`：替换默认的忽略列表（单位、选择器类型、指令）
 - `ignores.add*`：在默认忽略列表基础上追加项
 - `extends`：在预设之后追加自定义 Stylelint 配置
@@ -85,36 +87,56 @@ export default createStylelintConfig({
 
 ## Tailwind 原子类拦截
 
-该预设默认启用了 `stylelint-plugin-tailwindcss`，对应规则为：
+该预设默认启用 `stylelint-plugin-tailwindcss` 的 `base` 策略层，对应规则为：
 
 ```txt
 tailwindcss/no-atomic-class
 tailwindcss/no-invalid-apply
-tailwindcss/no-apply
-tailwindcss/no-arbitrary-value
-tailwindcss/no-theme-function
-tailwindcss/no-invalid-theme-function
-tailwindcss/no-screen-directive
-tailwindcss/no-css-layer
 unocss/no-atomic-class
 unocss/no-invalid-apply
-unocss/no-apply
-unocss/no-arbitrary-value
-unocss/no-variant-group
 ```
 
-这些规则会：
+这些默认规则会：
 
 - 拦截在样式文件中直接声明 Tailwind / UnoCSS utility selector，但不会影响正常的语义化类名，例如 BEM / OOCSS 风格命名
 - 拦截无效的 `@apply` utility candidate
-- 直接禁止 `@apply`
-- 拦截 `w-[10px]`、`[mask-type:luminance]` 这类 arbitrary value / arbitrary property
-- 拦截直接使用 `theme(...)` 以及无效的 Tailwind theme 路径
-- 拦截 Tailwind 的 `@screen` 与手写 `@layer`
-- 拦截 UnoCSS variant group，例如 `hover:(bg-red-500 text-white)`
 
-策略性更强的 Tailwind 入口规则 `tailwindcss/no-tailwind-directive` 和
-`tailwindcss/no-import-directive` 仍然会导出，但默认不包含在这个预设里。
+如果你需要更完整的日常策略层，可以切到：
+
+```ts
+import { createStylelintConfig } from '@icebreakers/stylelint-config'
+
+export default createStylelintConfig({
+  tailwindcssPreset: 'recommended',
+})
+```
+
+这会额外启用：
+
+- `tailwindcss/no-apply`
+- `tailwindcss/no-arbitrary-value`
+- `tailwindcss/no-invalid-theme-function`
+- `unocss/no-apply`
+- `unocss/no-arbitrary-value`
+- `unocss/no-variant-group`
+
+如果你需要更严格、偏架构约束的 Tailwind 策略层，可以切到：
+
+```ts
+import { createStylelintConfig } from '@icebreakers/stylelint-config'
+
+export default createStylelintConfig({
+  tailwindcssPreset: 'strict',
+})
+```
+
+这会在默认策略上额外启用这些 Tailwind 规则：
+
+- `tailwindcss/no-theme-function`
+- `tailwindcss/no-screen-directive`
+- `tailwindcss/no-tailwind-directive`
+- `tailwindcss/no-import-directive`
+- `tailwindcss/no-css-layer`
 
 底层插件同时兼容 Tailwind CSS v3 和 v4，会根据使用方项目实际安装的 `tailwindcss` 主版本自动切换检测逻辑。
 

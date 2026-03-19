@@ -1,71 +1,19 @@
 # stylelint-plugin-tailwindcss
 
-Stylelint plugin for Tailwind CSS and utility-first selector policies.
+Stylelint plugin for teams that do not want authored CSS to drift toward
+utility-first styles.
 
-## Overview
+It focuses on two related policies:
 
-This package is a Stylelint plugin focused on one question:
+- do not declare utility selectors such as `.flex`, `.grid`, `.text-center`,
+  or `.hover\:bg-red-500` in authored CSS
+- control utility-oriented directives such as `@apply`, `theme(...)`,
+  `@screen`, and similar Tailwind syntax when your team wants stricter
+  stylesheet conventions
 
-> Should authored stylesheets be allowed to declare utility-first selectors such as `.flex`, `.grid`, `.text-center`, or `.hover\:bg-red-500`?
-
-It is designed for teams that want:
-
-- utility classes to live in templates/markup only
-- semantic selectors in authored CSS/SCSS/Vue style blocks
-- the same rule to still be useful in Tailwind CSS and UnoCSS-like projects
-
-## Included Rules
-
-- `tailwindcss/no-atomic-class`
-- `tailwindcss/no-invalid-apply`
-- `tailwindcss/no-apply`
-- `tailwindcss/no-arbitrary-value`
-- `tailwindcss/no-theme-function`
-- `tailwindcss/no-screen-directive`
-- `tailwindcss/no-tailwind-directive`
-- `tailwindcss/no-import-directive`
-- `tailwindcss/no-css-layer`
-- `unocss/no-atomic-class`
-- `unocss/no-invalid-apply`
-- `unocss/no-apply`
-- `unocss/no-arbitrary-value`
-- `unocss/no-variant-group`
-
-## What The Rule Reports
-
-The rule reports selectors like:
-
-- `.flex`
-- `.grid`
-- `.text-center`
-- `.hover\:bg-red-500`
-- `.w-\[10px\]`
-- `.md\:flex`
-- `.\!mt-4`
-
-It does **not** report semantic selectors such as:
-
-- `.page-shell`
-- `.card__body`
-- `.hero-banner--primary`
-
-## Detection Modes
-
-The plugin supports three modes:
-
-- Tailwind CSS v3: resolved from the consuming project and validated against the installed runtime
-- Tailwind CSS v4: resolved from the consuming project and validated against the installed runtime
-- No Tailwind installed: falls back to heuristic utility-first selector detection, which is still useful for UnoCSS-style projects
-
-This means the package works in two different styles of project:
-
-1. Tailwind-aware projects
-   The plugin resolves the installed `tailwindcss` package from the consuming project and validates class names against the real Tailwind runtime.
-
-2. Utility-first projects without Tailwind installed
-   The plugin falls back to heuristic detection for common utility prefixes, variants, arbitrary values, negative utilities, important utilities, and similar patterns.
-
-That fallback is intentionally useful for projects built with tools like UnoCSS, even though the plugin name is Tailwind-oriented.
+Although the package name is Tailwind-oriented, it also ships a parallel
+`unocss/*` namespace so the same stylelint workflow can still be useful in
+UnoCSS-style projects.
 
 ## Installation
 
@@ -73,9 +21,13 @@ That fallback is intentionally useful for projects built with tools like UnoCSS,
 pnpm add -D stylelint stylelint-plugin-tailwindcss
 ```
 
-If the consuming project uses Tailwind CSS and you want exact validation, install `tailwindcss` there as usual.
+If the consuming project installs `tailwindcss`, validation can use the real
+Tailwind runtime. Without Tailwind installed, the plugin falls back to
+heuristic utility detection.
 
-## Usage
+## Quick Start
+
+Use the default recommended preset:
 
 ```ts
 // stylelint.config.ts
@@ -84,12 +36,7 @@ import { recommended } from 'stylelint-plugin-tailwindcss'
 export default recommended
 ```
 
-`recommended` now enables both namespaces by default:
-
-- `tailwindcss/*`
-- `unocss/*`
-
-Minimal base config:
+Use the minimal base preset:
 
 ```ts
 import { base } from 'stylelint-plugin-tailwindcss'
@@ -97,27 +44,23 @@ import { base } from 'stylelint-plugin-tailwindcss'
 export default base
 ```
 
-`base` enables:
-
-- `tailwindcss/no-atomic-class`
-- `tailwindcss/no-invalid-apply`
-- `unocss/no-atomic-class`
-- `unocss/no-invalid-apply`
-
-Tailwind-only config:
+Use only one namespace:
 
 ```ts
-import { tailwindRecommended } from 'stylelint-plugin-tailwindcss'
+import {
+  tailwindRecommended,
+  tailwindStrict,
+  unocssRecommended,
+  unocssStrict,
+} from 'stylelint-plugin-tailwindcss'
 
 export default tailwindRecommended
-```
-
-UnoCSS-only config:
-
-```ts
-import { unocssRecommended } from 'stylelint-plugin-tailwindcss'
-
+// or
 export default unocssRecommended
+// or
+export default tailwindStrict
+// or
+export default unocssStrict
 ```
 
 Disable one namespace while keeping the other:
@@ -133,139 +76,217 @@ export default {
     'unocss/no-invalid-apply': false,
     'unocss/no-apply': false,
     'unocss/no-arbitrary-value': false,
+    'unocss/no-variant-group': false,
   },
 }
 ```
 
-Disable individual rules one by one:
+## Presets
 
-```ts
-import { recommended } from 'stylelint-plugin-tailwindcss'
+### `base`
 
-export default {
-  ...recommended,
-  rules: {
-    ...recommended.rules,
-    'tailwindcss/no-apply': false,
-    'unocss/no-arbitrary-value': false,
-  },
-}
-```
-
-Preferred exported rule names and plugins:
-
-```ts
-import {
-  noApplyPlugin,
-  noApplyRuleName,
-  noArbitraryValuePlugin,
-  noArbitraryValueRuleName,
-  noAtomicClassPlugin,
-  noAtomicClassRuleName,
-  noCssLayerPlugin,
-  noCssLayerRuleName,
-  noImportDirectivePlugin,
-  noImportDirectiveRuleName,
-  noInvalidApplyPlugin,
-  noInvalidApplyRuleName,
-  noScreenDirectivePlugin,
-  noScreenDirectiveRuleName,
-  noTailwindDirectivePlugin,
-  noTailwindDirectiveRuleName,
-  noThemeFunctionPlugin,
-  noThemeFunctionRuleName,
-  tailwindBase,
-  tailwindRecommended,
-  unocssBase,
-  unocssNoApplyPlugin,
-  unocssNoApplyRuleName,
-  unocssNoArbitraryValuePlugin,
-  unocssNoArbitraryValueRuleName,
-  unocssNoAtomicClassPlugin,
-  unocssNoAtomicClassRuleName,
-  unocssNoInvalidApplyPlugin,
-  unocssNoInvalidApplyRuleName,
-  unocssNoVariantGroupPlugin,
-  unocssNoVariantGroupRuleName,
-  unocssRecommended,
-} from 'stylelint-plugin-tailwindcss'
-```
+Lowest-noise starting point. It only enables the core selector and invalid
+`@apply` checks for both namespaces.
 
 - `tailwindcss/no-atomic-class`
-  Exported as `noAtomicClassRuleName`, with `noAtomicClassPlugin` as the matching plugin.
 - `tailwindcss/no-invalid-apply`
-  Reports utility-like `@apply` candidates that do not exist in the resolved Tailwind runtime.
+- `unocss/no-atomic-class`
+- `unocss/no-invalid-apply`
+
+### `recommended`
+
+Default preset. It enables both namespaces, but only the lower-noise rules that
+work well as a general recommendation.
+
+Tailwind rules:
+
+- `tailwindcss/no-atomic-class`
+- `tailwindcss/no-invalid-apply`
+- `tailwindcss/no-apply`
+- `tailwindcss/no-arbitrary-value`
+- `tailwindcss/no-invalid-theme-function`
+
+UnoCSS rules:
+
+- `unocss/no-atomic-class`
+- `unocss/no-invalid-apply`
+- `unocss/no-apply`
+- `unocss/no-arbitrary-value`
+- `unocss/no-variant-group`
+
+### `tailwindBase`
+
+Tailwind-only version of `base`.
+
+### `tailwindRecommended`
+
+Tailwind-only version of `recommended`.
+
+### `strict`
+
+Highest policy layer. It adds the more architecture-oriented Tailwind rules on
+top of `recommended`.
+
+Tailwind rules:
+
+- `tailwindcss/no-atomic-class`
+- `tailwindcss/no-invalid-apply`
+- `tailwindcss/no-apply`
+- `tailwindcss/no-arbitrary-value`
+- `tailwindcss/no-theme-function`
+- `tailwindcss/no-invalid-theme-function`
+- `tailwindcss/no-screen-directive`
+- `tailwindcss/no-tailwind-directive`
+- `tailwindcss/no-import-directive`
+- `tailwindcss/no-css-layer`
+
+UnoCSS rules:
+
+- `unocss/no-atomic-class`
+- `unocss/no-invalid-apply`
+- `unocss/no-apply`
+- `unocss/no-arbitrary-value`
+- `unocss/no-variant-group`
+
+### `tailwindStrict`
+
+Tailwind-only version of `strict`.
+
+### `unocssBase`
+
+UnoCSS-only version of `base`.
+
+### `unocssRecommended`
+
+UnoCSS-only version of `recommended`.
+
+### `unocssStrict`
+
+UnoCSS-only version of `strict`.
+At the moment it is intentionally the same as `unocssRecommended`.
+
+## What Gets Reported
+
+Reported utility selectors include examples such as:
+
+- `.flex`
+- `.grid`
+- `.text-center`
+- `.hover\:bg-red-500`
+- `.md\:flex`
+- `.\!mt-4`
+- `.w-\[10px\]`
+
+Semantic selectors such as these are not treated as utility selectors:
+
+- `.page-shell`
+- `.card__body`
+- `.hero-banner--primary`
+
+## Detection Modes
+
+### Tailwind-aware mode
+
+When the consuming project installs Tailwind, the plugin resolves that project’s
+own `tailwindcss` package and validates against the real runtime.
+
+### Heuristic mode
+
+When Tailwind is not installed, the plugin does not fail closed. It falls back
+to utility-first heuristics that still catch many common utility selectors and
+utility-like `@apply` candidates.
+
+This is why the package remains useful in UnoCSS-style projects.
+
+## Rule Reference
+
+### Tailwind rules
+
+- `tailwindcss/no-atomic-class`
+  Reports authored utility selectors.
+- `tailwindcss/no-invalid-apply`
+  Reports `@apply` candidates that look utility-like but are not recognized as
+  valid Tailwind utilities.
 - `tailwindcss/no-apply`
   Reports every `@apply` directive.
 - `tailwindcss/no-arbitrary-value`
-  Reports Tailwind-style arbitrary values and arbitrary properties in selectors and `@apply` candidates, such as `w-[10px]` and `[mask-type:luminance]`.
+  Reports Tailwind-style arbitrary values and arbitrary properties in selectors
+  and `@apply`, such as `w-[10px]` and `[mask-type:luminance]`.
+- `tailwindcss/no-invalid-theme-function`
+  Reports `theme(...)` calls whose lookup path is invalid for the resolved
+  Tailwind runtime.
 - `tailwindcss/no-theme-function`
-  Reports any `theme(...)` usage in declarations and at-rule params.
+  Reports all `theme(...)` calls. Exported, but not enabled by
+  `recommended`.
 - `tailwindcss/no-screen-directive`
-  Reports any `@screen` directive.
+  Reports `@screen`. Exported, but not enabled by `recommended`.
 - `tailwindcss/no-tailwind-directive`
-  Reports any `@tailwind` directive. Exported, but not enabled by `recommended` by default.
+  Reports `@tailwind`. Exported, but not enabled by `recommended` because it is
+  better suited to migration or architecture-specific presets.
 - `tailwindcss/no-import-directive`
-  Reports `@import "tailwindcss"`-style entry imports. Exported, but not enabled by `recommended` by default.
+  Reports `@import "tailwindcss"`-style entry imports. Exported, but not
+  enabled by `recommended` because it is better suited to migration or
+  architecture-specific presets.
 - `tailwindcss/no-css-layer`
-  Reports authored `@layer` directives.
+  Reports authored `@layer` directives. Exported, but not enabled by
+  `recommended` because it can also match native CSS cascade layers.
+
+### UnoCSS rules
+
 - `unocss/no-atomic-class`
-  Exported as `unocssNoAtomicClassRuleName`, with `unocssNoAtomicClassPlugin` as the matching plugin.
+  Reports authored utility selectors.
 - `unocss/no-invalid-apply`
-  Exported as `unocssNoInvalidApplyRuleName`, with `unocssNoInvalidApplyPlugin` as the matching plugin.
+  Reports `@apply` candidates that look utility-like but are not recognized as
+  valid candidates by the plugin’s runtime and heuristic checks.
+  It is intentionally narrower than `unocss/no-apply`: semantic tokens such as
+  `button-base` are ignored, while misspelled utility-like tokens such as
+  `bg-rd-500` are reported.
+  Bare-value forms such as `w-10px` and `text-rgb(255,0,0)` can also be
+  reported here when they fail the validity check.
 - `unocss/no-apply`
-  Exported as `unocssNoApplyRuleName`, with `unocssNoApplyPlugin` as the matching plugin.
+  Reports every `@apply` directive.
 - `unocss/no-arbitrary-value`
-  Exported as `unocssNoArbitraryValueRuleName`, with `unocssNoArbitraryValuePlugin` as the matching plugin.
-  This namespace also reports UnoCSS bare-value forms such as `w-10px`, `w-50%`, `top--10px`, `bg-$brand`, `text-rgb(255,0,0)`, `translate-x-50%`, `outline-#fff`, and `[&>*]:w-10px`.
+  Reports UnoCSS-style arbitrary values in selectors and `@apply`.
+  This includes bare-value forms such as `w-10px`, `w-50%`, `top--10px`,
+  `bg-$brand`, `text-rgb(255,0,0)`, `translate-x-50%`, `outline-#fff`, and
+  `[&>*]:w-10px`.
 - `unocss/no-variant-group`
-  Exported as `unocssNoVariantGroupRuleName`, with `unocssNoVariantGroupPlugin` as the matching plugin.
   Reports UnoCSS variant groups such as `hover:(bg-red-500 text-white)`.
+
+## Exported Names
+
+The package exports:
+
+- preset objects such as `base`, `recommended`, `tailwindRecommended`, and
+  `unocssRecommended`
+- rule names such as `noAtomicClassRuleName` and
+  `unocssNoVariantGroupRuleName`
+- plugin instances such as `noAtomicClassPlugin` and
+  `unocssNoVariantGroupPlugin`
+
+If you need fine-grained composition, import the individual rule names and
+plugins directly.
 
 ## With `@icebreakers/stylelint-config`
 
-`@icebreakers/stylelint-config` already enables this plugin by default, so you do not need to register it manually when using that preset.
-
-## Exact vs Heuristic Validation
-
-When Tailwind is installed:
-
-- detection is more precise
-- the plugin uses the real installed Tailwind version from the consuming project
-- Tailwind v3 and v4 are handled differently internally
-
-When Tailwind is not installed:
-
-- the plugin does not fail
-- it falls back to utility-first heuristics
-- this is less exact, but still catches many real utility selectors
-
-In other words, the plugin is designed to degrade gracefully rather than becoming useless outside Tailwind projects.
+`@icebreakers/stylelint-config` already wires this plugin in. If you use that
+preset, you usually do not need to register this package manually.
 
 ## Supported File Types
 
-The plugin works wherever Stylelint works, including:
+The plugin works anywhere Stylelint works, including:
 
 - `.css`
 - `.scss`
-- Vue SFC `<style>` blocks
+- Vue SFC `<style>`
 - Vue SFC `<style lang="scss">`
 
 ## Demo
 
-This repository includes an IDE-visible demo under:
+This repository includes IDE-friendly examples under
+[`apps/mock/src/stylelint-demo`](/Users/yangqiming/Documents/GitHub/eslint-config/apps/mock/src/stylelint-demo).
 
-- [apps/mock/src/stylelint-demo](/Users/icebreaker/Documents/GitHub/eslint-config/apps/mock/src/stylelint-demo)
+## More
 
-You can run it with:
-
-```bash
-pnpm --dir apps/mock run lint:styles:demo
-```
-
-## Related Packages
-
-- `postcss-tailwindcss`
-  Used for selector collection and Tailwind runtime resolution.
-- `@icebreakers/stylelint-config`
-  Enables this plugin by default in the monorepo's Stylelint preset.
+The stricter preset is documented in
+[`docs/strict-preset.md`](/Users/yangqiming/Documents/GitHub/eslint-config/packages/stylelint-plugin-tailwindcss/docs/strict-preset.md).

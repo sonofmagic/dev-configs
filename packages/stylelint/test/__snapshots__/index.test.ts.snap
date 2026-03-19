@@ -11,17 +11,8 @@ exports[`index > common 1`] = `
   "plugins": [
     "stylelint-plugin-tailwindcss",
     "stylelint-plugin-tailwindcss/no-invalid-apply",
-    "stylelint-plugin-tailwindcss/no-apply",
-    "stylelint-plugin-tailwindcss/no-arbitrary-value",
     "stylelint-plugin-tailwindcss/unocss/no-atomic-class",
     "stylelint-plugin-tailwindcss/unocss/no-invalid-apply",
-    "stylelint-plugin-tailwindcss/unocss/no-apply",
-    "stylelint-plugin-tailwindcss/unocss/no-arbitrary-value",
-    "stylelint-plugin-tailwindcss/no-theme-function",
-    "stylelint-plugin-tailwindcss/no-invalid-theme-function",
-    "stylelint-plugin-tailwindcss/no-screen-directive",
-    "stylelint-plugin-tailwindcss/no-css-layer",
-    "stylelint-plugin-tailwindcss/unocss/no-variant-group",
   ],
   "rules": {
     "at-rule-no-deprecated": [
@@ -99,14 +90,8 @@ exports[`index > common 1`] = `
         ],
       },
     ],
-    "tailwindcss/no-apply": true,
-    "tailwindcss/no-arbitrary-value": true,
     "tailwindcss/no-atomic-class": true,
-    "tailwindcss/no-css-layer": true,
     "tailwindcss/no-invalid-apply": true,
-    "tailwindcss/no-invalid-theme-function": true,
-    "tailwindcss/no-screen-directive": true,
-    "tailwindcss/no-theme-function": true,
     "unit-no-unknown": [
       true,
       {
@@ -115,11 +100,8 @@ exports[`index > common 1`] = `
         ],
       },
     ],
-    "unocss/no-apply": true,
-    "unocss/no-arbitrary-value": true,
     "unocss/no-atomic-class": true,
     "unocss/no-invalid-apply": true,
-    "unocss/no-variant-group": true,
   },
 }
 `;

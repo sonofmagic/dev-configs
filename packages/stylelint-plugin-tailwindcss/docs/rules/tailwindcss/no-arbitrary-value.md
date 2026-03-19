@@ -6,6 +6,7 @@ Disallows Tailwind-style arbitrary values and arbitrary properties.
 
 - `base`: no
 - `recommended`: yes
+- `strict`: yes
 
 Reports examples like:
 

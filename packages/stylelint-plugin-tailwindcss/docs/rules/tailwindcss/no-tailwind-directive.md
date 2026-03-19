@@ -6,6 +6,7 @@ Disallows Tailwind entry directives inside authored stylesheets.
 
 - `base`: no
 - `recommended`: no
+- `strict`: yes
 
 Reports examples like:
 

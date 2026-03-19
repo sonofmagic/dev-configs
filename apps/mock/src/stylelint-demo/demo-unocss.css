@@ -13,6 +13,43 @@
   border-radius: 12px;
 }
 
+/* stylelint-disable comment-empty-line-before */
+/* should report: unocss/no-apply only, not unocss/no-invalid-apply */
+.uno-apply-valid-spacing {
+  @apply rounded-lg px-4;
+}
+
+/* should report: unocss/no-apply only, not unocss/no-invalid-apply */
+.uno-apply-semantic-token {
+  @apply button-base;
+}
+
+/* should report: unocss/no-apply and unocss/no-invalid-apply */
+.uno-apply-invalid-color {
+  @apply bg-rd-500 rounded-lg;
+}
+
+/* should report: unocss/no-apply and unocss/no-invalid-apply */
+.uno-apply-invalid-alignment {
+  @apply justify-betwen items-cneter;
+}
+
+/* should report: unocss/no-apply and unocss/no-arbitrary-value, not unocss/no-invalid-apply */
+.uno-apply-bracket-arbitrary {
+  @apply w-[10px] [mask-type:luminance];
+}
+
+/* should report: unocss/no-apply, unocss/no-arbitrary-value, and unocss/no-invalid-apply */
+.uno-apply-bare-arbitrary {
+  @apply w-10px text-rgb(255,0,0) translate-x-50%;
+}
+
+/* should report: unocss/no-apply and unocss/no-variant-group, not unocss/no-invalid-apply */
+.uno-apply-variant-group {
+  @apply hover:(bg-red-500 text-white);
+}
+/* stylelint-enable comment-empty-line-before */
+
 /* stylelint-disable selector-class-pattern, comment-empty-line-before */
 /* should report: unocss/no-atomic-class */
 .flex {

@@ -6,6 +6,7 @@ Disallows UnoCSS variant groups.
 
 - `base`: no
 - `recommended`: yes
+- `strict`: yes
 
 Reports examples like:
 
