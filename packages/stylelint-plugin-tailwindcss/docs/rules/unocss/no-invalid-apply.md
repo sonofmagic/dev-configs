@@ -30,14 +30,36 @@ It only reports tokens that still look utility-like.
 Invalid utility candidates inside `@apply` are hard to spot and often look
 close enough to real utilities.
 
+## ✅ Recommended
+
+- Use valid utility candidates when `@apply` is intentionally allowed
+- Let validation catch typos before they ship into shared styles
+
+## ❌ Avoid
+
+- Misspelled utility-like tokens such as `bg-rd-500`
+- Trusting visually similar shorthands without actual candidate validation
+
 ## When To Enable
 
 Enable this when `@apply` is still allowed for UnoCSS-style usage but you want
 candidate validation.
 
-## Example
+## Examples
+
+### ✅ Good
 
 ```css
+/* ✅ Good: every utility candidate is spelled correctly. */
+.button {
+  @apply bg-red-500 rounded-lg;
+}
+```
+
+### ❌ Bad
+
+```css
+/* ❌ Bad: these utility-like tokens are misspelled and should be reported. */
 .button {
   @apply bg-rd-500 rounded-lg;
 }

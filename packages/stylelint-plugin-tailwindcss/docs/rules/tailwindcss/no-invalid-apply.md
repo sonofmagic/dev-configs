@@ -20,14 +20,36 @@ based on the consuming project's actual Tailwind version and config.
 Typos inside `@apply` are easy to miss because they still look like valid
 utility syntax.
 
+## ✅ Recommended
+
+- Use only valid utilities when `@apply` is still allowed in your project
+- Rely on runtime-aware validation to catch misspellings early
+
+## ❌ Avoid
+
+- Misspelled utility candidates that only look correct at a glance
+- Assuming `@apply` tokens are valid without checking resolved Tailwind config
+
 ## When To Enable
 
 Enable this when `@apply` is still allowed in your codebase but you want
 runtime-aware validation for candidates.
 
-## Example
+## Examples
+
+### ✅ Good
 
 ```css
+/* ✅ Good: every utility candidate is valid in Tailwind. */
+.button {
+  @apply bg-red-500 rounded-lg;
+}
+```
+
+### ❌ Bad
+
+```css
+/* ❌ Bad: bg-rd-500 is a typo and should be reported. */
 .button {
   @apply bg-rd-500 rounded-lg;
 }
