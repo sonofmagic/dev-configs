@@ -1,5 +1,53 @@
 # @icebreakers/stylelint-config
 
+## 2.1.0
+
+### Minor Changes
+
+- ✨ **Split the utility-first rules into `tailwindcss/*` and `unocss/*`** [`8730574`](https://github.com/sonofmagic/dev-configs/commit/8730574b5399eb4c06908192ad279293592fe52f) by @sonofmagic
+  namespaces.
+
+  Default `base` and `recommended` configs now enable both namespaces,
+  while still allowing each rule to be disabled independently.
+
+  Add explicit single-namespace exports for consumers that want one side
+  only, including:
+  - `tailwindBase`
+  - `tailwindRecommended`
+  - `unocssBase`
+  - `unocssRecommended`
+  - `unocssNoAtomicClassPlugin`
+  - `unocssNoInvalidApplyPlugin`
+  - `unocssNoApplyPlugin`
+  - `unocssNoArbitraryValuePlugin`
+
+  Also add the matching `UNOCSS_NO_*` rule-name exports and document how
+  to disable either namespace or individual rules one by one.
+
+  Update `@icebreakers/stylelint-config` so its default preset enables
+  both the `tailwindcss/*` and `unocss/*` rule sets, and add matching
+  mock demo files that isolate each namespace in the IDE.
+
+- ✨ **Refine the utility-policy preset layering for Stylelint packages.** [`7474460`](https://github.com/sonofmagic/dev-configs/commit/7474460f247f773adcee7f580932ba7ed678c63e) by @sonofmagic
+  For `stylelint-plugin-tailwindcss`:
+  - clarify the built-in `base` and `recommended` tiers
+  - add `strict`, `tailwindStrict`, and `unocssStrict`
+  - refresh rule docs and README guidance for the new preset boundaries
+  - expand the UnoCSS demo examples to show what `unocss/no-invalid-apply`
+    reports and what it intentionally ignores
+
+  For `@icebreakers/stylelint-config`:
+  - change the default bundled utility-policy layer to the plugin package's
+    `base` preset
+  - add `tailwindcssPreset: 'base' | 'recommended' | 'strict'`
+  - document how to opt into the broader `recommended` layer or the stricter
+    architecture-oriented Tailwind layer
+
+### Patch Changes
+
+- 📦 **Dependencies** [`8730574`](https://github.com/sonofmagic/dev-configs/commit/8730574b5399eb4c06908192ad279293592fe52f)
+  → `stylelint-plugin-tailwindcss@1.0.0`
+
 ## Next
 
 ### Patch Changes
