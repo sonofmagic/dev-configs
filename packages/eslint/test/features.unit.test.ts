@@ -315,4 +315,70 @@ describe('resolveStylelintBridgePresets', () => {
       },
     })
   })
+
+  it('omits cwd from stylelint bridge options when not provided', async () => {
+    vi.doMock('eslint-plugin-better-stylelint', () => {
+      return {
+        default: {
+          meta: {
+            name: 'stylelint',
+            version: '0.0.1',
+          },
+          processors: {
+            css: {},
+            scss: {},
+          },
+          rules: {
+            stylelint: {},
+          },
+        },
+        createStylelintProcessor: createStylelintProcessorMock,
+      }
+    })
+
+    const presets = resolveStylelintBridgePresets(true)
+    await Promise.all(presets as Promise<TypedFlatConfigItem>[])
+
+    expect(createStylelintProcessorMock).toHaveBeenNthCalledWith(1, {
+      configLoader: expect.stringMatching(/stylelint\.(ts|js)$/u),
+      configOptions: {},
+    })
+  })
+
+  it('supports an object form with only stylelint config options', async () => {
+    vi.doMock('eslint-plugin-better-stylelint', () => {
+      return {
+        default: {
+          meta: {
+            name: 'stylelint',
+            version: '0.0.1',
+          },
+          processors: {
+            css: {},
+            scss: {},
+          },
+          rules: {
+            stylelint: {},
+          },
+        },
+        createStylelintProcessor: createStylelintProcessorMock,
+      }
+    })
+
+    const presets = resolveStylelintBridgePresets({
+      rules: {
+        'color-named': 'never',
+      },
+    })
+    await Promise.all(presets as Promise<TypedFlatConfigItem>[])
+
+    expect(createStylelintProcessorMock).toHaveBeenNthCalledWith(1, {
+      configLoader: expect.stringMatching(/stylelint\.(ts|js)$/u),
+      configOptions: {
+        rules: {
+          'color-named': 'never',
+        },
+      },
+    })
+  })
 })

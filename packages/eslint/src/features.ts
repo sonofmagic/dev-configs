@@ -86,34 +86,28 @@ export function resolveStylelintBridgePresets(option: UserDefinedOptions['stylel
 
   return [
     pluginModulePromise.then((pluginModule) => {
-      const plugin = pluginModule.default ?? pluginModule
-
       return {
         files: ['**/*.{css,pcss,postcss}'],
         plugins: {
-          stylelint: plugin,
+          stylelint: pluginModule.default,
         },
         processor: pluginModule.createStylelintProcessor(stylelintOptions) as any,
       } satisfies TypedFlatConfigItem
     }),
     pluginModulePromise.then((pluginModule) => {
-      const plugin = pluginModule.default ?? pluginModule
-
       return {
         files: ['**/*.{scss,sass}'],
         plugins: {
-          stylelint: plugin,
+          stylelint: pluginModule.default,
         },
         processor: pluginModule.createStylelintProcessor(stylelintOptions) as any,
       } satisfies TypedFlatConfigItem
     }),
     pluginModulePromise.then((pluginModule) => {
-      const plugin = pluginModule.default ?? pluginModule
-
       return {
         files: ['**/*.vue'],
         plugins: {
-          stylelint: plugin,
+          stylelint: pluginModule.default,
         },
         rules: {
           'stylelint/stylelint': ['error', stylelintOptions],
