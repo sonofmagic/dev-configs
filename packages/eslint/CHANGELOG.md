@@ -1,5 +1,15 @@
 # @icebreakers/eslint-config
 
+## 2.0.2
+
+### Patch Changes
+
+- 🐛 **Export explicit public config result types for the `icebreaker` factory helpers.** [`7cc614e`](https://github.com/sonofmagic/dev-configs/commit/7cc614ef85ca028297673da1d8c333c4d8b4bbbf) by @sonofmagic
+  - Also expose the Stylelint config input types from the package entry so consumers
+  - can reference both input and output config types directly.
+- 📦 **Dependencies** [`7cc614e`](https://github.com/sonofmagic/dev-configs/commit/7cc614ef85ca028297673da1d8c333c4d8b4bbbf)
+  → `@icebreakers/stylelint-config@2.1.1`
+
 ## 2.0.1
 
 ### Patch Changes
