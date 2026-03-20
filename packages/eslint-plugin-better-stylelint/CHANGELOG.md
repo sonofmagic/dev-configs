@@ -1,5 +1,26 @@
 # eslint-plugin-better-stylelint
 
+## 0.1.1
+
+### Patch Changes
+
+- 🐛 **Make the ESLint Stylelint bridge configurable without coupling the bridge plugin** [`e20b401`](https://github.com/sonofmagic/dev-configs/commit/e20b40187b9a3f9a1d737e94d9361469394827d9) by @sonofmagic
+  to the bundled Icebreaker preset.
+
+  For `@icebreakers/eslint-config`:
+  - bundle the Stylelint bridge and `@icebreakers/stylelint-config` by default
+  - keep `stylelint` disabled by default
+  - allow inline Stylelint preset options inside `eslint.config.js`
+  - expose an internal `./stylelint` loader entry used by the bridge
+
+  For `eslint-plugin-better-stylelint`:
+  - accept external `configLoader` and `configOptions` instead of importing the
+    Icebreaker Stylelint preset directly
+  - run Stylelint in a short-lived sync subprocess to avoid lingering test
+    handles and worker lifecycle issues
+
+- 🐛 **upgrade stylelint to 17.5.0** [`2111052`](https://github.com/sonofmagic/dev-configs/commit/2111052299626ee456f9a0ca897e764d81f2ec99) by @sonofmagic
+
 ## 0.1.0
 
 ### Minor Changes
