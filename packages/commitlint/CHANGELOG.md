@@ -1,5 +1,13 @@
 # @icebreakers/commitlint-config
 
+## 1.2.13
+
+### Patch Changes
+
+- 🐛 **Export explicit public config result types for the `icebreaker` factory helpers.** [`7cc614e`](https://github.com/sonofmagic/dev-configs/commit/7cc614ef85ca028297673da1d8c333c4d8b4bbbf) by @sonofmagic
+  - Also expose the Stylelint config input types from the package entry so consumers
+  - can reference both input and output config types directly.
+
 ## 1.2.12
 
 ### Patch Changes
