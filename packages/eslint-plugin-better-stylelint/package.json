@@ -55,7 +55,7 @@
     }
   },
   "dependencies": {
-    "stylelint": "^17.4.0",
+    "stylelint": "^17.5.0",
     "synckit": "^0.11.12"
   },
   "publishConfig": {
