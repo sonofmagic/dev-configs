@@ -271,6 +271,9 @@ importers:
       eslint-plugin-vuejs-accessibility:
         specifier: ^2.5.0
         version: 2.5.0(eslint@10.0.3(jiti@2.6.1))(globals@17.4.0)
+      stylelint:
+        specifier: ^17.5.0
+        version: 17.5.0(typescript@5.9.3)
     optionalDependencies:
       '@unocss/eslint-plugin':
         specifier: 66.6.7
