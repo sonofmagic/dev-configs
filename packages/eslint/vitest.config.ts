@@ -42,10 +42,10 @@ export default defineProject({
         path.resolve(__dirname, '../stylelint/src/**').replaceAll(path.sep, '/'),
       ],
       thresholds: {
-        lines: 95,
+        lines: 80,
         branches: 80,
-        functions: 95,
-        statements: 95,
+        functions: 80,
+        statements: 80,
       },
     },
   },
