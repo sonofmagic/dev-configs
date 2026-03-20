@@ -38,6 +38,8 @@ export default defineProject({
       exclude: [
         '**/*.d.ts',
         '**/dist/**',
+        path.resolve(__dirname, '../eslint-plugin-better-stylelint/src/**').replaceAll(path.sep, '/'),
+        path.resolve(__dirname, '../stylelint/src/**').replaceAll(path.sep, '/'),
       ],
       thresholds: {
         lines: 95,
