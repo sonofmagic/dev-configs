@@ -6,6 +6,10 @@ export type {
   IcebreakerStylelintOptions,
   IgnoreListOptions,
   PresetToggles,
+  StylelintConfig,
+  StylelintOverride,
+  StylelintRuleOptions,
+  StylelintRuleSetting,
   TailwindcssPresetLevel,
 } from './types'
 
@@ -40,3 +44,5 @@ export function icebreaker(config?: StylelintConfig): StylelintConfig {
   const base = createIcebreakerStylelintConfig()
   return mergeConfigs(base, config)
 }
+
+export type IcebreakerStylelintConfig = ReturnType<typeof icebreaker>

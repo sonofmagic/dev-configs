@@ -1,4 +1,8 @@
-import type { IcebreakerStylelintOptions } from '@icebreakers/stylelint-config'
+import type {
+  IcebreakerStylelintConfig,
+  IcebreakerStylelintOptions,
+  StylelintConfig,
+} from '@icebreakers/stylelint-config'
 import {
   createStylelintConfig,
   icebreaker,
@@ -12,5 +16,11 @@ const options: IcebreakerStylelintOptions = {
 }
 
 expectType<IcebreakerStylelintOptions>(options)
+expectAssignable<StylelintConfig>({
+  rules: {
+    color: 'red',
+  },
+})
+expectType<IcebreakerStylelintConfig>(icebreaker())
 expectAssignable<{ rules?: Record<string, unknown>, plugins?: unknown }>(createStylelintConfig())
 expectAssignable<{ rules?: Record<string, unknown>, plugins?: unknown }>(icebreaker())

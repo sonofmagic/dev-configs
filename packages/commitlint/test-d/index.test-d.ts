@@ -1,4 +1,5 @@
 import type { UserConfig } from '@commitlint/types'
+import type { IcebreakerCommitlintConfig } from '@icebreakers/commitlint-config'
 import {
   createIcebreakerCommitlintConfig,
   icebreaker,
@@ -7,6 +8,7 @@ import {
 import { expectAssignable, expectType } from 'tsd'
 
 expectType<UserConfig>(createIcebreakerCommitlintConfig())
+expectType<IcebreakerCommitlintConfig>(icebreaker())
 expectType<UserConfig>(icebreaker({
   types: {
     severity: RuleConfigSeverity.Error,

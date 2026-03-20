@@ -15,12 +15,18 @@ export function icebreaker(
   return antfu(...getPresets(options), ...userConfigs)
 }
 
+export type IcebreakerEslintConfig = ReturnType<typeof icebreaker>
+
 export function icebreakerLegacy(
   options: UserDefinedOptions = {},
   ...userConfigs: UserConfigItem[]
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
   return antfu(...getPresets(options, 'legacy'), ...userConfigs)
 }
+
+export type IcebreakerLegacyEslintConfig = ReturnType<
+  typeof icebreakerLegacy
+>
 
 export type {
   ConfigNames,

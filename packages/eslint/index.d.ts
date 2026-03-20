@@ -46,10 +46,16 @@ export declare function icebreaker(
   ...userConfigs: UserConfigItem[]
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames>
 
+export type IcebreakerEslintConfig = ReturnType<typeof icebreaker>
+
 export declare function icebreakerLegacy(
   options?: UserDefinedOptions,
   ...userConfigs: UserConfigItem[]
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames>
+
+export type IcebreakerLegacyEslintConfig = ReturnType<
+  typeof icebreakerLegacy
+>
 
 export type {
   ConfigNames,

@@ -69,3 +69,5 @@ export function createIcebreakerCommitlintConfig(
 export function icebreaker(options?: IcebreakerCommitlintOptions): UserConfig {
   return createIcebreakerCommitlintConfig(options)
 }
+
+export type IcebreakerCommitlintConfig = ReturnType<typeof icebreaker>
