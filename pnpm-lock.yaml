@@ -235,6 +235,9 @@ importers:
       '@eslint-react/eslint-plugin':
         specifier: ^3.0.0
         version: 3.0.0(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
+      '@icebreakers/stylelint-config':
+        specifier: workspace:*
+        version: link:../stylelint
       '@next/eslint-plugin-next':
         specifier: ^16.2.0
         version: 16.2.0
@@ -284,9 +287,6 @@ importers:
       stylelint:
         specifier: ^17.5.0
         version: 17.5.0(typescript@5.9.3)
-      synckit:
-        specifier: ^0.11.12
-        version: 0.11.12
 
   packages/lightningcss-tailwindcss:
     dependencies:
@@ -11482,8 +11482,8 @@ snapshots:
 
   '@typescript-eslint/project-service@8.56.1(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.56.1(typescript@5.9.3)
-      '@typescript-eslint/types': 8.56.1
+      '@typescript-eslint/tsconfig-utils': 8.57.1(typescript@5.9.3)
+      '@typescript-eslint/types': 8.57.1
       debug: 4.4.3
       typescript: 5.9.3
     transitivePeerDependencies:
