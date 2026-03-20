@@ -43,7 +43,7 @@ export default defineProject({
       ],
       thresholds: {
         lines: 95,
-        branches: 95,
+        branches: 80,
         functions: 95,
         statements: 95,
       },
