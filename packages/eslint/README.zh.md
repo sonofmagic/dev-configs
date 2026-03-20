@@ -8,7 +8,7 @@
 
 - Node.js 18 或更高版本
 - 支持 Flat Config 的 ESLint 9
-- 如需启用 Tailwind、MDX、Stylelint 桥接、UnoCSS 等，可安装对应的可选依赖：`eslint-plugin-tailwindcss` / `eslint-plugin-better-tailwindcss`、`eslint-plugin-mdx`、`eslint-plugin-better-stylelint`、`@unocss/eslint-plugin`
+- 如需启用 Tailwind、MDX、UnoCSS 等，可安装对应的可选依赖：`eslint-plugin-tailwindcss` / `eslint-plugin-better-tailwindcss`、`eslint-plugin-mdx`、`@unocss/eslint-plugin`
 
 ## 安装
 
@@ -72,15 +72,13 @@ export default icebreaker({
 
 ### Stylelint 桥接
 
+`@icebreakers/eslint-config` 已内置 Stylelint bridge，并在启用时默认使用
+`@icebreakers/stylelint-config` 作为 Stylelint 预设；但 bridge 默认仍是关闭的。
 设置 `stylelint: true` 后，会把 Stylelint 诊断桥接到 ESLint，用于：
 
 - `*.css`
 - `*.scss`
 - `.vue` 文件里的 `<style>` 块
-
-```bash
-pnpm add -D eslint-plugin-better-stylelint
-```
 
 ```ts
 import { icebreaker } from '@icebreakers/eslint-config'
@@ -91,17 +89,28 @@ export default icebreaker({
 })
 ```
 
-如果 Stylelint 需要从其它目录解析配置，也可以传：
+也可以直接把 Stylelint 预设配置写进 `eslint.config.ts`：
 
 ```ts
 import { icebreaker } from '@icebreakers/eslint-config'
 
 export default icebreaker({
+  vue: true,
   stylelint: {
-    cwd: '/path/to/project',
+    cwd: process.cwd(),
+    presets: {
+      order: false,
+    },
+    rules: {
+      'color-named': 'never',
+    },
   },
 })
 ```
+
+其中 `stylelint.cwd` 用来指定配置解析根目录，其余字段沿用
+`@icebreakers/stylelint-config` 的选项结构，例如 `presets`、
+`tailwindcssPreset`、`ignores`、`extends`、`overrides`、`rules`。
 
 ### NestJS 项目
 

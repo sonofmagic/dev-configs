@@ -1,4 +1,4 @@
-import { createSyncFn } from 'synckit'
+import { execFileSync } from 'node:child_process'
 import {
   __clearStylelintResultCache,
   __getStylelintResultCacheSize,
@@ -8,9 +8,16 @@ import {
 
 const runStylelintWorkerMock = vi.fn()
 
-vi.mock('synckit', () => {
+vi.mock('node:child_process', () => {
   return {
-    createSyncFn: vi.fn(() => runStylelintWorkerMock),
+    execFileSync: vi.fn((_command: string, _args: string[], options: { input: string }) => {
+      const request = JSON.parse(options.input) as {
+        code: string
+        filename: string
+        options: Record<string, unknown>
+      }
+      return JSON.stringify(runStylelintWorkerMock(request.code, request.filename, request.options))
+    }),
   }
 })
 
@@ -22,7 +29,7 @@ describe('runStylelintSync', () => {
     __resetStylelintWorker()
   })
 
-  it('creates a synckit sync worker for the internal worker file', () => {
+  it('executes the internal worker with node', () => {
     runStylelintWorkerMock.mockReturnValue({
       ok: true,
       result: {
@@ -32,8 +39,16 @@ describe('runStylelintSync', () => {
 
     runStylelintSync('.demo {}', '/tmp/demo.css', '/tmp')
 
-    expect(createSyncFn).toHaveBeenCalledWith(expect.stringMatching(/worker\.(ts|js)$/u))
-    expect(runStylelintWorkerMock).toHaveBeenCalledWith('.demo {}', '/tmp/demo.css', '/tmp')
+    expect(execFileSync).toHaveBeenCalledWith(
+      process.execPath,
+      expect.arrayContaining([expect.stringMatching(/worker\.(ts|js)$/u)]),
+      expect.objectContaining({
+        encoding: 'utf8',
+      }),
+    )
+    expect(runStylelintWorkerMock).toHaveBeenCalledWith('.demo {}', '/tmp/demo.css', {
+      cwd: '/tmp',
+    })
   })
 
   it('maps stylelint warnings from the worker response', () => {
@@ -128,6 +143,32 @@ describe('runStylelintSync', () => {
     expect(first).toEqual(second)
     expect(first).not.toBe(second)
     expect(runStylelintWorkerMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('misses the cache when the stylelint config object changes', () => {
+    runStylelintWorkerMock.mockReturnValue({
+      ok: true,
+      result: {
+        warnings: [],
+      },
+    })
+
+    runStylelintSync('.demo {}', '/tmp/demo.css', {
+      config: {
+        rules: {
+          'color-named': 'never',
+        },
+      },
+    })
+    runStylelintSync('.demo {}', '/tmp/demo.css', {
+      config: {
+        rules: {
+          'color-named': 'always-where-possible',
+        },
+      },
+    })
+
+    expect(runStylelintWorkerMock).toHaveBeenCalledTimes(2)
   })
 
   it('misses the cache when the source changes', () => {

@@ -1,15 +1,8 @@
 const createRequireMock = vi.fn()
-const runAsWorkerMock = vi.fn()
 
 vi.mock('node:module', () => {
   return {
     createRequire: createRequireMock,
-  }
-})
-
-vi.mock('synckit', () => {
-  return {
-    runAsWorker: runAsWorkerMock,
   }
 })
 

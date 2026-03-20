@@ -203,6 +203,15 @@ export const lintRule = {
           cwd: {
             type: 'string',
           },
+          config: {
+            type: 'object',
+          },
+          configOptions: {
+            type: 'object',
+          },
+          configLoader: {
+            type: 'string',
+          },
         },
       },
     ],
@@ -215,14 +224,13 @@ export const lintRule = {
         }
 
         const options = context.options[0]
-        const cwd = options?.cwd
         const styleBlocks = extractVueStyleBlocks(context.sourceCode.text, context.filename)
 
         for (const styleBlock of styleBlocks) {
           const diagnostics = runStylelintSync(
             styleBlock.content,
             styleBlock.virtualFilename,
-            cwd,
+            options,
           )
 
           for (const diagnostic of diagnostics) {

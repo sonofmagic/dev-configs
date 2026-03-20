@@ -1,3 +1,14 @@
+export interface BetterStylelintConfig {
+  [key: string]: unknown
+}
+
+export interface BetterStylelintOptions {
+  cwd?: string
+  config?: BetterStylelintConfig
+  configOptions?: BetterStylelintConfig
+  configLoader?: string
+}
+
 export interface BetterStylelintMessage {
   ruleId: string
   message: string
@@ -19,6 +30,4 @@ export interface BetterStylelintProcessor {
   supportsAutofix?: boolean
 }
 
-export interface BetterStylelintRuleOptions {
-  cwd?: string
-}
+export type BetterStylelintRuleOptions = BetterStylelintOptions

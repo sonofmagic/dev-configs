@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import * as core from '@/core'
-import plugin, { cssProcessor, lintRule } from '@/index'
+import plugin, { createStylelintProcessor, cssProcessor, lintRule } from '@/index'
 import {
   __createVueStyleVirtualFilename,
   __extractVueStyleBlocks,
@@ -30,9 +30,34 @@ describe('eslint-plugin-better-stylelint', () => {
     cssProcessor.preprocess('.demo { @apply flex; }', filename)
     const messages = cssProcessor.postprocess([], filename)
 
-    expect(spy).toHaveBeenCalledWith('.demo { @apply flex; }', filename)
+    expect(spy).toHaveBeenCalledWith('.demo { @apply flex; }', filename, {})
     expect(messages).toHaveLength(1)
     expect(messages[0]?.ruleId).toBe('tailwindcss/no-apply')
+  })
+
+  it('custom processor forwards inline stylelint options', () => {
+    const spy = vi.spyOn(core, 'runStylelintSync').mockReturnValue([])
+    const processor = createStylelintProcessor({
+      cwd: '/tmp/project',
+      config: {
+        rules: {
+          'color-named': 'never',
+        },
+      },
+    })
+    const filename = '/tmp/demo.css'
+
+    processor.preprocess('.demo { color: red; }', filename)
+    processor.postprocess([], filename)
+
+    expect(spy).toHaveBeenCalledWith('.demo { color: red; }', filename, {
+      cwd: '/tmp/project',
+      config: {
+        rules: {
+          'color-named': 'never',
+        },
+      },
+    })
   })
 
   it('vue rule reports Stylelint diagnostics', () => {

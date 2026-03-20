@@ -156,7 +156,13 @@ describe('eslint branch config behavior', () => {
       && config.rules?.['stylelint/stylelint'],
     )
 
-    expect(cssBridgeConfig?.processor).toBe('stylelint/css')
-    expect(vueBridgeConfig?.rules?.['stylelint/stylelint']).toEqual(['error', {}])
+    expect(typeof cssBridgeConfig?.processor).toBe('object')
+    expect(vueBridgeConfig?.rules?.['stylelint/stylelint']).toEqual([
+      'error',
+      expect.objectContaining({
+        configLoader: expect.stringMatching(/stylelint\.(ts|js)$/u),
+        configOptions: expect.any(Object),
+      }),
+    ])
   })
 })

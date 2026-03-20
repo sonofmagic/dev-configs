@@ -3,6 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "@icebreakers/stylelint-config": [
+        "../stylelint/src/index.ts"
+      ],
       "eslint-plugin-better-stylelint": [
         "../eslint-plugin-better-stylelint/src/index.ts"
       ],
@@ -14,6 +17,7 @@
   "include": [
     "src",
     "test",
+    "../stylelint/src",
     "../eslint-plugin-better-stylelint/src"
   ]
 }

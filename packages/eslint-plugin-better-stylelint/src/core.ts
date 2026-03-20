@@ -1,8 +1,9 @@
-import type { BetterStylelintMessage } from './types'
+import type { BetterStylelintMessage, BetterStylelintOptions } from './types'
+import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import path from 'node:path'
+import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import { createSyncFn } from 'synckit'
 
 interface StylelintWarning {
   rule?: string
@@ -33,14 +34,21 @@ type StylelintWorkerResponse = StylelintWorkerSuccess | StylelintWorkerFailure
 type RunStylelintWorker = (
   code: string,
   filename: string,
-  cwd: string,
+  options: Required<Pick<BetterStylelintOptions, 'cwd'>> & BetterStylelintOptions,
 ) => StylelintWorkerResponse
 
 const MAX_CACHE_ENTRIES = 100
 const CORE_TS_PATTERN = /core\.ts$/u
 const CORE_JS_PATTERN = /core\.js$/u
 const resultCache = new Map<string, BetterStylelintMessage[]>()
-let runStylelintWorker: RunStylelintWorker | undefined
+const configCacheIds = new WeakMap<object, number>()
+let nextConfigCacheId = 0
+const UNSUPPORTED_EXEC_ARGV_FLAGS = new Set([
+  '--eval',
+  '-e',
+  '--print',
+  '-p',
+])
 
 function normalizeStylelintResults(
   result: StylelintResult,
@@ -79,9 +87,43 @@ function cloneMessages(messages: BetterStylelintMessage[]): BetterStylelintMessa
   return messages.map(message => ({ ...message }))
 }
 
-function createCacheKey(code: string, filename: string, cwd: string): string {
+function getConfigCacheKey(config: BetterStylelintOptions['config']) {
+  if (!config || typeof config !== 'object') {
+    return 'no-config'
+  }
+
+  let cacheId = configCacheIds.get(config)
+
+  if (cacheId === undefined) {
+    nextConfigCacheId += 1
+    cacheId = nextConfigCacheId
+    configCacheIds.set(config, cacheId)
+  }
+
+  return `config:${cacheId}`
+}
+
+function normalizeLintOptions(
+  filename: string,
+  options?: BetterStylelintOptions | string,
+): Required<Pick<BetterStylelintOptions, 'cwd'>> & BetterStylelintOptions {
+  if (typeof options === 'string') {
+    return { cwd: options }
+  }
+
+  return {
+    ...options,
+    cwd: options?.cwd ?? path.dirname(filename),
+  }
+}
+
+function createCacheKey(
+  code: string,
+  filename: string,
+  options: Required<Pick<BetterStylelintOptions, 'cwd'>> & BetterStylelintOptions,
+): string {
   const codeHash = createHash('sha1').update(code).digest('hex')
-  return `${cwd}\0${filename}\0${codeHash}`
+  return `${options.cwd}\0${filename}\0${options.configLoader ?? 'no-loader'}\0${getConfigCacheKey(options.config ?? options.configOptions)}\0${codeHash}`
 }
 
 function getCachedMessages(cacheKey: string): BetterStylelintMessage[] | undefined {
@@ -122,24 +164,65 @@ function resolveWorkerPath() {
   return currentFilePath.replace(CORE_JS_PATTERN, 'worker.js')
 }
 
+function getWorkerExecArgv() {
+  const workerExecArgv: string[] = []
+
+  for (let index = 0; index < process.execArgv.length; index += 1) {
+    const arg = process.execArgv[index]
+
+    if (!arg) {
+      continue
+    }
+
+    if (arg === '--input-type' || arg.startsWith('--input-type=')) {
+      if (arg === '--input-type') {
+        index += 1
+      }
+      continue
+    }
+
+    if (UNSUPPORTED_EXEC_ARGV_FLAGS.has(arg)) {
+      index += 1
+      continue
+    }
+
+    workerExecArgv.push(arg)
+  }
+
+  return workerExecArgv
+}
+
 function getRunStylelintWorker(): RunStylelintWorker {
-  runStylelintWorker ??= createSyncFn<RunStylelintWorker>(resolveWorkerPath())
-  return runStylelintWorker
+  return (code, filename, options) => {
+    const workerArgs = [...getWorkerExecArgv(), resolveWorkerPath()]
+    const output = execFileSync(process.execPath, workerArgs, {
+      input: JSON.stringify({
+        code,
+        filename,
+        options,
+      }),
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    })
+
+    return JSON.parse(output) as StylelintWorkerResponse
+  }
 }
 
 export function runStylelintSync(
   code: string,
   filename: string,
-  cwd = path.dirname(filename),
+  options?: BetterStylelintOptions | string,
 ): BetterStylelintMessage[] {
-  const cacheKey = createCacheKey(code, filename, cwd)
+  const normalizedOptions = normalizeLintOptions(filename, options)
+  const cacheKey = createCacheKey(code, filename, normalizedOptions)
   const cached = getCachedMessages(cacheKey)
 
   if (cached) {
     return cached
   }
 
-  const response = getRunStylelintWorker()(code, filename, cwd)
+  const response = getRunStylelintWorker()(code, filename, normalizedOptions)
 
   if (!response.ok) {
     return setCachedMessages(cacheKey, createBridgeError(response.error))
@@ -157,5 +240,5 @@ export function __getStylelintResultCacheSize() {
 }
 
 export function __resetStylelintWorker() {
-  runStylelintWorker = undefined
+  // No-op: the bridge now uses short-lived child processes per invocation.
 }

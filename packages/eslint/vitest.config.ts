@@ -11,6 +11,14 @@ export default defineProject({
         replacement: path.resolve(__dirname, './src'),
       },
       {
+        find: '@icebreakers/stylelint-config',
+        replacement: path.resolve(__dirname, '../stylelint/src/index.ts'),
+      },
+      {
+        find: '@icebreakers/eslint-config/stylelint',
+        replacement: path.resolve(__dirname, './src/stylelint.ts'),
+      },
+      {
         find: 'eslint-plugin-better-stylelint',
         replacement: path.resolve(__dirname, '../eslint-plugin-better-stylelint/src/index.ts'),
       },

@@ -1,7 +1,18 @@
 import type { Linter } from 'eslint'
-import type { TypedFlatConfigItem, UserConfigItem, UserDefinedOptions } from './types'
+import type {
+  StylelintBridgeOption,
+  TypedFlatConfigItem,
+  UserConfigItem,
+  UserDefinedOptions,
+} from './types'
 import { interopDefault } from './antfu'
 import { nestjsTypeScriptRules } from './defaults'
+
+function resolveStylelintConfigLoader() {
+  return import.meta.url.endsWith('.ts')
+    ? new URL('./stylelint.ts', import.meta.url).href
+    : new URL('./stylelint.js', import.meta.url).href
+}
 
 export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']): UserConfigItem[] {
   if (!option) {
@@ -50,37 +61,55 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
   ]
 }
 
+function resolveStylelintBridgeOptions(
+  option: UserDefinedOptions['stylelint'],
+) {
+  const bridgeOptions = typeof option === 'object'
+    ? option
+    : {} as StylelintBridgeOption
+  const { cwd, ...stylelintConfigOptions } = bridgeOptions
+
+  return {
+    ...(cwd ? { cwd } : {}),
+    configLoader: resolveStylelintConfigLoader(),
+    configOptions: stylelintConfigOptions as unknown as Record<string, unknown>,
+  }
+}
+
 export function resolveStylelintBridgePresets(option: UserDefinedOptions['stylelint']): UserConfigItem[] {
   if (!option) {
     return []
   }
 
-  const stylelintOptions = typeof option === 'object'
-    ? option
-    : {}
-
-  const pluginPromise = interopDefault(import('eslint-plugin-better-stylelint'))
+  const pluginModulePromise = import('eslint-plugin-better-stylelint')
+  const stylelintOptions = resolveStylelintBridgeOptions(option)
 
   return [
-    pluginPromise.then((plugin) => {
+    pluginModulePromise.then((pluginModule) => {
+      const plugin = pluginModule.default ?? pluginModule
+
       return {
         files: ['**/*.{css,pcss,postcss}'],
         plugins: {
           stylelint: plugin,
         },
-        processor: 'stylelint/css',
+        processor: pluginModule.createStylelintProcessor(stylelintOptions) as any,
       } satisfies TypedFlatConfigItem
     }),
-    pluginPromise.then((plugin) => {
+    pluginModulePromise.then((pluginModule) => {
+      const plugin = pluginModule.default ?? pluginModule
+
       return {
         files: ['**/*.{scss,sass}'],
         plugins: {
           stylelint: plugin,
         },
-        processor: 'stylelint/scss',
+        processor: pluginModule.createStylelintProcessor(stylelintOptions) as any,
       } satisfies TypedFlatConfigItem
     }),
-    pluginPromise.then((plugin) => {
+    pluginModulePromise.then((pluginModule) => {
+      const plugin = pluginModule.default ?? pluginModule
+
       return {
         files: ['**/*.vue'],
         plugins: {

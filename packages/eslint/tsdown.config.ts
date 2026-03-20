@@ -6,6 +6,7 @@ export default defineConfig({
   },
   entry: {
     index: 'src/index.ts',
+    stylelint: 'src/stylelint.ts',
   },
   format: ['esm', 'cjs'],
   dts: {

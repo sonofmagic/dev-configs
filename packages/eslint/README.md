@@ -10,7 +10,7 @@
 
 - Node.js 18 or newer
 - ESLint 9 with flat config support
-- Install optional peer plugins when you turn on Tailwind (`eslint-plugin-tailwindcss` or `eslint-plugin-better-tailwindcss`), MDX (`eslint-plugin-mdx`), Stylelint bridge (`eslint-plugin-better-stylelint`), or UnoCSS (`@unocss/eslint-plugin`)
+- Install optional peer plugins when you turn on Tailwind (`eslint-plugin-tailwindcss` or `eslint-plugin-better-tailwindcss`), MDX (`eslint-plugin-mdx`), or UnoCSS (`@unocss/eslint-plugin`)
 
 ## Installation
 
@@ -74,12 +74,10 @@ export default icebreaker({
 
 ### Stylelint Bridge
 
-Set `stylelint: true` to bridge Stylelint diagnostics into ESLint for
-`*.css`, `*.scss`, and `.vue` style blocks:
-
-```bash
-pnpm add -D eslint-plugin-better-stylelint
-```
+`@icebreakers/eslint-config` bundles the Stylelint bridge and uses
+`@icebreakers/stylelint-config` as the default Stylelint preset when you opt in.
+The bridge is still disabled by default. Turn it on with `stylelint: true` to
+lint `*.css`, `*.scss`, and `.vue` style blocks through ESLint:
 
 ```ts
 import { icebreaker } from '@icebreakers/eslint-config'
@@ -90,8 +88,28 @@ export default icebreaker({
 })
 ```
 
-You can also pass `stylelint: { cwd: '/path/to/project' }` if Stylelint should
-resolve its config from a different working directory.
+You can also inline Stylelint preset options directly in `eslint.config.ts`:
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  vue: true,
+  stylelint: {
+    cwd: process.cwd(),
+    presets: {
+      order: false,
+    },
+    rules: {
+      'color-named': 'never',
+    },
+  },
+})
+```
+
+`stylelint.cwd` changes the resolution root, and the remaining fields follow
+the `@icebreakers/stylelint-config` options (`presets`, `tailwindcssPreset`,
+`ignores`, `extends`, `overrides`, `rules`).
 
 ### NestJS Projects
 

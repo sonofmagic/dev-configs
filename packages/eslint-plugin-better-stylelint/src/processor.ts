@@ -1,9 +1,15 @@
-import type { BetterStylelintMessage, BetterStylelintProcessor } from './types'
+import type {
+  BetterStylelintMessage,
+  BetterStylelintProcessor,
+  BetterStylelintRuleOptions,
+} from './types'
 import { runStylelintSync } from './core'
 
 const sourceCache = new Map<string, string>()
 
-function createProcessor(): BetterStylelintProcessor {
+export function createStylelintProcessor(
+  options: BetterStylelintRuleOptions = {},
+): BetterStylelintProcessor {
   return {
     meta: {
       name: 'eslint-plugin-better-stylelint/processor',
@@ -16,11 +22,11 @@ function createProcessor(): BetterStylelintProcessor {
     postprocess(_messages: unknown[][], filename: string): BetterStylelintMessage[] {
       const source = sourceCache.get(filename) ?? ''
       sourceCache.delete(filename)
-      return runStylelintSync(source, filename)
+      return runStylelintSync(source, filename, options)
     },
     supportsAutofix: false,
   }
 }
 
-export const cssProcessor = createProcessor()
-export const scssProcessor = createProcessor()
+export const cssProcessor = createStylelintProcessor()
+export const scssProcessor = createStylelintProcessor()

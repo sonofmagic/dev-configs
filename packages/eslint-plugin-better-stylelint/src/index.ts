@@ -30,10 +30,12 @@ const plugin: BetterStylelintPlugin = {
 }
 
 export { runStylelintSync } from './core'
-export { cssProcessor, scssProcessor } from './processor'
+export { createStylelintProcessor, cssProcessor, scssProcessor } from './processor'
 export { lintRule } from './rule'
 export type {
+  BetterStylelintConfig,
   BetterStylelintMessage,
+  BetterStylelintOptions,
   BetterStylelintProcessor,
   BetterStylelintRuleOptions,
 } from './types'

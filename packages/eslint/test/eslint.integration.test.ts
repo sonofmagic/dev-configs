@@ -5,6 +5,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { ESLint } from 'eslint'
 import { icebreaker } from '@/index'
+import { __resetStylelintWorker } from '../../eslint-plugin-better-stylelint/src/core'
 
 const ROOT_DIR = path.resolve(__dirname, '..')
 const INPUT_ROOT = path.join(ROOT_DIR, 'fixtures', 'input')
@@ -215,6 +216,10 @@ async function compareOutputs(
 }
 
 describe('eslint integration fixtures', () => {
+  afterEach(() => {
+    __resetStylelintWorker()
+  })
+
   it.each(CASES)('formats %s fixtures with expected output', async (caseName) => {
     const tempDir = await prepareFixture(caseName)
     const { configs, extensions, ignoreExtensions } = await resolveCaseContext(caseName)
@@ -232,5 +237,30 @@ describe('eslint integration fixtures', () => {
     await ESLint.outputFixes(results)
 
     await compareOutputs(caseName, tempDir, { ignoreExtensions })
+  })
+
+  it('accepts inline stylelint config from eslint options', async () => {
+    const tempDir = await prepareFixture('all')
+    const eslint = new ESLint({
+      cwd: tempDir,
+      overrideConfig: await icebreaker({
+        stylelint: {
+          rules: {
+            'color-named': 'never',
+          },
+        },
+      }).toConfigs(),
+      overrideConfigFile: true,
+    })
+
+    const [result] = await eslint.lintText('.demo { color: red; }', {
+      filePath: path.join(tempDir, 'inline.css'),
+    })
+
+    expect(result?.messages).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        message: expect.stringContaining('Unexpected named color "red"'),
+      }),
+    ]))
   })
 })

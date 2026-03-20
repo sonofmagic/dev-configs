@@ -24,6 +24,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./stylelint": {
+      "types": "./dist/stylelint.d.ts",
+      "import": "./dist/stylelint.js",
+      "require": "./dist/stylelint.cjs"
+    },
     "./*": "./*"
   },
   "main": "./dist/index.cjs",
@@ -44,13 +49,9 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "eslint-plugin-better-stylelint": "workspace:*",
     "eslint-plugin-pnpm": "^1.4.3"
   },
   "peerDependenciesMeta": {
-    "eslint-plugin-better-stylelint": {
-      "optional": true
-    },
     "eslint-plugin-pnpm": {
       "optional": true
     }
@@ -58,8 +59,10 @@
   "dependencies": {
     "@antfu/eslint-config": "7.7.3",
     "@eslint-react/eslint-plugin": "^3.0.0",
+    "@icebreakers/stylelint-config": "workspace:*",
     "@next/eslint-plugin-next": "^16.2.0",
     "@tanstack/eslint-plugin-query": "^5.91.5",
+    "eslint-plugin-better-stylelint": "workspace:*",
     "eslint-plugin-better-tailwindcss": "^4.3.2",
     "eslint-plugin-format": "2.0.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",

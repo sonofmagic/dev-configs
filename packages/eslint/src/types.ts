@@ -3,6 +3,7 @@ import type {
   OptionsConfig,
   TypedFlatConfigItem,
 } from '@antfu/eslint-config'
+import type { IcebreakerStylelintOptions } from '@icebreakers/stylelint-config'
 import type { Linter } from 'eslint'
 import type { FlatConfigComposer } from 'eslint-flat-config-utils'
 
@@ -18,9 +19,10 @@ export interface TailwindcssOption {
 }
 
 export type TailwindcssConfig = boolean | TailwindcssOption
-export type StylelintBridgeConfig = boolean | {
+export type StylelintBridgeOption = IcebreakerStylelintOptions & {
   cwd?: string
 }
+export type StylelintBridgeConfig = boolean | StylelintBridgeOption
 
 export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
   /**

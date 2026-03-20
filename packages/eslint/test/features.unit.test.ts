@@ -9,12 +9,38 @@ import {
   resolveTailwindPresets,
 } from '@/features'
 
+const createStylelintProcessorMock = vi.fn((options?: Record<string, unknown>) => {
+  return {
+    __processor: 'stylelint',
+    options,
+  }
+})
+
 vi.mock('@/antfu', () => {
   return {
     interopDefault: async <T>(loader: Promise<T>): Promise<T> => {
       const mod = await loader
       return (mod as any)?.default ?? mod
     },
+  }
+})
+
+vi.mock('eslint-plugin-better-stylelint', () => {
+  return {
+    default: {
+      meta: {
+        name: 'stylelint',
+        version: '0.0.1',
+      },
+      processors: {
+        css: {},
+        scss: {},
+      },
+      rules: {
+        stylelint: {},
+      },
+    },
+    createStylelintProcessor: createStylelintProcessorMock,
   }
 })
 
@@ -230,46 +256,62 @@ describe('resolveQueryPresets', () => {
 })
 
 describe('resolveStylelintBridgePresets', () => {
+  beforeEach(() => {
+    createStylelintProcessorMock.mockClear()
+  })
+
   it('returns empty array when disabled', () => {
     expect(resolveStylelintBridgePresets(false)).toEqual([])
   })
 
   it('returns async presets for css, scss, and vue when enabled', async () => {
-    vi.doMock('eslint-plugin-better-stylelint', () => {
-      return {
-        default: {
-          meta: {
-            name: 'stylelint',
-            version: '0.0.1',
-          },
-          processors: {
-            css: {},
-            scss: {},
-          },
-          rules: {
-            stylelint: {},
-          },
-        },
-      }
+    const presets = resolveStylelintBridgePresets({
+      cwd: '/tmp/project',
+      presets: {
+        order: false,
+      },
+      rules: {
+        'color-named': 'never',
+      },
     })
-
-    const presets = resolveStylelintBridgePresets({ cwd: '/tmp/project' })
     expect(presets).toHaveLength(3)
 
     const [cssPreset, scssPreset, vuePreset] = await Promise.all(presets as Promise<TypedFlatConfigItem>[])
+    const expectedStylelintOptions = {
+      cwd: '/tmp/project',
+      configLoader: expect.stringMatching(/stylelint\.(ts|js)$/u),
+      configOptions: {
+        presets: {
+          order: false,
+        },
+        rules: {
+          'color-named': 'never',
+        },
+      },
+    }
+
+    expect(createStylelintProcessorMock).toHaveBeenCalledTimes(2)
+    expect(createStylelintProcessorMock).toHaveBeenNthCalledWith(1, expectedStylelintOptions)
+    expect(createStylelintProcessorMock).toHaveBeenNthCalledWith(2, expectedStylelintOptions)
 
     expect(cssPreset).toMatchObject({
       files: ['**/*.{css,pcss,postcss}'],
-      processor: 'stylelint/css',
+      processor: {
+        __processor: 'stylelint',
+        options: expectedStylelintOptions,
+      },
     })
     expect(scssPreset).toMatchObject({
       files: ['**/*.{scss,sass}'],
-      processor: 'stylelint/scss',
+      processor: {
+        __processor: 'stylelint',
+        options: expectedStylelintOptions,
+      },
     })
     expect(vuePreset).toMatchObject({
       files: ['**/*.vue'],
       rules: {
-        'stylelint/stylelint': ['error', { cwd: '/tmp/project' }],
+        'stylelint/stylelint': ['error', expectedStylelintOptions],
       },
     })
   })
