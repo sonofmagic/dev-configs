@@ -1,5 +1,13 @@
 # @icebreakers/eslint-config
 
+## 2.0.3
+
+### Patch Changes
+
+- 🐛 **Update package dependencies to latest compatible versions.** [`5cca66e`](https://github.com/sonofmagic/dev-configs/commit/5cca66e5245a59cb11bbc6dbaefd87315f801397) by @sonofmagic
+- 📦 **Dependencies**
+  → `@icebreakers/stylelint-config@2.1.2`
+
 ## 2.0.2
 
 ### Patch Changes

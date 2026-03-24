@@ -1,5 +1,11 @@
 # postcss-tailwindcss
 
+## 1.0.1
+
+### Patch Changes
+
+- 🐛 **Update package dependencies to latest compatible versions.** [`5cca66e`](https://github.com/sonofmagic/dev-configs/commit/5cca66e5245a59cb11bbc6dbaefd87315f801397) by @sonofmagic
+
 ## 1.0.0
 
 ### Major Changes
