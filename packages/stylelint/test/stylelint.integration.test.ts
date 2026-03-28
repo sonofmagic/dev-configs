@@ -454,6 +454,31 @@ describe('stylelint integration', () => {
     ).toBe(false)
   })
 
+  it('ignores mini program build outputs when miniProgram is enabled', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'icebreaker-stylelint-ignore-'))
+    const ignoredFile = path.join(tempDir, '.weapp-vite', 'app.wxss')
+
+    await fs.mkdir(path.dirname(ignoredFile), { recursive: true })
+    await fs.writeFile(ignoredFile, '.demo { color: #f00; unknown-prop: 1rpx; }\n', 'utf8')
+
+    try {
+      const result = await stylelint.lint({
+        cwd: tempDir,
+        files: ignoredFile,
+        config: createStylelintConfig({
+          miniProgram: true,
+        }) as StylelintConfig,
+      })
+
+      expect(result.results).toHaveLength(1)
+      expect(result.results[0]?.errored).toBe(false)
+      expect(result.results[0]?.warnings).toEqual([])
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+
   it('writes vscode settings via the cli entry', async () => {
     const tempDir = await fs.mkdtemp(
       path.join(os.tmpdir(), 'icebreaker-stylelint-'),

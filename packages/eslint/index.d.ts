@@ -19,6 +19,7 @@ export interface StylelintBridgeOption {
 export type StylelintBridgeConfig = boolean | StylelintBridgeOption
 
 export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
+  miniProgram?: boolean
   tailwindcss?: TailwindcssConfig
   stylelint?: StylelintBridgeConfig
   mdx?: boolean

@@ -4,14 +4,14 @@ describe('mergeConfigs branches', () => {
   afterEach(() => {
     vi.resetModules()
     vi.clearAllMocks()
-    vi.unmock('@/config')
   })
 
   it('handles missing rules on base and overrides', async () => {
     vi.doMock('@/config', () => {
       return {
-        createIcebreakerStylelintConfig: vi.fn(() => ({
-          extends: ['base'],
+        createIcebreakerStylelintConfig: vi.fn((config?: StylelintConfig) => ({
+          extends: config?.extends ?? ['base'],
+          rules: config?.rules ?? {},
         })),
       }
     })

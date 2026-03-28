@@ -54,12 +54,13 @@ export default icebreaker({
   a11y: true,
   nestjs: true,
   ionic: true,
-  weapp: true,
+  miniProgram: true,
   formatters: true,
 })
 ```
 
-- `vue`：启用 Vue 规则，可根据 Vue 2/3 自动切换，并在 `ionic`、`weapp` 选项开启时追加对应覆盖。
+- `miniProgram`：启用小程序预设，注入全局变量、忽略常见产物/配置文件，并在 `vue: true` 时补充小程序模板兼容调整。
+- `vue`：启用 Vue 规则，可根据 Vue 2/3 自动切换，并在 `ionic`、`miniProgram` 选项开启时追加对应覆盖。
 - `react`：复用上游 React 预设，配合 `a11y` 注入无障碍插件。
 - `query`：按需启用 TanStack Query 插件（`@tanstack/eslint-plugin-query`）及其推荐规则。
 - `tailwindcss`：传入 `true` 使用内置 Tailwind flat 配置，或通过对象指定 Tailwind v4 的入口文件 / v3 的配置文件路径。
@@ -69,6 +70,55 @@ export default icebreaker({
 - `nestjs`：针对 NestJS 场景做 TypeScript 调整（允许带装饰器的空构造函数、依赖注入参数属性、声明合并等）。
 - `formatters`：默认启用格式化辅助规则。
 - `test`：放宽 Vitest / Jest 常见规则，例如关闭 `test/prefer-lowercase-title`。
+- `weapp`：`miniProgram` 的兼容别名，保留但不再推荐作为主入口。
+
+### 小程序预设
+
+推荐在 `weapp-vite`、`wevu`、原生小程序模板里统一使用 `miniProgram: true`。
+它会默认完成：
+
+- 注入 `wx`、`Page`、`App`、`Component`、`getApp`、`getCurrentPages`、`requirePlugin`、`WechatMiniprogram` 全局变量
+- 忽略 `dist/**`、`.weapp-vite/**`、`miniprogram_npm/**`、`node_modules/**`、`project.config.json`、`project.private.config.json`
+- 当同时开启 `vue: true` 时，降低 `<text>` 等小程序内联标签的误报
+
+#### 原生小程序最小配置
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  miniProgram: true,
+})
+```
+
+#### weapp-vite + wevu 最小配置
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  miniProgram: true,
+  vue: true,
+})
+```
+
+#### 与现有选项组合
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  miniProgram: true,
+  vue: true,
+  tailwindcss: true,
+  ignores: [
+    'coverage/**',
+  ],
+})
+```
+
+`miniProgram` 只负责追加平台默认项；你自己的 `ignores`、`extends`、`rules`
+以及额外 flat config 仍按原有方式继续组合。
 
 ### Stylelint 桥接
 

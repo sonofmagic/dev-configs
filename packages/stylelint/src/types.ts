@@ -58,6 +58,8 @@ export interface IgnoreListOptions {
 export type TailwindcssPresetLevel = 'base' | 'recommended' | 'strict'
 
 export interface IcebreakerStylelintOptions {
+  /** Enable Mini Program defaults such as common ignore paths. */
+  miniProgram?: boolean
   /** Toggle built-in preset bundles. */
   presets?: PresetToggles
   /** Control the bundled Tailwind/UnoCSS policy layer. */
@@ -66,6 +68,12 @@ export interface IcebreakerStylelintOptions {
   extends?: StylelintConfig['extends']
   /** Append override entries. */
   overrides?: StylelintConfig['overrides']
+  /** Append plugins. */
+  plugins?: StylelintConfig['plugins']
+  /** Set a top-level custom syntax. */
+  customSyntax?: StylelintConfig['customSyntax']
+  /** Append ignoreFiles entries. */
+  ignoreFiles?: StylelintConfig['ignoreFiles']
   /** Provide additional or replacement rule ignore lists. */
   ignores?: IgnoreListOptions
   /** Override or add rules. */

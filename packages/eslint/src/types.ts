@@ -25,6 +25,11 @@ export type StylelintBridgeConfig = boolean | StylelintBridgeOption
 
 export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
   /**
+   * Enable Mini Program support.
+   * @default false
+   */
+  miniProgram?: boolean
+  /**
    * Enable TailwindCSS support
    * @default false
    */
@@ -61,6 +66,7 @@ export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
   ionic?: boolean
   /**
    * Enable Weapp support
+   * @deprecated Use `miniProgram` instead.
    * @default false
    */
   weapp?: boolean

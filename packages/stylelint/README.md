@@ -31,10 +31,13 @@ The CLI will create or update `.vscode/settings.json` with the proper `stylelint
 // stylelint.config.ts
 import { icebreaker } from '@icebreakers/stylelint-config'
 
-export default icebreaker()
+export default icebreaker({
+  miniProgram: true,
+})
 ```
 
-`icebreaker()` returns the default preset and merges any additional Stylelint config you pass in.
+`icebreaker()` accepts the same options as `createStylelintConfig()`, so the
+minimal Mini Program setup is a single call with `miniProgram: true`.
 
 ## Advanced Configuration
 
@@ -44,6 +47,7 @@ Use `createStylelintConfig` for fine-grained control over preset toggles, ignore
 import { createStylelintConfig } from '@icebreakers/stylelint-config'
 
 export default createStylelintConfig({
+  miniProgram: true,
   tailwindcssPreset: 'recommended',
   presets: {
     vue: false, // disable Vue rules for pure SCSS projects
@@ -69,6 +73,7 @@ export default createStylelintConfig({
 
 ### Option Reference
 
+- `miniProgram` – ignore Mini Program build outputs by default: `dist/**`, `.weapp-vite/**`, `node_modules/**`, `miniprogram_npm/**`
 - `presets.scss` – include `stylelint-config-standard-scss` (default `true`)
 - `presets.vue` – include `stylelint-config-recommended-vue/scss` (default `true`)
 - `presets.order` – include `stylelint-config-recess-order` (default `true`)
@@ -86,6 +91,38 @@ Defaults include:
 - Ignoring Tailwind/UnoCSS style at-rules (`apply`, `screen`, etc.)
 - Disallowing authored Tailwind utility selectors such as `.flex` or `.hover\:bg-red-500`
 - Ignoring the `page` selector used by various platforms
+
+### Mini Program Templates
+
+#### Native Template Minimal Config
+
+```ts
+import { icebreaker } from '@icebreakers/stylelint-config'
+
+export default icebreaker({
+  miniProgram: true,
+})
+```
+
+Use a script such as:
+
+```bash
+stylelint "**/*.{css,scss,wxss,vue}" --fix
+```
+
+#### Vue / wevu Template Minimal Config
+
+```ts
+import { icebreaker } from '@icebreakers/stylelint-config'
+
+export default icebreaker({
+  miniProgram: true,
+})
+```
+
+This works for `.css`, `.scss`, `.wxss`, and Vue `<style>` blocks without
+having to manually wire `postcss-html`, Vue overrides, or Mini Program ignore
+paths.
 
 ## Tailwind Utility Selector Guard
 

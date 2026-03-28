@@ -56,12 +56,13 @@ export default icebreaker({
   a11y: true,
   nestjs: true,
   ionic: true,
-  weapp: true,
+  miniProgram: true,
   formatters: true,
 })
 ```
 
-- `vue` – enables Vue + optionally version specific overrides (Vue 2/3) and ionic/weapp adjustments.
+- `miniProgram` – injects Mini Program globals, ignores common outputs/config files, and enables Vue-side Mini Program compatibility tweaks when `vue` is on.
+- `vue` – enables Vue + optionally version specific overrides (Vue 2/3) and ionic/miniProgram adjustments.
 - `react` – defers to the upstream React preset and unlocks accessibility helpers when `a11y` is enabled.
 - `query` – toggles the TanStack Query plugin (`@tanstack/eslint-plugin-query`) and its recommended lint rules.
 - `tailwindcss` – pass `true` to use the built-in Tailwind flat config or provide `{ entryPoint, tailwindConfig }` for Tailwind v4/v3 projects.
@@ -71,6 +72,55 @@ export default icebreaker({
 - `nestjs` – enables NestJS-centric TypeScript tweaks (empty decorated constructors, declaration merging, DI parameter properties, etc.).
 - `formatters` – keeps the built-in formatting rules enabled by default.
 - `test` – relaxes certain Vitest/Jest style rules (`test/prefer-lowercase-title`).
+- `weapp` – legacy alias for `miniProgram`; kept for backward compatibility.
+
+### Mini Program Preset
+
+`miniProgram: true` is the recommended API for `weapp-vite`, `wevu`, and native
+Mini Program templates. It enables the following defaults:
+
+- injects readonly globals for `wx`, `Page`, `App`, `Component`, `getApp`, `getCurrentPages`, `requirePlugin`, and `WechatMiniprogram`
+- ignores `dist/**`, `.weapp-vite/**`, `miniprogram_npm/**`, `node_modules/**`, `project.config.json`, and `project.private.config.json`
+- when `vue: true` is also enabled, relaxes Vue template checks for Mini Program inline tags such as `<text>`
+
+#### Native Mini Program Minimal Config
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  miniProgram: true,
+})
+```
+
+#### weapp-vite + wevu Minimal Config
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  miniProgram: true,
+  vue: true,
+})
+```
+
+#### Combining With Existing Options
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  miniProgram: true,
+  vue: true,
+  tailwindcss: true,
+  ignores: [
+    'coverage/**',
+  ],
+})
+```
+
+`miniProgram` only adds the platform defaults. User supplied `ignores`,
+`extends`, `rules`, and downstream flat config items still compose normally.
 
 ### Stylelint Bridge
 

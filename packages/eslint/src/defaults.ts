@@ -77,6 +77,10 @@ export const nestjsTypeScriptRules: NonNullable<OptionsTypescript['overrides']> 
   ],
 }
 
+function isMiniProgramEnabled(opts?: UserDefinedOptions) {
+  return opts?.miniProgram === true || opts?.weapp === true
+}
+
 //  'vue/no-deprecated-slot-attribute': 'off',
 export function getDefaultVueOptions(opts?: UserDefinedOptions) {
   const overrides: OptionsVue['overrides'] = {
@@ -104,7 +108,7 @@ export function getDefaultVueOptions(opts?: UserDefinedOptions) {
     overrides['vue/no-deprecated-slot-attribute'] = 'off'
   }
   // 小程序启用
-  if (opts?.weapp) {
+  if (isMiniProgramEnabled(opts)) {
     overrides['vue/singleline-html-element-content-newline'] = [
       'warn',
       {
@@ -158,3 +162,5 @@ export function getDefaultTypescriptOptions(opts?: UserDefinedOptions) {
   }
   return typescriptOptions
 }
+
+export { isMiniProgramEnabled }

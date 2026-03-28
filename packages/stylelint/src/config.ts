@@ -55,6 +55,12 @@ function resolvePresetPath(specifier: string): string {
 const PRESET_PATH_STANDARD_SCSS = resolvePresetPath(PRESET_STANDARD_SCSS)
 const PRESET_PATH_VUE_SCSS = resolvePresetPath(PRESET_VUE_SCSS)
 const PRESET_PATH_RECESS_ORDER = resolvePresetPath(PRESET_RECESS_ORDER)
+const MINI_PROGRAM_IGNORE_FILES = [
+  'dist/**',
+  '.weapp-vite/**',
+  'node_modules/**',
+  'miniprogram_npm/**',
+] as const
 
 function resolvePresetExtends(presets: PresetToggles | undefined): string[] {
   const entries: string[] = []
@@ -84,6 +90,19 @@ function resolveOverrides(options: IcebreakerStylelintOptions | undefined): NonN
   }
 
   return [...overrides]
+}
+
+function resolvePlugins(options: IcebreakerStylelintOptions | undefined): NonNullable<StylelintConfig['plugins']> {
+  return toArray(options?.plugins)
+}
+
+function resolveIgnoreFiles(options: IcebreakerStylelintOptions | undefined): StylelintConfig['ignoreFiles'] {
+  const values = unique([
+    ...(options?.miniProgram ? MINI_PROGRAM_IGNORE_FILES : []),
+    ...toArray(options?.ignoreFiles),
+  ])
+
+  return normalizeExtends(values)
 }
 
 function resolveRules(options: IcebreakerStylelintOptions | undefined): NonNullable<StylelintConfig['rules']> {
@@ -158,12 +177,16 @@ function resolveTailwindcssPreset(options: IcebreakerStylelintOptions | undefine
 export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOptions = {}): StylelintConfig {
   const extendsConfig = resolveExtends(options)
   const overrides = resolveOverrides(options)
+  const plugins = resolvePlugins(options)
+  const ignoreFiles = resolveIgnoreFiles(options)
   const rules = resolveRules(options)
   const tailwindcssPreset = resolveTailwindcssPreset(options)
 
   return {
     ...(extendsConfig !== undefined ? { extends: extendsConfig } : {}),
-    plugins: [...(tailwindcssPreset.plugins ?? [])],
+    ...(options.customSyntax !== undefined ? { customSyntax: options.customSyntax } : {}),
+    ...(ignoreFiles !== undefined ? { ignoreFiles } : {}),
+    plugins: [...(tailwindcssPreset.plugins ?? []), ...plugins],
     overrides,
     rules: {
       ...(tailwindcssPreset.rules ?? {

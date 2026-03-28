@@ -160,6 +160,26 @@ describe('createIcebreakerStylelintConfig', () => {
     ])
   })
 
+  it('adds mini program ignore files and preserves extra config fields', async () => {
+    const { createIcebreakerStylelintConfig } = await loadConfig()
+    const config = createIcebreakerStylelintConfig({
+      miniProgram: true,
+      plugins: ['custom-plugin'],
+      customSyntax: 'postcss-html',
+      ignoreFiles: ['coverage/**'],
+    })
+
+    expect(config.customSyntax).toBe('postcss-html')
+    expect(config.plugins).toContain('custom-plugin')
+    expect(config.ignoreFiles).toEqual([
+      'dist/**',
+      '.weapp-vite/**',
+      'node_modules/**',
+      'miniprogram_npm/**',
+      'coverage/**',
+    ])
+  })
+
   it('uses require.resolve when import.meta.resolve is disabled', async () => {
     vi.doMock('node:module', () => {
       return {

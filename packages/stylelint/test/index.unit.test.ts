@@ -1,12 +1,11 @@
-import type { StylelintConfig } from '@/types'
 import { createStylelintConfig, icebreaker } from '@/index'
 
 vi.mock('@/config', () => {
   return {
-    createIcebreakerStylelintConfig: vi.fn(() => ({
-      extends: ['base'],
+    createIcebreakerStylelintConfig: vi.fn((config?: Record<string, unknown>) => ({
+      extends: (config?.['extends'] as string[] | undefined) ?? ['base'],
       rules: {
-        'selector-class-pattern': ['base'],
+        'selector-class-pattern': (config?.['rules'] as Record<string, unknown> | undefined)?.['selector-class-pattern'] ?? ['base'],
       },
     })),
   }
@@ -19,7 +18,8 @@ describe('index helpers', () => {
   })
 
   it('merges overrides into the base config', () => {
-    const override: StylelintConfig = {
+    const override = {
+      miniProgram: true,
       extends: ['override'],
       rules: {
         'selector-class-pattern': ['override'],

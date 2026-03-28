@@ -82,6 +82,33 @@ describe('getPresets', () => {
     ])
   })
 
+  it('prepends miniProgram ignores and globals when enabled', () => {
+    const [, ignoreConfig, globalsConfig] = getPresets({
+      miniProgram: true,
+    })
+    const ignorePreset = toConfigObject(ignoreConfig)
+    const globalsPreset = toConfigObject(globalsConfig)
+
+    expect(ignorePreset).toMatchObject({
+      ignores: expect.arrayContaining([
+        'dist/**',
+        '.weapp-vite/**',
+        'project.config.json',
+        'project.private.config.json',
+      ]),
+    })
+    expect(globalsPreset).toMatchObject({
+      files: ['**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx,vue}'],
+      languageOptions: {
+        globals: expect.objectContaining({
+          wx: 'readonly',
+          Page: 'readonly',
+          WechatMiniprogram: 'readonly',
+        }),
+      },
+    })
+  })
+
   it('uses legacy rules when requested', () => {
     const [, baseConfig] = getPresets(undefined, 'legacy')
     const base = toConfigObject(baseConfig)

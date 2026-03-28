@@ -39,6 +39,11 @@ describe('eslint branch config behavior', () => {
       'utf8',
     )
     await fs.writeFile(
+      path.join(tempDir, 'sample.js'),
+      'wx.showToast({ title: String(getCurrentPages().length) })\n',
+      'utf8',
+    )
+    await fs.writeFile(
       path.join(tempDir, 'sample.css'),
       '.demo {}\n',
       'utf8',
@@ -52,7 +57,7 @@ describe('eslint branch config behavior', () => {
     const configs = await icebreaker({
       vue: true,
       typescript: true,
-      weapp: true,
+      miniProgram: true,
       ionic: true,
       nestjs: true,
     }).toConfigs()
@@ -164,5 +169,21 @@ describe('eslint branch config behavior', () => {
         configOptions: expect.any(Object),
       }),
     ])
+  })
+
+  it('injects mini program globals into javascript files', async () => {
+    const results = await eslint.lintFiles([
+      path.join(tempDir, 'sample.js'),
+    ])
+
+    expect(results[0]?.messages).toEqual([])
+  })
+
+  it('ignores common mini program output paths', async () => {
+    expect(await eslint.isPathIgnored(path.join(tempDir, 'dist', 'output.js'))).toBe(true)
+    expect(await eslint.isPathIgnored(path.join(tempDir, '.weapp-vite', 'cache.js'))).toBe(true)
+    expect(await eslint.isPathIgnored(path.join(tempDir, 'miniprogram_npm', 'vendor.js'))).toBe(true)
+    expect(await eslint.isPathIgnored(path.join(tempDir, 'project.config.json'))).toBe(true)
+    expect(await eslint.isPathIgnored(path.join(tempDir, 'project.private.config.json'))).toBe(true)
   })
 })

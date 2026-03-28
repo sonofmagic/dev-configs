@@ -10,6 +10,7 @@ import {
 import { expectAssignable, expectType } from 'tsd'
 
 const options: IcebreakerStylelintOptions = {
+  miniProgram: true,
   presets: {
     vue: false,
   },

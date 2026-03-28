@@ -136,6 +136,7 @@ describe('index', () => {
 
   it('merges overrides in icebreaker configs', () => {
     const config = icebreaker({
+      miniProgram: true,
       plugins: ['custom-plugin'],
       rules: {
         'selector-class-pattern': null,
@@ -144,5 +145,11 @@ describe('index', () => {
 
     expect(config.plugins).toHaveLength(5)
     expect(config.rules?.['selector-class-pattern']).toBeNull()
+    expect(config.ignoreFiles).toEqual([
+      'dist/**',
+      '.weapp-vite/**',
+      'node_modules/**',
+      'miniprogram_npm/**',
+    ])
   })
 })

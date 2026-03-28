@@ -11,7 +11,7 @@ describe('getDefaultVueOptions', () => {
   })
 
   it('adds ionic and weapp tweaks when enabled', () => {
-    const vueOptions = getDefaultVueOptions({ ionic: true, weapp: true })
+    const vueOptions = getDefaultVueOptions({ ionic: true, miniProgram: true })
 
     expect(vueOptions.overrides).toBeDefined()
 
@@ -34,6 +34,12 @@ describe('getDefaultVueOptions', () => {
     const vueOverrides = vueOptions.overrides!
     expect(vueOverrides['vue/no-deprecated-slot-attribute']).toBeUndefined()
     expect(vueOverrides['vue/singleline-html-element-content-newline']).toBeUndefined()
+  })
+
+  it('keeps the legacy weapp alias working', () => {
+    const vueOptions = getDefaultVueOptions({ weapp: true })
+
+    expect(vueOptions.overrides?.['vue/singleline-html-element-content-newline']).toBeDefined()
   })
 })
 

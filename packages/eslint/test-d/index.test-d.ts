@@ -12,6 +12,8 @@ import { expectAssignable, expectType } from 'tsd'
 
 expectAssignable<FlatConfigComposer<TypedFlatConfigItem, ConfigNames>>(icebreaker())
 expectAssignable<FlatConfigComposer<TypedFlatConfigItem, ConfigNames>>(icebreakerLegacy())
+expectAssignable<UserDefinedOptions>({ miniProgram: true })
+expectAssignable<UserDefinedOptions>({ weapp: true })
 expectType<IcebreakerEslintConfig>(icebreaker())
 expectType<IcebreakerLegacyEslintConfig>(icebreakerLegacy())
 expectType<[UserDefinedOptions, ...UserConfigItem[]]>(getPresets())

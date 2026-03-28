@@ -6,7 +6,7 @@ import { createRequire } from 'node:module'
 import path from 'node:path'
 import process from 'node:process'
 import { defu } from 'defu'
-import { getDefaultTypescriptOptions, getDefaultVueOptions } from './defaults'
+import { getDefaultTypescriptOptions, getDefaultVueOptions, isMiniProgramEnabled } from './defaults'
 import { isObject } from './utils'
 
 const BASE_DEFAULTS: Pick<UserDefinedOptions, 'formatters' | 'javascript' | 'test' | 'pnpm'> = {
@@ -296,6 +296,11 @@ export function resolveUserOptions(options?: UserDefinedOptions): ResolvedUserOp
     options ?? {},
     BASE_DEFAULTS,
   ) as ResolvedUserOptions
+
+  if (isMiniProgramEnabled(options)) {
+    resolved.miniProgram = true
+    delete resolved.weapp
+  }
 
   const resolvedVue = mergeOptionWithDefaults(
     resolved.vue,

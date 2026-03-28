@@ -68,6 +68,14 @@ describe('resolveUserOptions', () => {
     expect(resolved.typescript).toBe(false)
   })
 
+  it('normalizes miniProgram and legacy weapp into one flag', () => {
+    expect(resolveUserOptions({ miniProgram: true }).miniProgram).toBe(true)
+
+    const resolvedLegacy = resolveUserOptions({ weapp: true })
+    expect(resolvedLegacy.miniProgram).toBe(true)
+    expect(resolvedLegacy.weapp).toBeUndefined()
+  })
+
   it('applies vue2 specific overrides when requested', () => {
     const resolved = resolveUserOptions({
       vue: {

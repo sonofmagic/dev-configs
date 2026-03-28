@@ -29,10 +29,13 @@ npx @icebreakers/stylelint-config
 // stylelint.config.ts
 import { icebreaker } from '@icebreakers/stylelint-config'
 
-export default icebreaker()
+export default icebreaker({
+  miniProgram: true,
+})
 ```
 
-`icebreaker()` 会返回默认预设，并与传入的额外 Stylelint 配置合并。
+`icebreaker()` 现在可直接接收和 `createStylelintConfig()` 相同的选项；
+对小程序模板来说，最小配置就是 `miniProgram: true`。
 
 ## 进阶配置
 
@@ -42,6 +45,7 @@ export default icebreaker()
 import { createStylelintConfig } from '@icebreakers/stylelint-config'
 
 export default createStylelintConfig({
+  miniProgram: true,
   tailwindcssPreset: 'recommended',
   presets: {
     vue: false, // 纯 SCSS 项目无需 Vue 规则
@@ -67,6 +71,7 @@ export default createStylelintConfig({
 
 ### 配置说明
 
+- `miniProgram`：默认忽略小程序常见产物目录：`dist/**`、`.weapp-vite/**`、`node_modules/**`、`miniprogram_npm/**`
 - `presets.scss`：是否包含 `stylelint-config-standard-scss`，默认开启
 - `presets.vue`：是否包含 `stylelint-config-recommended-vue/scss`，默认开启
 - `presets.order`：是否包含 `stylelint-config-recess-order`，默认开启
@@ -84,6 +89,37 @@ export default createStylelintConfig({
 - 忽略 Tailwind / UnoCSS 常见指令（如 `apply`、`screen`）
 - 禁止在手写样式中声明 `.flex`、`.hover\:bg-red-500` 这类 Tailwind 原子类选择器
 - 忽略多端平台常见的 `page` 选择器
+
+## 小程序模板推荐用法
+
+### 原生小程序最小配置
+
+```ts
+import { icebreaker } from '@icebreakers/stylelint-config'
+
+export default icebreaker({
+  miniProgram: true,
+})
+```
+
+推荐脚本：
+
+```bash
+stylelint "**/*.{css,scss,wxss,vue}" --fix
+```
+
+### Vue / wevu 模板最小配置
+
+```ts
+import { icebreaker } from '@icebreakers/stylelint-config'
+
+export default icebreaker({
+  miniProgram: true,
+})
+```
+
+该配置默认兼容 `.css`、`.scss`、`.wxss` 以及 Vue SFC 的 `<style>`，
+无需手动处理 `postcss-html`、Vue preset 或小程序 ignore 路径。
 
 ## Tailwind 原子类拦截
 
