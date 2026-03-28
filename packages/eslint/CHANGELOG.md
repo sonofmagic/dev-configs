@@ -1,5 +1,23 @@
 # @icebreakers/eslint-config
 
+## 2.1.0
+
+### Minor Changes
+
+- ✨ **Add first-class Mini Program presets for ESLint and Stylelint.** [`58fb7d2`](https://github.com/sonofmagic/dev-configs/commit/58fb7d20acc9c196432523a48c7571b4ddccd912) by @sonofmagic
+  - For `@icebreakers/eslint-config`, this introduces the recommended `miniProgram: true`
+  - option, keeps `weapp` as a backwards-compatible alias, injects common Mini Program
+  - globals, ignores common Mini Program build/config outputs, and improves Vue SFC
+  - compatibility for Mini Program templates.
+  - For `@icebreakers/stylelint-config`, this introduces `miniProgram: true` support,
+  - adds default ignore paths for Mini Program build outputs, and documents the minimal
+  - setup for native Mini Program and `weapp-vite` / `wevu` templates.
+
+### Patch Changes
+
+- 📦 **Dependencies** [`58fb7d2`](https://github.com/sonofmagic/dev-configs/commit/58fb7d20acc9c196432523a48c7571b4ddccd912)
+  → `@icebreakers/stylelint-config@2.2.0`
+
 ## 2.0.3
 
 ### Patch Changes
