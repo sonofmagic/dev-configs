@@ -200,6 +200,7 @@ function getWorkerExecArgv() {
 function resolveWorkerCommand(workerPath: string) {
   if (workerPath.endsWith('.ts')) {
     const workerEntry = pathToFileURL(workerPath).href
+    const tsxLoaderEntry = pathToFileURL(require.resolve('tsx/esm')).href
     const bootstrapPath = path.join(
       os.tmpdir(),
       `${WORKER_BOOTSTRAP_PREFIX}${createHash('sha1').update(workerEntry).digest('hex')}.mjs`,
@@ -214,7 +215,7 @@ function resolveWorkerCommand(workerPath: string) {
       args: [
         ...getWorkerExecArgv(),
         '--import',
-        require.resolve('tsx/esm'),
+        tsxLoaderEntry,
         bootstrapPath,
       ],
     }
