@@ -62,6 +62,6 @@
   "dependencies": {
     "@commitlint/config-conventional": "^20.5.0",
     "@commitlint/types": "^20.5.0",
-    "conventional-changelog-conventionalcommits": "^9.3.0"
+    "conventional-changelog-conventionalcommits": "^9.3.1"
   }
 }
