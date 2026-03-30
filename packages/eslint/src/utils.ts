@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import process from 'node:process'
@@ -19,7 +20,30 @@ export function isPackageAvailable(
     return true
   }
   catch {
-    return false
+    const packageSegments = name.split('/')
+
+    return searchPaths.some((searchPath) => {
+      let currentDir = path.resolve(searchPath)
+
+      while (true) {
+        const packageJsonPath = path.join(
+          currentDir,
+          'node_modules',
+          ...packageSegments,
+          'package.json',
+        )
+
+        if (fs.existsSync(packageJsonPath)) {
+          return true
+        }
+
+        const parentDir = path.dirname(currentDir)
+        if (parentDir === currentDir) {
+          return false
+        }
+        currentDir = parentDir
+      }
+    })
   }
 }
 

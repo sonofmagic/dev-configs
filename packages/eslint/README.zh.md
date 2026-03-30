@@ -8,7 +8,7 @@
 
 - Node.js 18 或更高版本
 - 支持 Flat Config 的 ESLint 9
-- React / Next 相关插件现在是可选项。缺失时会自动跳过 `react`、`nextjs`、`query` 以及 React 侧的 `a11y` 配置，而不是在解析配置时直接报错。
+- React 相关插件已随当前包一起分发。Next.js、Query 等生态预设仍保持可选，缺失时会自动跳过对应配置，而不是在解析时直接报错。
 - 如需启用 Tailwind、MDX、UnoCSS 等，可安装对应的可选依赖：`eslint-plugin-tailwindcss` / `eslint-plugin-better-tailwindcss`、`eslint-plugin-mdx`、`@unocss/eslint-plugin`
 
 ## 安装
@@ -62,7 +62,7 @@ export default icebreaker({
 
 - `miniProgram`：启用小程序预设，注入全局变量、忽略常见产物/配置文件，并在 `vue: true` 时补充小程序模板兼容调整。
 - `vue`：启用 Vue 规则，可根据 Vue 2/3 自动切换，并在 `ionic`、`miniProgram` 选项开启时追加对应覆盖。
-- `react`：复用上游 React 预设，配合 `a11y` 注入无障碍插件；如果 React 插件组未安装，会自动忽略该选项。
+- `react`：复用上游 React 预设，配合 `a11y` 注入无障碍插件；所需的 React lint 插件已内置在当前包里。
 - `query`：按需启用 TanStack Query 插件（`@tanstack/eslint-plugin-query`）及其推荐规则；缺少插件时按 no-op 处理。
 - `tailwindcss`：传入 `true` 使用内置 Tailwind flat 配置，或通过对象指定 Tailwind v4 的入口文件 / v3 的配置文件路径。
 - `mdx`：激活 `eslint-plugin-mdx` 处理 `.mdx` 文件。

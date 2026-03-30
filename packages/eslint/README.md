@@ -10,7 +10,7 @@
 
 - Node.js 18 or newer
 - ESLint 9 with flat config support
-- React and Next related plugins are optional. If they are missing, `react`, `nextjs`, `query`, and React-side `a11y` helpers are skipped automatically instead of failing config resolution.
+- React related plugins are bundled with this package. Next.js, Query, and other ecosystem presets remain optional and are skipped automatically when their plugins are missing.
 - Install optional peer plugins when you turn on Tailwind (`eslint-plugin-tailwindcss` or `eslint-plugin-better-tailwindcss`), MDX (`eslint-plugin-mdx`), or UnoCSS (`@unocss/eslint-plugin`)
 
 ## Installation
@@ -64,7 +64,7 @@ export default icebreaker({
 
 - `miniProgram` – injects Mini Program globals, ignores common outputs/config files, and enables Vue-side Mini Program compatibility tweaks when `vue` is on.
 - `vue` – enables Vue + optionally version specific overrides (Vue 2/3) and ionic/miniProgram adjustments.
-- `react` – defers to the upstream React preset and unlocks accessibility helpers when `a11y` is enabled. If the React plugin set is not installed, this flag is ignored automatically.
+- `react` – defers to the upstream React preset and unlocks accessibility helpers when `a11y` is enabled. The required React lint plugins are bundled with this package.
 - `query` – toggles the TanStack Query plugin (`@tanstack/eslint-plugin-query`) and its recommended lint rules. Missing plugin installs are treated as a no-op.
 - `tailwindcss` – pass `true` to use the built-in Tailwind flat config or provide `{ entryPoint, tailwindConfig }` for Tailwind v4/v3 projects.
 - `mdx` – activates MDX linting via `eslint-plugin-mdx`.
