@@ -136,7 +136,10 @@ async function main() {
   process.stdout.write(JSON.stringify(response))
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (
+  process.env['ICEBREAKER_STYLELINT_WORKER'] === '1'
+  || (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url))
+) {
   void main().catch((error) => {
     const message = error instanceof Error ? error.stack ?? error.message : String(error)
     process.stderr.write(`${message}\n`)

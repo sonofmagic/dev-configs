@@ -44,18 +44,21 @@ describe('runStylelintSync', () => {
     expect(command).toBe(process.execPath)
     const workerArg = args.at(-1)
     expect(workerArg).toBeDefined()
-    expect(workerArg).toSatisfy((arg: string) => /worker\.(?:ts|js)$/u.test(arg))
-    if (workerArg?.endsWith('worker.ts')) {
+    if (workerArg?.endsWith('.mjs')) {
       expect(args).toEqual(expect.arrayContaining([
         '--import',
         expect.stringMatching(/tsx[\\/]dist[\\/]esm[\\/]index\.mjs$/u),
+        expect.stringMatching(/icebreaker-stylelint-worker-.+\.mjs$/u),
       ]))
-      if (process.platform === 'win32') {
-        expect(workerArg).toMatch(/^file:\/\/\/.+worker\.ts$/u)
-      }
+    }
+    else {
+      expect(workerArg).toMatch(/worker\.js$/u)
     }
     expect(options).toEqual(expect.objectContaining({
       encoding: 'utf8',
+      env: expect.objectContaining({
+        ICEBREAKER_STYLELINT_WORKER: '1',
+      }),
     }))
     expect(runStylelintWorkerMock).toHaveBeenCalledWith('.demo {}', '/tmp/demo.css', {
       cwd: '/tmp',

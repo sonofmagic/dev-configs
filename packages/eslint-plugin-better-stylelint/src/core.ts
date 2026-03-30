@@ -1,7 +1,9 @@
 import type { BetterStylelintMessage, BetterStylelintOptions } from './types'
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
+import fs from 'node:fs'
 import { createRequire } from 'node:module'
+import os from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -41,6 +43,7 @@ type RunStylelintWorker = (
 const MAX_CACHE_ENTRIES = 100
 const CORE_TS_PATTERN = /core\.ts$/u
 const CORE_JS_PATTERN = /core\.js$/u
+const WORKER_BOOTSTRAP_PREFIX = 'icebreaker-stylelint-worker-'
 const resultCache = new Map<string, BetterStylelintMessage[]>()
 const configCacheIds = new WeakMap<object, number>()
 let nextConfigCacheId = 0
@@ -196,9 +199,15 @@ function getWorkerExecArgv() {
 
 function resolveWorkerCommand(workerPath: string) {
   if (workerPath.endsWith('.ts')) {
-    const workerEntry = process.platform === 'win32'
-      ? pathToFileURL(workerPath).href
-      : workerPath
+    const workerEntry = pathToFileURL(workerPath).href
+    const bootstrapPath = path.join(
+      os.tmpdir(),
+      `${WORKER_BOOTSTRAP_PREFIX}${createHash('sha1').update(workerEntry).digest('hex')}.mjs`,
+    )
+
+    if (!fs.existsSync(bootstrapPath)) {
+      fs.writeFileSync(bootstrapPath, `import ${JSON.stringify(workerEntry)}\n`, 'utf8')
+    }
 
     return {
       command: process.execPath,
@@ -206,7 +215,7 @@ function resolveWorkerCommand(workerPath: string) {
         ...getWorkerExecArgv(),
         '--import',
         require.resolve('tsx/esm'),
-        workerEntry,
+        bootstrapPath,
       ],
     }
   }
@@ -227,6 +236,10 @@ function getRunStylelintWorker(): RunStylelintWorker {
         options,
       }),
       encoding: 'utf8',
+      env: {
+        ...process.env,
+        ICEBREAKER_STYLELINT_WORKER: '1',
+      },
       stdio: ['pipe', 'pipe', 'pipe'],
     })
 
