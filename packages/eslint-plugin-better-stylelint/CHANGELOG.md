@@ -1,5 +1,17 @@
 # eslint-plugin-better-stylelint
 
+## 0.1.2
+
+### Patch Changes
+
+- 🐛 **Fix the source-mode Stylelint worker bootstrap on Windows so Node.js 20 can** [`455b711`](https://github.com/sonofmagic/dev-configs/commit/455b711a080cbfd19dd4b56db1edae5d5197b143) by @sonofmagic
+  - start the TypeScript worker through the `tsx` ESM loader using a `file://`
+  - entry URL.
+
+- 🐛 **Fix the Stylelint worker bootstrap in source-mode test runs so Node.js 20 can** [`eeb599d`](https://github.com/sonofmagic/dev-configs/commit/eeb599d1d372bce17149ff7d77c8923d2b7d7d9f) by @sonofmagic
+  - execute the TypeScript worker through the `tsx` ESM loader instead of failing on
+  - the raw `.ts` entry file.
+
 ## 0.1.1
 
 ### Patch Changes
