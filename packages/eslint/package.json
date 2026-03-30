@@ -82,8 +82,16 @@
   "tsd": {
     "directory": "test-d",
     "compilerOptions": {
-      "module": "esnext",
-      "moduleResolution": "bundler",
+      "module": "nodenext",
+      "baseUrl": ".",
+      "paths": {
+        "@icebreakers/stylelint-config": [
+          "../stylelint/dist/index.d.ts"
+        ],
+        "eslint-plugin-better-stylelint": [
+          "../eslint-plugin-better-stylelint/dist/index.d.ts"
+        ]
+      },
       "skipLibCheck": true
     }
   }
