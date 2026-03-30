@@ -8,6 +8,7 @@ import {
   resolveStylelintBridgePresets,
   resolveTailwindPresets,
 } from '@/features'
+import * as utils from '@/utils'
 
 const createStylelintProcessorMock = vi.fn((options?: Record<string, unknown>) => {
   return {
@@ -24,6 +25,8 @@ vi.mock('@/antfu', () => {
     },
   }
 })
+
+const hasAllPackagesMock = vi.spyOn(utils, 'hasAllPackages')
 
 vi.mock('eslint-plugin-better-stylelint', () => {
   return {
@@ -133,6 +136,10 @@ vi.mock('@tanstack/eslint-plugin-query', () => {
 })
 
 describe('resolveTailwindPresets', () => {
+  beforeEach(() => {
+    hasAllPackagesMock.mockReturnValue(true)
+  })
+
   it('returns empty array when disabled', () => {
     expect(resolveTailwindPresets(false)).toEqual([])
   })
@@ -169,9 +176,20 @@ describe('resolveTailwindPresets', () => {
       },
     })
   })
+
+  it('returns empty array when the requested tailwind plugin is unavailable', () => {
+    hasAllPackagesMock.mockReturnValue(false)
+
+    expect(resolveTailwindPresets(true)).toEqual([])
+    expect(resolveTailwindPresets({ tailwindConfig: 'tailwind.config.js' })).toEqual([])
+  })
 })
 
 describe('resolveMdxPresets', () => {
+  beforeEach(() => {
+    hasAllPackagesMock.mockReturnValue(true)
+  })
+
   it('returns empty array when disabled', () => {
     expect(resolveMdxPresets(false)).toEqual([])
   })
@@ -201,9 +219,19 @@ describe('resolveMdxPresets', () => {
       },
     })
   })
+
+  it('returns empty array when the mdx plugin is unavailable', () => {
+    hasAllPackagesMock.mockReturnValue(false)
+
+    expect(resolveMdxPresets(true)).toEqual([])
+  })
 })
 
 describe('resolveAccessibilityPresets', () => {
+  beforeEach(() => {
+    hasAllPackagesMock.mockReturnValue(true)
+  })
+
   it('early returns when disabled', () => {
     expect(resolveAccessibilityPresets(false, false, false)).toEqual([])
   })
@@ -227,6 +255,12 @@ describe('resolveAccessibilityPresets', () => {
     await expect(vuePreset).resolves.toMatchObject({ name: 'vue-a11y-flat' })
     await expect(reactPreset).resolves.toMatchObject({ name: 'jsx-a11y-flat' })
   })
+
+  it('skips unavailable accessibility plugins without throwing', () => {
+    hasAllPackagesMock.mockReturnValue(false)
+
+    expect(resolveAccessibilityPresets(true, true, true)).toEqual([])
+  })
 })
 
 describe('resolveNestPresets', () => {
@@ -245,6 +279,10 @@ describe('resolveNestPresets', () => {
 })
 
 describe('resolveQueryPresets', () => {
+  beforeEach(() => {
+    hasAllPackagesMock.mockReturnValue(true)
+  })
+
   it('returns empty array when disabled', () => {
     expect(resolveQueryPresets(false)).toEqual([])
   })
@@ -253,15 +291,28 @@ describe('resolveQueryPresets', () => {
     const [preset] = resolveQueryPresets(true)
     await expect(preset).resolves.toMatchObject({ name: 'tanstack-query-flat' })
   })
+
+  it('returns empty array when the tanstack query plugin is unavailable', () => {
+    hasAllPackagesMock.mockReturnValue(false)
+
+    expect(resolveQueryPresets(true)).toEqual([])
+  })
 })
 
 describe('resolveStylelintBridgePresets', () => {
   beforeEach(() => {
     createStylelintProcessorMock.mockClear()
+    hasAllPackagesMock.mockReturnValue(true)
   })
 
   it('returns empty array when disabled', () => {
     expect(resolveStylelintBridgePresets(false)).toEqual([])
+  })
+
+  it('returns empty array when the stylelint bridge plugin is unavailable', () => {
+    hasAllPackagesMock.mockReturnValue(false)
+
+    expect(resolveStylelintBridgePresets(true)).toEqual([])
   })
 
   it('returns async presets for css, scss, and vue when enabled', async () => {

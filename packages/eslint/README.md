@@ -10,6 +10,7 @@
 
 - Node.js 18 or newer
 - ESLint 9 with flat config support
+- React and Next related plugins are optional. If they are missing, `react`, `nextjs`, `query`, and React-side `a11y` helpers are skipped automatically instead of failing config resolution.
 - Install optional peer plugins when you turn on Tailwind (`eslint-plugin-tailwindcss` or `eslint-plugin-better-tailwindcss`), MDX (`eslint-plugin-mdx`), or UnoCSS (`@unocss/eslint-plugin`)
 
 ## Installation
@@ -63,11 +64,11 @@ export default icebreaker({
 
 - `miniProgram` – injects Mini Program globals, ignores common outputs/config files, and enables Vue-side Mini Program compatibility tweaks when `vue` is on.
 - `vue` – enables Vue + optionally version specific overrides (Vue 2/3) and ionic/miniProgram adjustments.
-- `react` – defers to the upstream React preset and unlocks accessibility helpers when `a11y` is enabled.
-- `query` – toggles the TanStack Query plugin (`@tanstack/eslint-plugin-query`) and its recommended lint rules.
+- `react` – defers to the upstream React preset and unlocks accessibility helpers when `a11y` is enabled. If the React plugin set is not installed, this flag is ignored automatically.
+- `query` – toggles the TanStack Query plugin (`@tanstack/eslint-plugin-query`) and its recommended lint rules. Missing plugin installs are treated as a no-op.
 - `tailwindcss` – pass `true` to use the built-in Tailwind flat config or provide `{ entryPoint, tailwindConfig }` for Tailwind v4/v3 projects.
 - `mdx` – activates MDX linting via `eslint-plugin-mdx`.
-- `a11y` – wires in JSX (React) and Vue accessibility plugins.
+- `a11y` – wires in JSX (React) and Vue accessibility plugins. Missing framework-specific plugins are skipped independently.
 - `typescript` – extends the TypeScript preset and applies stricter unused diagnostics. Pair with `nestjs` for Nest specific adjustments.
 - `nestjs` – enables NestJS-centric TypeScript tweaks (empty decorated constructors, declaration merging, DI parameter properties, etc.).
 - `formatters` – keeps the built-in formatting rules enabled by default.
@@ -197,6 +198,6 @@ You may also pass other flat configs (e.g. from in-house presets) as additional 
 
 ## Troubleshooting
 
-- Missing plugin errors usually mean the optional dependency is not installed in the current workspace. Add it with `pnpm add -D`.
+- Missing plugin errors usually mean a feature is enabled without its optional dependency being installed in the current workspace. React and Next related presets now auto-skip in that case; other features can be added with `pnpm add -D`.
 - When combining legacy `.eslintrc` projects, prefer `icebreakerLegacy()` and move overrides into flat config format incrementally.
 - Tailwind class validation reads from your `tailwind.config.*`; double check the path when using monorepo roots or custom build tooling.

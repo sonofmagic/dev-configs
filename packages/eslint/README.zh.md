@@ -8,6 +8,7 @@
 
 - Node.js 18 或更高版本
 - 支持 Flat Config 的 ESLint 9
+- React / Next 相关插件现在是可选项。缺失时会自动跳过 `react`、`nextjs`、`query` 以及 React 侧的 `a11y` 配置，而不是在解析配置时直接报错。
 - 如需启用 Tailwind、MDX、UnoCSS 等，可安装对应的可选依赖：`eslint-plugin-tailwindcss` / `eslint-plugin-better-tailwindcss`、`eslint-plugin-mdx`、`@unocss/eslint-plugin`
 
 ## 安装
@@ -61,11 +62,11 @@ export default icebreaker({
 
 - `miniProgram`：启用小程序预设，注入全局变量、忽略常见产物/配置文件，并在 `vue: true` 时补充小程序模板兼容调整。
 - `vue`：启用 Vue 规则，可根据 Vue 2/3 自动切换，并在 `ionic`、`miniProgram` 选项开启时追加对应覆盖。
-- `react`：复用上游 React 预设，配合 `a11y` 注入无障碍插件。
-- `query`：按需启用 TanStack Query 插件（`@tanstack/eslint-plugin-query`）及其推荐规则。
+- `react`：复用上游 React 预设，配合 `a11y` 注入无障碍插件；如果 React 插件组未安装，会自动忽略该选项。
+- `query`：按需启用 TanStack Query 插件（`@tanstack/eslint-plugin-query`）及其推荐规则；缺少插件时按 no-op 处理。
 - `tailwindcss`：传入 `true` 使用内置 Tailwind flat 配置，或通过对象指定 Tailwind v4 的入口文件 / v3 的配置文件路径。
 - `mdx`：激活 `eslint-plugin-mdx` 处理 `.mdx` 文件。
-- `a11y`：按需引入 JSX 与 Vue 的无障碍规则。
+- `a11y`：按需引入 JSX 与 Vue 的无障碍规则，缺少某一侧插件时只跳过对应框架配置。
 - `typescript`：开启 TypeScript 预设，加强未使用诊断，可与 `nestjs` 搭配使用以获得 Nest 专属优化。
 - `nestjs`：针对 NestJS 场景做 TypeScript 调整（允许带装饰器的空构造函数、依赖注入参数属性、声明合并等）。
 - `formatters`：默认启用格式化辅助规则。
@@ -198,6 +199,6 @@ export default icebreaker(
 
 ## 常见问题
 
-- 如果提示缺少插件，说明当前工作区未安装对应可选依赖，可通过 `pnpm add -D` 补齐。
+- 如果提示缺少插件，通常是某个功能已开启但当前工作区未安装对应可选依赖。React / Next 相关预设会自动跳过；其他能力可通过 `pnpm add -D` 补齐。
 - 与旧版 `.eslintrc` 混用时建议先改用 `icebreakerLegacy()`，逐步迁移至 Flat Config。
 - Tailwind 校验依赖 `tailwind.config.*`，Monorepo 或自定义构建路径时请确认配置文件位置。

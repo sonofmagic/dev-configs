@@ -7,6 +7,15 @@ import type {
 } from './types'
 import { interopDefault } from './antfu'
 import { nestjsTypeScriptRules } from './defaults'
+import { hasAllPackages } from './utils'
+
+const BETTER_TAILWIND_PACKAGES = ['eslint-plugin-better-tailwindcss']
+const TAILWIND_PACKAGES = ['eslint-plugin-tailwindcss']
+const STYLELINT_BRIDGE_PACKAGES = ['eslint-plugin-better-stylelint']
+const MDX_PACKAGES = ['eslint-plugin-mdx']
+const VUE_A11Y_PACKAGES = ['eslint-plugin-vuejs-accessibility']
+const REACT_A11Y_PACKAGES = ['eslint-plugin-jsx-a11y']
+const QUERY_PACKAGES = ['@tanstack/eslint-plugin-query']
 
 function resolveStylelintConfigLoader() {
   return import.meta.url.endsWith('.ts')
@@ -20,6 +29,10 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
   }
 
   if (typeof option === 'object') {
+    if (!hasAllPackages(BETTER_TAILWIND_PACKAGES)) {
+      return []
+    }
+
     return [
       interopDefault(
         import('eslint-plugin-better-tailwindcss'),
@@ -44,6 +57,10 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
         } satisfies TypedFlatConfigItem
       }),
     ]
+  }
+
+  if (!hasAllPackages(TAILWIND_PACKAGES)) {
+    return []
   }
 
   return [
@@ -78,6 +95,10 @@ function resolveStylelintBridgeOptions(
 
 export function resolveStylelintBridgePresets(option: UserDefinedOptions['stylelint']): UserConfigItem[] {
   if (!option) {
+    return []
+  }
+
+  if (!hasAllPackages(STYLELINT_BRIDGE_PACKAGES)) {
     return []
   }
 
@@ -122,6 +143,10 @@ export function resolveMdxPresets(isEnabled: UserDefinedOptions['mdx']): UserCon
     return []
   }
 
+  if (!hasAllPackages(MDX_PACKAGES)) {
+    return []
+  }
+
   return [
     interopDefault(import('eslint-plugin-mdx')).then((mdx) => {
       return [
@@ -154,7 +179,7 @@ export function resolveAccessibilityPresets(
 
   const presets: UserConfigItem[] = []
 
-  if (vueOption) {
+  if (vueOption && hasAllPackages(VUE_A11Y_PACKAGES)) {
     presets.push(
       interopDefault(
         import('eslint-plugin-vuejs-accessibility'),
@@ -164,7 +189,7 @@ export function resolveAccessibilityPresets(
     )
   }
 
-  if (reactOption) {
+  if (reactOption && hasAllPackages(REACT_A11Y_PACKAGES)) {
     presets.push(
       interopDefault(
         // @ts-ignore optional dependency shape
@@ -191,6 +216,10 @@ export function resolveNestPresets(isEnabled: UserDefinedOptions['nestjs']): Use
 
 export function resolveQueryPresets(isEnabled: UserDefinedOptions['query']): UserConfigItem[] {
   if (!isEnabled) {
+    return []
+  }
+
+  if (!hasAllPackages(QUERY_PACKAGES)) {
     return []
   }
 
