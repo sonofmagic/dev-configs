@@ -2,6 +2,7 @@ import type {
   IcebreakerStylelintOptions,
   PresetToggles,
   StylelintConfig,
+  StylelintPlugin,
 } from './types'
 import { createRequire } from 'node:module'
 import process from 'node:process'
@@ -92,8 +93,12 @@ function resolveOverrides(options: IcebreakerStylelintOptions | undefined): NonN
   return [...overrides]
 }
 
-function resolvePlugins(options: IcebreakerStylelintOptions | undefined): NonNullable<StylelintConfig['plugins']> {
-  return toArray(options?.plugins)
+function normalizePlugins(plugins: StylelintConfig['plugins'] | undefined): StylelintPlugin[] {
+  return toArray<StylelintPlugin>(plugins)
+}
+
+function resolvePlugins(options: IcebreakerStylelintOptions | undefined): StylelintPlugin[] {
+  return normalizePlugins(options?.plugins)
 }
 
 function resolveIgnoreFiles(options: IcebreakerStylelintOptions | undefined): StylelintConfig['ignoreFiles'] {
@@ -186,7 +191,7 @@ export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOpti
     ...(extendsConfig !== undefined ? { extends: extendsConfig } : {}),
     ...(options.customSyntax !== undefined ? { customSyntax: options.customSyntax } : {}),
     ...(ignoreFiles !== undefined ? { ignoreFiles } : {}),
-    plugins: [...(tailwindcssPreset.plugins ?? []), ...plugins],
+    plugins: [...normalizePlugins(tailwindcssPreset.plugins), ...plugins],
     overrides,
     rules: {
       ...(tailwindcssPreset.rules ?? {

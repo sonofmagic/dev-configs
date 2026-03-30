@@ -349,7 +349,7 @@ async function isTailwindThemePathV3(path: string, fromFile?: string): Promise<b
   }
 
   const context = await getTailwindV3RuntimeContext(fromFile)
-  const matched = getThemePathValue(context.resolvedConfig.theme, path) !== undefined
+  const matched = getThemePathValue(context.resolvedConfig['theme'], path) !== undefined
 
   cache.set(path, matched)
   return matched

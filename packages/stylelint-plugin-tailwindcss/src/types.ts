@@ -9,6 +9,7 @@ export interface TailwindRuntimeContextV3 {
 
 export interface TailwindV4DesignSystem {
   candidatesToCss: (classes: string[]) => Array<string | null>
+  resolveThemeValue: (path: string) => unknown
 }
 
 export interface TailwindV4ModuleLoaderResult {

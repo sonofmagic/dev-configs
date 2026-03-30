@@ -2,6 +2,8 @@ export interface StylelintRuleOptions {
   [key: string]: unknown
 }
 
+export type StylelintPlugin = string | object
+
 export type StylelintRuleSetting
   = | null
     | undefined
@@ -12,19 +14,20 @@ export type StylelintRuleSetting
     | StylelintRuleOptions
     | [unknown]
     | [unknown, StylelintRuleOptions]
+    | unknown[]
 
 export interface StylelintOverride {
   files: string | string[]
   name?: string
   customSyntax?: any
   extends?: string | string[]
-  plugins?: string | object | Array<string | object>
+  plugins?: StylelintPlugin | StylelintPlugin[]
   rules?: Record<string, StylelintRuleSetting>
 }
 
 export interface StylelintConfig {
   extends?: string | string[]
-  plugins?: string | object | Array<string | object>
+  plugins?: StylelintPlugin | StylelintPlugin[]
   overrides?: StylelintOverride[]
   rules?: Record<string, StylelintRuleSetting>
   customSyntax?: any
