@@ -26,8 +26,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
-    "test": "mkdir -p coverage/.tmp && vitest run && pnpm test:types",
-    "test:dev": "mkdir -p coverage/.tmp && vitest",
+    "test": "node -e \"require('node:fs').mkdirSync('coverage/.tmp', { recursive: true })\" && vitest run && pnpm test:types",
+    "test:dev": "node -e \"require('node:fs').mkdirSync('coverage/.tmp', { recursive: true })\" && vitest",
     "test:types": "turbo run test:types",
     "test:release-scripts": "vitest run -c scripts/release/vitest.config.mjs",
     "lint": "turbo run lint",
