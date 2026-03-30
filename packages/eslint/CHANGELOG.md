@@ -1,5 +1,18 @@
 # @icebreakers/eslint-config
 
+## 2.1.2
+
+### Patch Changes
+
+- 🐛 **Bundle the React ESLint plugins into `@icebreakers/eslint-config`, align** [`243c5bd`](https://github.com/sonofmagic/dev-configs/commit/243c5bda0c7ea41030e0ba3c5552649bbb951af9) by @sonofmagic
+  - `@eslint-react/eslint-plugin` with the peer range required by
+  - `@antfu/eslint-config`, and harden optional package detection for packages
+  - without a root export entry.
+  - Add regression coverage to verify bundled React plugin peer compatibility and
+  - consumer-side `react` preset resolution.
+- 📦 **Dependencies** [`455b711`](https://github.com/sonofmagic/dev-configs/commit/455b711a080cbfd19dd4b56db1edae5d5197b143)
+  → `eslint-plugin-better-stylelint@0.1.2`
+
 ## 2.1.1
 
 ### Patch Changes
