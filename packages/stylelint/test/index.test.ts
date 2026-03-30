@@ -3,16 +3,18 @@ import { createStylelintConfig, icebreaker } from '@/index'
 import { setVscodeSettingsJson } from '@/shared'
 
 function normalizePresetPath(value: string) {
-  if (value.includes(PRESET_STANDARD_SCSS)) {
+  const normalizedValue = value.replaceAll('\\', '/')
+
+  if (normalizedValue.includes(PRESET_STANDARD_SCSS)) {
     return PRESET_STANDARD_SCSS
   }
-  if (value.includes(PRESET_VUE_SCSS)) {
+  if (normalizedValue.includes(PRESET_VUE_SCSS)) {
     return PRESET_VUE_SCSS
   }
-  if (value.includes(PRESET_RECESS_ORDER)) {
+  if (normalizedValue.includes(PRESET_RECESS_ORDER)) {
     return PRESET_RECESS_ORDER
   }
-  return value
+  return normalizedValue
 }
 
 function normalizeConfigForSnapshot(config: ReturnType<typeof icebreaker>) {
@@ -81,9 +83,9 @@ describe('index', () => {
   it('common', () => {
     const config = icebreaker()
 
-    expect(config.extends).toEqual([
+    expect((config.extends as string[]).map(normalizePresetPath)).toEqual([
       expect.stringContaining(PRESET_STANDARD_SCSS),
-      expect.stringContaining(PRESET_VUE_SCSS),
+      PRESET_VUE_SCSS,
       expect.stringContaining(PRESET_RECESS_ORDER),
     ])
     expect(config.plugins).toHaveLength(4)
@@ -100,7 +102,7 @@ describe('index', () => {
       extends: 'my-custom-config',
     })
 
-    expect(config.extends).toEqual([
+    expect((config.extends as string[]).map(normalizePresetPath)).toEqual([
       expect.stringContaining(PRESET_STANDARD_SCSS),
       'my-custom-config',
     ])

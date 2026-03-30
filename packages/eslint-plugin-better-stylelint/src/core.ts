@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import process from 'node:process'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 interface StylelintWarning {
   rule?: string
@@ -166,20 +166,6 @@ function resolveWorkerPath() {
   return currentFilePath.replace(CORE_JS_PATTERN, 'worker.js')
 }
 
-function resolveWorkerCommand(workerPath: string) {
-  if (workerPath.endsWith('.ts')) {
-    return {
-      command: process.execPath,
-      args: [...getWorkerExecArgv(), '--import', require.resolve('tsx/esm'), workerPath],
-    }
-  }
-
-  return {
-    command: process.execPath,
-    args: [...getWorkerExecArgv(), workerPath],
-  }
-}
-
 function getWorkerExecArgv() {
   const workerExecArgv: string[] = []
 
@@ -206,6 +192,29 @@ function getWorkerExecArgv() {
   }
 
   return workerExecArgv
+}
+
+function resolveWorkerCommand(workerPath: string) {
+  if (workerPath.endsWith('.ts')) {
+    const workerEntry = process.platform === 'win32'
+      ? pathToFileURL(workerPath).href
+      : workerPath
+
+    return {
+      command: process.execPath,
+      args: [
+        ...getWorkerExecArgv(),
+        '--import',
+        require.resolve('tsx/esm'),
+        workerEntry,
+      ],
+    }
+  }
+
+  return {
+    command: process.execPath,
+    args: [...getWorkerExecArgv(), workerPath],
+  }
 }
 
 function getRunStylelintWorker(): RunStylelintWorker {

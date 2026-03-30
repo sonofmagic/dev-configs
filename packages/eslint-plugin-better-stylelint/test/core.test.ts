@@ -42,14 +42,17 @@ describe('runStylelintSync', () => {
     const [command, args, options] = vi.mocked(execFileSync).mock.calls[0]!
 
     expect(command).toBe(process.execPath)
-    expect(args).toEqual(expect.arrayContaining([
-      expect.stringMatching(/worker\.(ts|js)$/u),
-    ]))
-    if (args.some(arg => /worker\.ts$/u.test(arg))) {
+    const workerArg = args.at(-1)
+    expect(workerArg).toBeDefined()
+    expect(workerArg).toSatisfy((arg: string) => /worker\.(?:ts|js)$/u.test(arg))
+    if (workerArg?.endsWith('worker.ts')) {
       expect(args).toEqual(expect.arrayContaining([
         '--import',
         expect.stringMatching(/tsx[\\/]dist[\\/]esm[\\/]index\.mjs$/u),
       ]))
+      if (process.platform === 'win32') {
+        expect(workerArg).toMatch(/^file:\/\/\/.+worker\.ts$/u)
+      }
     }
     expect(options).toEqual(expect.objectContaining({
       encoding: 'utf8',

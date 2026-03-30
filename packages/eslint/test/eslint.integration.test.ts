@@ -211,7 +211,7 @@ async function compareOutputs(
       path.join(actualRoot, relativePath),
       'utf8',
     )
-    expect(actual).toBe(expected)
+    expect(actual.replace(/\r\n/g, '\n')).toBe(expected.replace(/\r\n/g, '\n'))
   }))
 }
 

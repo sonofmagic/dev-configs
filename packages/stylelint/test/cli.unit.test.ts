@@ -1,3 +1,5 @@
+import { resolve } from 'node:path'
+
 let exists = false
 let readValue = '{}'
 
@@ -42,6 +44,8 @@ vi.mock('comment-json', () => {
 })
 
 describe('cli', () => {
+  const vscodeDir = resolve('/repo', '.vscode')
+  const vscodeSettingsPath = resolve('/repo', '.vscode/settings.json')
   const infoSpy = vi.spyOn(console, 'info').mockImplementation(() => {})
 
   afterEach(() => {
@@ -56,11 +60,11 @@ describe('cli', () => {
 
     await import('@/cli')
 
-    expect(mkdirSync).toHaveBeenCalledWith('/repo/.vscode', { recursive: true })
-    expect(existsSync).toHaveBeenCalledWith('/repo/.vscode/settings.json')
+    expect(mkdirSync).toHaveBeenCalledWith(vscodeDir, { recursive: true })
+    expect(existsSync).toHaveBeenCalledWith(vscodeSettingsPath)
     expect(readFileSync).not.toHaveBeenCalled()
     expect(stringify).toHaveBeenCalled()
-    expect(writeFileSync).toHaveBeenCalledWith('/repo/.vscode/settings.json', '{"ok":true}', 'utf8')
+    expect(writeFileSync).toHaveBeenCalledWith(vscodeSettingsPath, '{"ok":true}', 'utf8')
     expect(infoSpy).toHaveBeenCalledWith(expect.stringContaining('init'))
 
     const firstCall = stringify.mock.calls.at(0)
@@ -81,7 +85,7 @@ describe('cli', () => {
 
     await import('@/cli')
 
-    expect(readFileSync).toHaveBeenCalledWith('/repo/.vscode/settings.json', 'utf8')
+    expect(readFileSync).toHaveBeenCalledWith(vscodeSettingsPath, 'utf8')
     expect(parse).toHaveBeenCalledWith(readValue)
     expect(infoSpy).toHaveBeenCalledWith(expect.stringContaining('update'))
     expect(stringify).toHaveBeenCalled()

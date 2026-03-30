@@ -10,6 +10,20 @@ async function loadConfig() {
 
 const DISABLE_IMPORT_META_RESOLVE_ENV = 'ICEBREAKER_STYLELINT_DISABLE_IMPORT_META_RESOLVE'
 
+function normalizePath(value: string) {
+  return value.replaceAll('\\', '/')
+}
+
+function normalizeExtendsList(config: { extends?: string | string[] }) {
+  const extendsList = Array.isArray(config.extends)
+    ? config.extends
+    : config.extends
+      ? [config.extends]
+      : []
+
+  return extendsList.map(normalizePath)
+}
+
 async function withImportMetaResolveDisabled<T>(fn: () => Promise<T>): Promise<T> {
   const previousValue = process.env[DISABLE_IMPORT_META_RESOLVE_ENV]
   process.env[DISABLE_IMPORT_META_RESOLVE_ENV] = '1'
@@ -37,7 +51,7 @@ describe('createIcebreakerStylelintConfig', () => {
     const { createIcebreakerStylelintConfig } = await loadConfig()
     const config = createIcebreakerStylelintConfig()
 
-    expect(config.extends).toEqual([
+    expect(normalizeExtendsList(config)).toEqual([
       expect.stringContaining(PRESET_STANDARD_SCSS),
       expect.stringContaining(PRESET_VUE_SCSS),
       expect.stringContaining(PRESET_RECESS_ORDER),
@@ -217,13 +231,7 @@ describe('createIcebreakerStylelintConfig', () => {
     const { createIcebreakerStylelintConfig } = await withImportMetaResolveDisabled(loadConfig)
     const config = createIcebreakerStylelintConfig()
 
-    const extendsList = Array.isArray(config.extends)
-      ? config.extends
-      : config.extends
-        ? [config.extends]
-        : []
-
-    expect(extendsList).toEqual([
+    expect(normalizeExtendsList(config)).toEqual([
       PRESET_STANDARD_SCSS,
       PRESET_VUE_SCSS,
       PRESET_RECESS_ORDER,
