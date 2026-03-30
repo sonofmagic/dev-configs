@@ -1,5 +1,13 @@
 # @icebreakers/eslint-config
 
+## 2.1.1
+
+### Patch Changes
+
+- 🐛 **Make React, Next, and TanStack Query ESLint plugins optional so the preset can still resolve in Node 20 environments when those plugins are not installed. Also fix the bundled Stylelint config typings so package typecheck passes again.** [`fc8b49d`](https://github.com/sonofmagic/dev-configs/commit/fc8b49dfcf010c3351730301dfc31c9b786dfca4) by @sonofmagic
+- 📦 **Dependencies** [`fc8b49d`](https://github.com/sonofmagic/dev-configs/commit/fc8b49dfcf010c3351730301dfc31c9b786dfca4)
+  → `@icebreakers/stylelint-config@2.2.1`
+
 ## 2.1.0
 
 ### Minor Changes
