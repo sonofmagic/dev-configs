@@ -1,6 +1,7 @@
 import type { BetterStylelintMessage, BetterStylelintOptions } from './types'
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
@@ -43,6 +44,7 @@ const CORE_JS_PATTERN = /core\.js$/u
 const resultCache = new Map<string, BetterStylelintMessage[]>()
 const configCacheIds = new WeakMap<object, number>()
 let nextConfigCacheId = 0
+const require = createRequire(import.meta.url)
 const UNSUPPORTED_EXEC_ARGV_FLAGS = new Set([
   '--eval',
   '-e',
@@ -164,6 +166,20 @@ function resolveWorkerPath() {
   return currentFilePath.replace(CORE_JS_PATTERN, 'worker.js')
 }
 
+function resolveWorkerCommand(workerPath: string) {
+  if (workerPath.endsWith('.ts')) {
+    return {
+      command: process.execPath,
+      args: [...getWorkerExecArgv(), '--import', require.resolve('tsx/esm'), workerPath],
+    }
+  }
+
+  return {
+    command: process.execPath,
+    args: [...getWorkerExecArgv(), workerPath],
+  }
+}
+
 function getWorkerExecArgv() {
   const workerExecArgv: string[] = []
 
@@ -194,8 +210,8 @@ function getWorkerExecArgv() {
 
 function getRunStylelintWorker(): RunStylelintWorker {
   return (code, filename, options) => {
-    const workerArgs = [...getWorkerExecArgv(), resolveWorkerPath()]
-    const output = execFileSync(process.execPath, workerArgs, {
+    const worker = resolveWorkerCommand(resolveWorkerPath())
+    const output = execFileSync(worker.command, worker.args, {
       input: JSON.stringify({
         code,
         filename,

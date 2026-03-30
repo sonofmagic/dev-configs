@@ -39,13 +39,21 @@ describe('runStylelintSync', () => {
 
     runStylelintSync('.demo {}', '/tmp/demo.css', '/tmp')
 
-    expect(execFileSync).toHaveBeenCalledWith(
-      process.execPath,
-      expect.arrayContaining([expect.stringMatching(/worker\.(ts|js)$/u)]),
-      expect.objectContaining({
-        encoding: 'utf8',
-      }),
-    )
+    const [command, args, options] = vi.mocked(execFileSync).mock.calls[0]!
+
+    expect(command).toBe(process.execPath)
+    expect(args).toEqual(expect.arrayContaining([
+      expect.stringMatching(/worker\.(ts|js)$/u),
+    ]))
+    if (args.some(arg => /worker\.ts$/u.test(arg))) {
+      expect(args).toEqual(expect.arrayContaining([
+        '--import',
+        expect.stringMatching(/tsx[\\/]dist[\\/]esm[\\/]index\.mjs$/u),
+      ]))
+    }
+    expect(options).toEqual(expect.objectContaining({
+      encoding: 'utf8',
+    }))
     expect(runStylelintWorkerMock).toHaveBeenCalledWith('.demo {}', '/tmp/demo.css', {
       cwd: '/tmp',
     })
