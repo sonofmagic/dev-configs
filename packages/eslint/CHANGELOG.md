@@ -1,5 +1,16 @@
 # @icebreakers/eslint-config
 
+## 3.0.1
+
+### Patch Changes
+
+- 🐛 **Fix flat config user `ignores` handling in `icebreaker(...)` so global ignore** [`2fff479`](https://github.com/sonofmagic/dev-configs/commit/2fff4791c1c19c9bbd3ef0032345807bed4bcc8d) by @sonofmagic
+  - patterns are emitted as a top-level ignore config item and work with
+  - `eslint .`.
+  - Keep scoped `files` + `ignores` user config semantics unchanged, and add
+  - regression coverage for global ignores, scoped ignores, and passthrough flat
+  - config fields such as `languageOptions` and `linterOptions`.
+
 ## 3.0.0
 
 ### Major Changes
