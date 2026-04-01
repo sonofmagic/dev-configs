@@ -8,7 +8,7 @@
 
 ## Requirements
 
-- Node.js 18 or newer
+- Node.js 22 or newer
 - ESLint 9 with flat config support
 - React related plugins are bundled with this package. Next.js, Query, and other ecosystem presets remain optional and are skipped automatically when their plugins are missing.
 - Install optional peer plugins when you turn on Tailwind (`eslint-plugin-tailwindcss` or `eslint-plugin-better-tailwindcss`), MDX (`eslint-plugin-mdx`), or UnoCSS (`@unocss/eslint-plugin`)

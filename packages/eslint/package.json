@@ -38,6 +38,9 @@
     "dist",
     "index.d.ts"
   ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "tsdown --watch --sourcemap",
     "build": "tsdown",

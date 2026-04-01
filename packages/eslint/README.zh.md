@@ -6,7 +6,7 @@
 
 ## 环境要求
 
-- Node.js 18 或更高版本
+- Node.js 22 或更高版本
 - 支持 Flat Config 的 ESLint 9
 - React 相关插件已随当前包一起分发。Next.js、Query 等生态预设仍保持可选，缺失时会自动跳过对应配置，而不是在解析时直接报错。
 - 如需启用 Tailwind、MDX、UnoCSS 等，可安装对应的可选依赖：`eslint-plugin-tailwindcss` / `eslint-plugin-better-tailwindcss`、`eslint-plugin-mdx`、`@unocss/eslint-plugin`
