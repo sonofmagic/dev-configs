@@ -40,6 +40,47 @@ describe('factory helpers', () => {
     expect(result).toBe('composer')
   })
 
+  it('lifts ignores into a standalone config item before the user config', () => {
+    const userConfig = {
+      name: 'user',
+      ignores: ['.agents/**'],
+      rules: {
+        'no-console': 'error',
+      },
+    }
+
+    icebreaker({ vue: true }, userConfig)
+
+    expect(antfuMock).toHaveBeenCalledWith(
+      {},
+      { name: 'preset' },
+      [
+        { name: 'user/ignores', ignores: ['.agents/**'] },
+        {
+          name: 'user',
+          rules: {
+            'no-console': 'error',
+          },
+        },
+      ],
+    )
+  })
+
+  it('keeps ignores scoped when the user config declares files', () => {
+    const userConfig = {
+      name: 'scoped-user',
+      files: ['src/**/*.js'],
+      ignores: ['**/vendor/**'],
+      rules: {
+        'no-console': 'error',
+      },
+    }
+
+    icebreaker({ vue: true }, userConfig)
+
+    expect(antfuMock).toHaveBeenCalledWith({}, { name: 'preset' }, userConfig)
+  })
+
   it('passes legacy mode to getPresets', () => {
     const userConfig = { name: 'legacy-user' }
     const result = icebreakerLegacy({ react: true }, userConfig)

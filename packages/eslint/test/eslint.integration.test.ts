@@ -263,4 +263,147 @@ describe('eslint integration fixtures', () => {
       }),
     ]))
   })
+
+  it('lifts user ignores to a top-level flat config item', async () => {
+    const tempDir = path.join(TEMP_ROOT, `ignores-${crypto.randomUUID()}`)
+    await fs.rm(tempDir, { recursive: true, force: true })
+    await fs.mkdir(path.join(tempDir, '.agents'), { recursive: true })
+    await fs.writeFile(
+      path.join(tempDir, 'index.js'),
+      'console.log("visible")\n',
+      'utf8',
+    )
+    await fs.writeFile(
+      path.join(tempDir, '.agents', 'hidden.md'),
+      '# bad\tmarkdown\n',
+      'utf8',
+    )
+
+    const eslint = new ESLint({
+      cwd: tempDir,
+      overrideConfig: await icebreaker(
+        {},
+        {
+          ignores: ['.agents/**'],
+          rules: {
+            'no-restricted-syntax': [
+              'error',
+              'CallExpression[callee.object.name="console"]',
+            ],
+          },
+        },
+      ).toConfigs(),
+      overrideConfigFile: true,
+    })
+
+    expect(await eslint.isPathIgnored(path.join(tempDir, '.agents', 'hidden.md'))).toBe(true)
+
+    const results = await eslint.lintFiles(['.'])
+    const relativePaths = results.map(result => path.relative(tempDir, result.filePath))
+
+    expect(relativePaths).toContain('index.js')
+    expect(relativePaths).not.toContain(path.join('.agents', 'hidden.md'))
+    expect(results.find(result => result.filePath.endsWith('index.js'))?.messages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ruleId: 'no-restricted-syntax',
+        }),
+      ]),
+    )
+  })
+
+  it('keeps scoped ignores on file-matched user configs', async () => {
+    const tempDir = path.join(TEMP_ROOT, `scoped-ignores-${crypto.randomUUID()}`)
+    await fs.rm(tempDir, { recursive: true, force: true })
+    await fs.mkdir(path.join(tempDir, 'src', 'vendor'), { recursive: true })
+    await fs.mkdir(path.join(tempDir, 'other', 'vendor'), { recursive: true })
+    await fs.writeFile(
+      path.join(tempDir, 'src', 'index.js'),
+      'console.log("src")\n',
+      'utf8',
+    )
+    await fs.writeFile(
+      path.join(tempDir, 'src', 'vendor', 'ignored.js'),
+      'console.log("ignored")\n',
+      'utf8',
+    )
+    await fs.writeFile(
+      path.join(tempDir, 'other', 'vendor', 'outside.js'),
+      'console.log("outside")\n',
+      'utf8',
+    )
+
+    const eslint = new ESLint({
+      cwd: tempDir,
+      overrideConfig: await icebreaker(
+        {},
+        {
+          files: ['src/**/*.js'],
+          ignores: ['**/vendor/**'],
+          rules: {
+            'no-restricted-syntax': [
+              'error',
+              'CallExpression[callee.object.name="console"]',
+            ],
+          },
+        },
+      ).toConfigs(),
+      overrideConfigFile: true,
+    })
+
+    expect(await eslint.isPathIgnored(path.join(tempDir, 'src', 'vendor', 'ignored.js'))).toBe(false)
+
+    const results = await eslint.lintFiles(['.'])
+    const srcResult = results.find(result => result.filePath.endsWith(path.join('src', 'index.js')))
+    const ignoredResult = results.find(result => result.filePath.endsWith(path.join('src', 'vendor', 'ignored.js')))
+    const outsideResult = results.find(result => result.filePath.endsWith(path.join('other', 'vendor', 'outside.js')))
+
+    expect(srcResult?.messages).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        ruleId: 'no-restricted-syntax',
+      }),
+    ]))
+    expect(ignoredResult?.messages.some(message => message.ruleId === 'no-restricted-syntax')).toBe(false)
+    expect(outsideResult?.messages.some(message => message.ruleId === 'no-restricted-syntax')).toBe(false)
+  })
+
+  it('keeps ordinary user flat config fields working when passed through', async () => {
+    const tempDir = path.join(TEMP_ROOT, `user-fields-${crypto.randomUUID()}`)
+    await fs.rm(tempDir, { recursive: true, force: true })
+    await fs.mkdir(tempDir, { recursive: true })
+    await fs.writeFile(
+      path.join(tempDir, 'index.js'),
+      '/* eslint-disable no-undef */\nfoo\n',
+      'utf8',
+    )
+
+    const eslint = new ESLint({
+      cwd: tempDir,
+      overrideConfig: await icebreaker(
+        {},
+        {
+          files: ['**/*.js'],
+          languageOptions: {
+            globals: {
+              foo: 'readonly',
+            },
+          },
+          linterOptions: {
+            reportUnusedDisableDirectives: 'error',
+          },
+        },
+      ).toConfigs(),
+      overrideConfigFile: true,
+    })
+
+    const [result] = await eslint.lintFiles(['.'])
+
+    expect(result?.messages).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        ruleId: null,
+        message: expect.stringContaining('Unused eslint-disable directive'),
+      }),
+    ]))
+    expect(result?.messages.some(message => message.ruleId === 'no-undef')).toBe(false)
+  })
 })

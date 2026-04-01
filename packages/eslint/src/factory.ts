@@ -33,13 +33,78 @@ function normalizeOptionalAntfuFeatures(
   return normalized
 }
 
+function hasGlobalIgnoreShape(
+  config: TypedFlatConfigItem,
+): boolean {
+  const keys = Object.keys(config).filter(key => key !== 'name')
+  return keys.length === 1 && keys[0] === 'ignores'
+}
+
+function liftConfigIgnores(
+  config: TypedFlatConfigItem,
+): TypedFlatConfigItem | TypedFlatConfigItem[] {
+  if (
+    !('ignores' in config)
+    || config.ignores == null
+    || hasGlobalIgnoreShape(config)
+    || 'files' in config
+  ) {
+    return config
+  }
+
+  const { ignores, name, ...rest } = config
+  const ignoreConfig: TypedFlatConfigItem = {
+    ...(name ? { name: `${name}/ignores` } : {}),
+    ignores,
+  }
+
+  return [ignoreConfig, { ...(name ? { name } : {}), ...rest }]
+}
+
+function normalizeResolvedUserConfig(
+  userConfig: Exclude<Awaited<UserConfigItem>, FlatConfigComposer<any, any>>,
+): Exclude<UserConfigItem, FlatConfigComposer<any, any>> {
+  if (Array.isArray(userConfig)) {
+    return userConfig.flatMap(config => liftConfigIgnores(config as TypedFlatConfigItem))
+  }
+
+  return liftConfigIgnores(userConfig as TypedFlatConfigItem)
+}
+
+function isComposer(
+  value: Awaited<UserConfigItem>,
+): value is FlatConfigComposer<any, any> {
+  return !!value
+    && typeof value === 'object'
+    && 'toConfigs' in value
+    && typeof value.toConfigs === 'function'
+}
+
+function normalizeUserConfig(
+  userConfig: UserConfigItem,
+): UserConfigItem {
+  if (typeof (userConfig as PromiseLike<Awaited<UserConfigItem>>)?.then === 'function') {
+    return Promise.resolve(userConfig).then((resolved) => {
+      return isComposer(resolved) ? resolved : normalizeResolvedUserConfig(resolved)
+    })
+  }
+
+  return isComposer(userConfig)
+    ? userConfig
+    : normalizeResolvedUserConfig(userConfig)
+}
+
 // for vue2 @see https://github.com/antfu/eslint-config/issues/367#issuecomment-1979646400
 export function icebreaker(
   options: UserDefinedOptions = {},
   ...userConfigs: UserConfigItem[]
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
   const [resolved, ...presets] = getPresets(options)
-  return antfu(normalizeOptionalAntfuFeatures(resolved), ...presets, ...userConfigs)
+  return antfu(
+    normalizeOptionalAntfuFeatures(resolved),
+    ...presets,
+    ...userConfigs.map(normalizeUserConfig),
+  )
 }
 
 export type IcebreakerEslintConfig = ReturnType<typeof icebreaker>
@@ -49,7 +114,11 @@ export function icebreakerLegacy(
   ...userConfigs: UserConfigItem[]
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
   const [resolved, ...presets] = getPresets(options, 'legacy')
-  return antfu(normalizeOptionalAntfuFeatures(resolved), ...presets, ...userConfigs)
+  return antfu(
+    normalizeOptionalAntfuFeatures(resolved),
+    ...presets,
+    ...userConfigs.map(normalizeUserConfig),
+  )
 }
 
 export type IcebreakerLegacyEslintConfig = ReturnType<
