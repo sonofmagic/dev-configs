@@ -23,6 +23,12 @@ const BUNDLED_REACT_PACKAGES = [
   'eslint-plugin-react-refresh',
 ] as const
 
+const ANTFU_PEER_CHECK_PACKAGES = [
+  '@eslint-react/eslint-plugin',
+  'eslint-plugin-jsx-a11y',
+  'eslint-plugin-react-refresh',
+] as const
+
 function readInstalledPackageJson(name: string): { version: string } {
   const packageJsonPath = path.join(
     PACKAGE_DIR,
@@ -46,7 +52,7 @@ describe('peer compatibility', () => {
     expect(packageJson.optionalDependencies?.[name]).toBeUndefined()
   })
 
-  it.each(BUNDLED_REACT_PACKAGES)(
+  it.each(ANTFU_PEER_CHECK_PACKAGES)(
     'keeps the installed %s version within the @antfu/eslint-config peer range',
     (name) => {
       const installedPackageJson = readInstalledPackageJson(name)
