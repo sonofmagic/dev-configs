@@ -1,5 +1,13 @@
 # eslint-plugin-better-stylelint
 
+## 0.1.3
+
+### Patch Changes
+
+- 🐛 **Fix the Windows worker bootstrap so the `tsx/esm` loader is passed to** [`69db5c8`](https://github.com/sonofmagic/dev-configs/commit/69db5c87a842d26cedac9256000afa24f8711bc4) by @sonofmagic
+  - `node --import` as a `file://` URL, which restores test runs on Node.js 20+
+  - and newer GitHub Actions runners.
+
 ## 0.1.2
 
 ### Patch Changes

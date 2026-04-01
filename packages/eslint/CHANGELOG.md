@@ -1,5 +1,21 @@
 # @icebreakers/eslint-config
 
+## 3.0.0
+
+### Major Changes
+
+- 🚀 **Raise the supported Node.js baseline for `@icebreakers/eslint-config` to Node.js** [`fdc18ad`](https://github.com/sonofmagic/dev-configs/commit/fdc18ad209e1f4d49101765a2fae5bc3ca290572) by @sonofmagic
+  - 22 and newer.
+  - Node.js 20 support is no longer treated as complete because the preset now
+  - depends on packages whose published engine ranges exclude Node.js 20.
+
+### Patch Changes
+
+- 🐛 **Allow `axios` and `lint-staged` in the `e18e/ban-dependencies` rule defaults so** [`035b992`](https://github.com/sonofmagic/dev-configs/commit/035b9920a15c98ccf47f30b999a9c46b9ae96898) by @sonofmagic
+  - the preset does not warn on those packages.
+- 📦 **Dependencies** [`69db5c8`](https://github.com/sonofmagic/dev-configs/commit/69db5c87a842d26cedac9256000afa24f8711bc4)
+  → `eslint-plugin-better-stylelint@0.1.3`
+
 ## 2.1.2
 
 ### Patch Changes
