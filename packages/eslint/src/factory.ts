@@ -132,7 +132,7 @@ function normalizeUnoCssOptions(
       }
     : {
         ...restOptions,
-        settings: settings as NonNullable<UserDefinedOptions['settings']>,
+        settings,
         unocss: unocssOptions,
       }
 
