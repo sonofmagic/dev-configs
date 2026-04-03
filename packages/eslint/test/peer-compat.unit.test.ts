@@ -29,6 +29,10 @@ const ANTFU_PEER_CHECK_PACKAGES = [
   'eslint-plugin-react-refresh',
 ] as const
 
+const OPTIONAL_UNOCSS_PACKAGES = [
+  '@unocss/eslint-plugin',
+] as const
+
 function readInstalledPackageJson(name: string): { version: string } {
   const packageJsonPath = path.join(
     PACKAGE_DIR,
@@ -52,7 +56,27 @@ describe('peer compatibility', () => {
     expect(packageJson.optionalDependencies?.[name]).toBeUndefined()
   })
 
+  it.each(OPTIONAL_UNOCSS_PACKAGES)('ships %s as an optional dependency', (name) => {
+    expect(packageJson.optionalDependencies?.[name]).toBeTruthy()
+    expect(packageJson.dependencies?.[name]).toBeUndefined()
+  })
+
   it.each(ANTFU_PEER_CHECK_PACKAGES)(
+    'keeps the installed %s version within the @antfu/eslint-config peer range',
+    (name) => {
+      const installedPackageJson = readInstalledPackageJson(name)
+      const peerRange = antfuPackageJson.peerDependencies?.[name]
+
+      expect(peerRange).toBeTruthy()
+      expect(
+        semver.satisfies(installedPackageJson.version, peerRange!, {
+          includePrerelease: true,
+        }),
+      ).toBe(true)
+    },
+  )
+
+  it.each(OPTIONAL_UNOCSS_PACKAGES)(
     'keeps the installed %s version within the @antfu/eslint-config peer range',
     (name) => {
       const installedPackageJson = readInstalledPackageJson(name)

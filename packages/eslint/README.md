@@ -53,6 +53,9 @@ export default icebreaker({
   tailwindcss: {
     tailwindConfig: './tailwind.config.ts',
   },
+  unocss: {
+    strict: true,
+  },
   mdx: process.env.LINT_MDX === 'true',
   a11y: true,
   nestjs: true,
@@ -67,6 +70,7 @@ export default icebreaker({
 - `react` – defers to the upstream React preset and unlocks accessibility helpers when `a11y` is enabled. The required React lint plugins are bundled with this package.
 - `query` – toggles the TanStack Query plugin (`@tanstack/eslint-plugin-query`) and its recommended lint rules. Missing plugin installs are treated as a no-op.
 - `tailwindcss` – pass `true` to use the built-in Tailwind flat config or provide `{ entryPoint, tailwindConfig }` for Tailwind v4/v3 projects.
+- `unocss` – pass `true` to use the upstream Antfu UnoCSS preset, or provide `{ strict, attributify, configPath }` to keep the same preset while using the Icebreaker wrapper API.
 - `mdx` – activates MDX linting via `eslint-plugin-mdx`.
 - `a11y` – wires in JSX (React) and Vue accessibility plugins. Missing framework-specific plugins are skipped independently.
 - `typescript` – extends the TypeScript preset and applies stricter unused diagnostics. Pair with `nestjs` for Nest specific adjustments.
@@ -162,6 +166,36 @@ export default icebreaker({
 the `@icebreakers/stylelint-config` options (`presets`, `tailwindcssPreset`,
 `ignores`, `extends`, `overrides`, `rules`).
 
+### UnoCSS Projects
+
+The UnoCSS integration is still powered by the upstream Antfu preset, but
+`@icebreakers/eslint-config` adds a small wrapper so the config file path can be
+declared next to the other UnoCSS options:
+
+```ts
+import path from 'node:path'
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  unocss: {
+    strict: true,
+    attributify: false,
+    configPath: path.resolve(process.cwd(), './uno.config.ts'),
+  },
+})
+```
+
+Behavior details:
+
+- `unocss: true` enables the upstream Antfu UnoCSS preset unchanged.
+- `unocss.configPath` is an Icebreaker wrapper for `settings.unocss.configPath`.
+- If `configPath` is omitted, UnoCSS still searches the lint project root for
+  `uno.config.*`.
+- If both `unocss.configPath` and `settings.unocss.configPath` are provided,
+  `unocss.configPath` wins.
+- If `@unocss/eslint-plugin` is unavailable, the UnoCSS preset is skipped
+  instead of throwing.
+
 ### NestJS Projects
 
 Enable `nestjs: true` together with the TypeScript preset to apply rules tailored for Nest idioms:
@@ -198,6 +232,6 @@ You may also pass other flat configs (e.g. from in-house presets) as additional 
 
 ## Troubleshooting
 
-- Missing plugin errors usually mean a feature is enabled without its optional dependency being installed in the current workspace. React and Next related presets now auto-skip in that case; other features can be added with `pnpm add -D`.
+- Missing plugin errors usually mean a feature is enabled without its optional dependency being installed in the current workspace. React, Next, and UnoCSS related presets now auto-skip in that case; other features can be added with `pnpm add -D`.
 - When combining legacy `.eslintrc` projects, prefer `icebreakerLegacy()` and move overrides into flat config format incrementally.
 - Tailwind class validation reads from your `tailwind.config.*`; double check the path when using monorepo roots or custom build tooling.

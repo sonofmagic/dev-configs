@@ -5,6 +5,8 @@ export type {
   StylelintBridgeOption,
   TailwindcssConfig,
   TailwindcssOption,
+  UnocssConfig,
+  UnocssOption,
   UserConfigItem,
   UserDefinedOptions,
 } from './types'
