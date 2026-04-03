@@ -22,4 +22,4 @@ Commits follow Conventional Commits (`@commitlint/config-conventional`); run `pn
 
 ## Tooling & Environment Notes
 
-This repository targets Node >= 18 and pnpm 10.x. Husky hooks run on `prepare`; install dependencies before committing to ensure hooks exist locally. Use `npx @eslint/config-inspector` or `pnpm build:inspector` when you need a visual diff of rule changes.
+This repository targets Node `^20.19.0 || >=22.12.0` and pnpm 10.x. Husky hooks run on `prepare`; install dependencies before committing to ensure hooks exist locally. Use `npx @eslint/config-inspector` or `pnpm build:inspector` when you need a visual diff of rule changes.

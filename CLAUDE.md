@@ -179,7 +179,7 @@ pnpm release  # runs pnpm publish
 
 ## Important Notes
 
-- **Node version**: Requires Node >= 18
+- **Node version**: Requires Node ^20.19.0 || >=22.12.0
 - **pnpm**: Enforced via `preinstall` hook using `only-allow`
 - **Turbo**: Handles task orchestration and caching
 - **Husky**: Git hooks are set up on `prepare` (runs after install)

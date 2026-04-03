@@ -17,8 +17,41 @@ permissions:
   id-token: write # to use OpenID Connect token for provenance (changesets/action)
 
 jobs:
+  verify-supported-node:
+    name: Verify on Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20.19.0, 22.12.0]
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
   release:
     name: Release
+    needs: verify-supported-node
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
