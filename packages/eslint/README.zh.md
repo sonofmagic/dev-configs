@@ -1,5 +1,33 @@
 # @icebreakers/eslint-config
 
+## UnoCSS 包装层
+
+`@icebreakers/eslint-config` 的 UnoCSS 能力仍然复用上游
+`@antfu/eslint-config`，但现在额外提供了一层更贴近本仓库风格的包装 API。
+
+推荐写法：
+
+```ts
+import path from 'node:path'
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  unocss: {
+    strict: true,
+    attributify: false,
+    configPath: path.resolve(process.cwd(), './uno.config.ts'),
+  },
+})
+```
+
+行为说明：
+
+- `unocss: true`：直接启用上游 Antfu 的 UnoCSS preset
+- `unocss.configPath`：会被自动映射为 `settings.unocss.configPath`
+- 不传 `configPath`：仍然按 UnoCSS 默认行为，从 lint 项目根目录查找 `uno.config.*`
+- 同时传 `unocss.configPath` 和 `settings.unocss.configPath`：以前者为准
+- 如果当前 workspace 没有安装 `@unocss/eslint-plugin`：该 preset 会自动跳过，不会直接抛错
+
 ## 简介
 
 `@icebreakers/eslint-config` 基于 `@antfu/eslint-config` 的 flat config 预设，额外补充了 Tailwind CSS、MDX、Vue 无障碍以及 Icebreaker 团队常用的 TypeScript 默认规则。它返回一个 `FlatConfigComposer`，可以按需启用不同预设，并继续追加工作区特定的覆盖项。

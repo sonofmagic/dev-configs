@@ -406,4 +406,84 @@ describe('eslint integration fixtures', () => {
     ]))
     expect(result?.messages.some(message => message.ruleId === 'no-undef')).toBe(false)
   })
+
+  it('discovers uno.config.ts from project root when unocss.configPath is omitted', async () => {
+    const tempDir = path.join(TEMP_ROOT, `unocss-root-${crypto.randomUUID()}`)
+    await fs.rm(tempDir, { recursive: true, force: true })
+    await fs.mkdir(tempDir, { recursive: true })
+    await fs.writeFile(
+      path.join(tempDir, 'uno.config.ts'),
+      `export default { blocklist: ['foo'] }\n`,
+      'utf8',
+    )
+
+    const eslint = new ESLint({
+      cwd: tempDir,
+      overrideConfig: await icebreaker({
+        unocss: {
+          strict: true,
+        },
+      }).toConfigs(),
+      overrideConfigFile: true,
+    })
+
+    const [result] = await eslint.lintText(
+      `export const Demo = () => <div className="foo bar" />\n`,
+      {
+        filePath: path.join(tempDir, 'demo.jsx'),
+      },
+    )
+
+    expect(result?.messages).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        ruleId: 'unocss/blocklist',
+        message: expect.stringContaining('"foo" is in blocklist'),
+      }),
+    ]))
+  })
+
+  it('uses unocss.configPath to override root uno.config.ts', async () => {
+    const tempDir = path.join(TEMP_ROOT, `unocss-config-path-${crypto.randomUUID()}`)
+    const customConfigPath = path.resolve(tempDir, 'configs', 'uno.alt.ts')
+
+    await fs.rm(tempDir, { recursive: true, force: true })
+    await fs.mkdir(path.dirname(customConfigPath), { recursive: true })
+
+    await fs.writeFile(
+      path.join(tempDir, 'uno.config.ts'),
+      `export default { blocklist: ['foo'] }\n`,
+      'utf8',
+    )
+    await fs.writeFile(
+      customConfigPath,
+      `export default { blocklist: ['bar'] }\n`,
+      'utf8',
+    )
+
+    const eslint = new ESLint({
+      cwd: tempDir,
+      overrideConfig: await icebreaker({
+        unocss: {
+          strict: true,
+          configPath: customConfigPath,
+        },
+      }).toConfigs(),
+      overrideConfigFile: true,
+    })
+
+    const [result] = await eslint.lintText(
+      `export const Demo = () => <div className="foo bar" />\n`,
+      {
+        filePath: path.join(tempDir, 'demo.jsx'),
+      },
+    )
+
+    expect(result?.messages.some(message => message.message.includes('"foo" is in blocklist'))).toBe(false)
+    expect(result?.messages).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        ruleId: 'unocss/blocklist',
+        message: expect.stringContaining('"bar" is in blocklist'),
+      }),
+    ]))
+  })
 })

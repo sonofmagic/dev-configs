@@ -19,6 +19,22 @@ export interface TailwindcssOption {
 }
 
 export type TailwindcssConfig = boolean | TailwindcssOption
+export interface UnocssOption {
+  /**
+   * UnoCSS config file path, e.g. `uno.config.ts`.
+   * When omitted, fallback to default project-root discovery.
+   */
+  configPath?: string
+  /**
+   * Enable UnoCSS attributify support.
+   */
+  attributify?: boolean
+  /**
+   * Enable UnoCSS strict mode.
+   */
+  strict?: boolean
+}
+export type UnocssConfig = boolean | UnocssOption
 export interface StylelintBridgeOption extends IcebreakerStylelintOptions {
   cwd?: string
 }
@@ -35,7 +51,7 @@ export type NormalizableUserConfig = Exclude<
   FlatConfigComposer<any, any>
 >
 
-export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
+export type UserDefinedOptions = Omit<OptionsConfig, 'unocss'> & TypedFlatConfigItem & {
   /**
    * Enable Mini Program support.
    * @default false
@@ -46,6 +62,11 @@ export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
    * @default false
    */
   tailwindcss?: TailwindcssConfig
+  /**
+   * Enable UnoCSS support.
+   * @default false
+   */
+  unocss?: UnocssConfig
   /**
    * Bridge Stylelint diagnostics into ESLint for style files.
    * @default false

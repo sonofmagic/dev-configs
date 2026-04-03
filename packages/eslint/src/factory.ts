@@ -21,12 +21,62 @@ const OPTIONAL_ANTFU_FEATURE_PACKAGES = {
     'eslint-plugin-react-refresh',
   ],
   nextjs: ['@next/eslint-plugin-next'],
+  unocss: ['@unocss/eslint-plugin'],
 } as const
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && Object.prototype.toString.call(value) === '[object Object]'
+}
+
+function cloneUserDefinedOptions(
+  options: UserDefinedOptions,
+): UserDefinedOptions {
+  const { settings, ...restOptions } = options
+  if (settings === undefined) {
+    return { ...restOptions }
+  }
+
+  return {
+    ...restOptions,
+    settings,
+  }
+}
+
+function getSettingsRecord(
+  settings: UserDefinedOptions['settings'],
+): Record<string, unknown> {
+  return isPlainObject(settings) ? settings : {}
+}
+
+function removeNamespacedSetting(
+  options: UserDefinedOptions,
+  namespace: string,
+): UserDefinedOptions {
+  if (!isPlainObject(options.settings)) {
+    return options
+  }
+
+  const settings = getSettingsRecord(options.settings)
+  if (!(namespace in settings)) {
+    return options
+  }
+
+  const { [namespace]: _unusedNamespace, ...restSettings } = settings
+  const { settings: _settings, ...restOptions } = options
+  if (Object.keys(restSettings).length === 0) {
+    return { ...restOptions }
+  }
+
+  return {
+    ...restOptions,
+    settings: restSettings as NonNullable<UserDefinedOptions['settings']>,
+  }
+}
 
 function normalizeOptionalAntfuFeatures(
   options: UserDefinedOptions,
 ): UserDefinedOptions {
-  const normalized = { ...options }
+  const normalized = cloneUserDefinedOptions(options)
 
   if (normalized.react && !hasAllPackages([...OPTIONAL_ANTFU_FEATURE_PACKAGES.react])) {
     normalized.react = false
@@ -36,7 +86,61 @@ function normalizeOptionalAntfuFeatures(
     normalized.nextjs = false
   }
 
+  if (normalized.unocss && !hasAllPackages([...OPTIONAL_ANTFU_FEATURE_PACKAGES.unocss])) {
+    normalized.unocss = false
+    return removeNamespacedSetting(normalized, 'unocss')
+  }
+
   return normalized
+}
+
+function mergeNamespacedSetting(
+  options: UserDefinedOptions,
+  namespace: string,
+  value: Record<string, unknown>,
+): UserDefinedOptions {
+  const currentSettings = getSettingsRecord(options.settings)
+  const currentNamespaceSettings = isPlainObject(currentSettings[namespace])
+    ? currentSettings[namespace]
+    : {}
+
+  return {
+    ...options,
+    settings: {
+      ...currentSettings,
+      [namespace]: {
+        ...currentNamespaceSettings,
+        ...value,
+      },
+    } as NonNullable<UserDefinedOptions['settings']>,
+  }
+}
+
+function normalizeUnoCssOptions(
+  options: UserDefinedOptions,
+): UserDefinedOptions {
+  if (!options.unocss || typeof options.unocss !== 'object') {
+    return options
+  }
+
+  const { configPath, ...unocssOptions } = options.unocss
+  const { settings, ...restOptions } = options
+  const normalized: UserDefinedOptions = settings === undefined
+    ? {
+        ...restOptions,
+        unocss: unocssOptions,
+      }
+    : {
+        ...restOptions,
+        settings: settings as NonNullable<UserDefinedOptions['settings']>,
+        unocss: unocssOptions,
+      }
+
+  if (!configPath) {
+    return normalized
+  }
+
+  return mergeNamespacedSetting(normalized, 'unocss', { configPath })
 }
 
 function hasGlobalIgnoreShape(
@@ -108,8 +212,9 @@ export function icebreaker(
   ...userConfigs: UserConfigItem[]
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
   const [resolved, ...presets] = getPresets(options)
+  const normalized = normalizeUnoCssOptions(normalizeOptionalAntfuFeatures(resolved))
   return antfu(
-    normalizeOptionalAntfuFeatures(resolved),
+    normalized,
     ...presets,
     ...userConfigs.map(normalizeUserConfig),
   )
@@ -122,8 +227,9 @@ export function icebreakerLegacy(
   ...userConfigs: UserConfigItem[]
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
   const [resolved, ...presets] = getPresets(options, 'legacy')
+  const normalized = normalizeUnoCssOptions(normalizeOptionalAntfuFeatures(resolved))
   return antfu(
-    normalizeOptionalAntfuFeatures(resolved),
+    normalized,
     ...presets,
     ...userConfigs.map(normalizeUserConfig),
   )

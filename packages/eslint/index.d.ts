@@ -14,14 +14,21 @@ export interface TailwindcssOption {
 }
 
 export type TailwindcssConfig = boolean | TailwindcssOption
+export interface UnocssOption {
+  configPath?: string
+  attributify?: boolean
+  strict?: boolean
+}
+export type UnocssConfig = boolean | UnocssOption
 export interface StylelintBridgeOption extends IcebreakerStylelintOptions {
   cwd?: string
 }
 export type StylelintBridgeConfig = boolean | StylelintBridgeOption
 
-export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
+export type UserDefinedOptions = Omit<OptionsConfig, 'unocss'> & TypedFlatConfigItem & {
   miniProgram?: boolean
   tailwindcss?: TailwindcssConfig
+  unocss?: UnocssConfig
   stylelint?: StylelintBridgeConfig
   mdx?: boolean
   a11y?: boolean

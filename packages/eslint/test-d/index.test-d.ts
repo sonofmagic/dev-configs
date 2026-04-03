@@ -14,6 +14,14 @@ expectAssignable<FlatConfigComposer<TypedFlatConfigItem, ConfigNames>>(icebreake
 expectAssignable<FlatConfigComposer<TypedFlatConfigItem, ConfigNames>>(icebreakerLegacy())
 expectAssignable<UserDefinedOptions>({ miniProgram: true })
 expectAssignable<UserDefinedOptions>({ weapp: true })
+expectAssignable<UserDefinedOptions>({ unocss: true })
+expectAssignable<UserDefinedOptions>({
+  unocss: {
+    strict: true,
+    attributify: false,
+    configPath: './uno.config.ts',
+  },
+})
 expectType<IcebreakerEslintConfig>(icebreaker())
 expectType<IcebreakerLegacyEslintConfig>(icebreakerLegacy())
 expectType<[UserDefinedOptions, ...UserConfigItem[]]>(getPresets())

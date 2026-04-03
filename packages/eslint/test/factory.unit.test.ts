@@ -116,4 +116,241 @@ describe('factory helpers', () => {
       { name: 'preset' },
     )
   })
+
+  it('disables optional antfu unocss feature when the plugin is unavailable', () => {
+    getPresetsMock.mockReturnValueOnce([
+      {
+        unocss: true,
+      } as any,
+      { name: 'preset' },
+    ])
+    hasAllPackagesMock.mockImplementation((packages) => {
+      return !packages.includes('@unocss/eslint-plugin')
+    })
+
+    icebreaker({
+      unocss: true,
+    } as any)
+
+    expect(antfuMock).toHaveBeenCalledWith(
+      {
+        unocss: false,
+      },
+      { name: 'preset' },
+    )
+  })
+
+  it('maps unocss.configPath to settings.unocss.configPath', () => {
+    getPresetsMock.mockReturnValueOnce([
+      {
+        unocss: {
+          strict: true,
+          attributify: false,
+          configPath: './uno.config.ts',
+        },
+      } as any,
+      { name: 'preset' },
+    ])
+
+    icebreaker({
+      unocss: {
+        strict: true,
+        attributify: false,
+        configPath: './uno.config.ts',
+      },
+    } as any)
+
+    expect(antfuMock).toHaveBeenCalledWith(
+      {
+        unocss: {
+          strict: true,
+          attributify: false,
+        },
+        settings: {
+          unocss: {
+            configPath: './uno.config.ts',
+          },
+        },
+      },
+      { name: 'preset' },
+    )
+  })
+
+  it('keeps default unocss discovery behavior when configPath is omitted', () => {
+    getPresetsMock.mockReturnValueOnce([
+      {
+        unocss: {
+          strict: true,
+          attributify: false,
+        },
+      } as any,
+      { name: 'preset' },
+    ])
+
+    icebreaker({
+      unocss: {
+        strict: true,
+        attributify: false,
+      },
+    } as any)
+
+    expect(antfuMock).toHaveBeenCalledWith(
+      {
+        unocss: {
+          strict: true,
+          attributify: false,
+        },
+      },
+      { name: 'preset' },
+    )
+  })
+
+  it('prefers wrapper configPath over settings.unocss.configPath', () => {
+    getPresetsMock.mockReturnValueOnce([
+      {
+        unocss: {
+          strict: true,
+          configPath: './preferred-uno.config.ts',
+        },
+        settings: {
+          unocss: {
+            configPath: './ignored-uno.config.ts',
+          },
+        },
+      } as any,
+      { name: 'preset' },
+    ])
+
+    icebreaker({
+      unocss: {
+        strict: true,
+        configPath: './preferred-uno.config.ts',
+      },
+      settings: {
+        unocss: {
+          configPath: './ignored-uno.config.ts',
+        },
+      },
+    } as any)
+
+    expect(antfuMock).toHaveBeenCalledWith(
+      {
+        unocss: {
+          strict: true,
+        },
+        settings: {
+          unocss: {
+            configPath: './preferred-uno.config.ts',
+          },
+        },
+      },
+      { name: 'preset' },
+    )
+  })
+
+  it('drops injected settings.unocss when unocss is disabled due to missing plugin', () => {
+    getPresetsMock.mockReturnValueOnce([
+      {
+        unocss: {
+          strict: true,
+          configPath: './uno.config.ts',
+        },
+        settings: {
+          unocss: {
+            configPath: './uno.config.ts',
+          },
+          foo: {
+            bar: true,
+          },
+        },
+      } as any,
+      { name: 'preset' },
+    ])
+    hasAllPackagesMock.mockImplementation((packages) => {
+      return !packages.includes('@unocss/eslint-plugin')
+    })
+
+    icebreaker({
+      unocss: {
+        strict: true,
+        configPath: './uno.config.ts',
+      },
+      settings: {
+        unocss: {
+          configPath: './uno.config.ts',
+        },
+        foo: {
+          bar: true,
+        },
+      },
+    } as any)
+
+    expect(antfuMock).toHaveBeenCalledWith(
+      {
+        unocss: false,
+        settings: {
+          foo: {
+            bar: true,
+          },
+        },
+      },
+      { name: 'preset' },
+    )
+  })
+
+  it('maps unocss.configPath to settings.unocss.configPath in legacy mode', () => {
+    getPresetsMock.mockReturnValueOnce([
+      {
+        unocss: {
+          strict: true,
+          configPath: './legacy-uno.config.ts',
+        },
+      } as any,
+      { name: 'preset' },
+    ])
+
+    icebreakerLegacy({
+      unocss: {
+        strict: true,
+        configPath: './legacy-uno.config.ts',
+      },
+    } as any)
+
+    expect(antfuMock).toHaveBeenCalledWith(
+      {
+        unocss: {
+          strict: true,
+        },
+        settings: {
+          unocss: {
+            configPath: './legacy-uno.config.ts',
+          },
+        },
+      },
+      { name: 'preset' },
+    )
+  })
+
+  it('disables unocss in legacy mode when the plugin is unavailable', () => {
+    getPresetsMock.mockReturnValueOnce([
+      {
+        unocss: true,
+      } as any,
+      { name: 'preset' },
+    ])
+    hasAllPackagesMock.mockImplementation((packages) => {
+      return !packages.includes('@unocss/eslint-plugin')
+    })
+
+    icebreakerLegacy({
+      unocss: true,
+    } as any)
+
+    expect(antfuMock).toHaveBeenCalledWith(
+      {
+        unocss: false,
+      },
+      { name: 'preset' },
+    )
+  })
 })
