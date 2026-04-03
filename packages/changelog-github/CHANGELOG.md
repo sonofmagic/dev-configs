@@ -1,5 +1,17 @@
 # @icebreakers/changelog-github
 
+## 1.0.0
+
+### Major Changes
+
+- 🚀 **Raise the minimum supported Node.js versions to `^20.19.0 || >=22.12.0`** [`92b869f`](https://github.com/sonofmagic/dev-configs/commit/92b869fb95ad99a1c7f5f970c675cfa79b8b9a31) by @sonofmagic
+  - across all published packages so the supported runtime range matches the
+  - default `require(esm)` behavior.
+  - Also fix `@icebreakers/eslint-config` so ESLint config loading works on
+  - Node.js `20.19.0` by polyfilling `Object.groupBy` when the runtime does not
+  - provide it yet. This unblocks `pnpm lint` and test execution for the Node 20
+  - CI job.
+
 ## 0.2.2
 
 ### Patch Changes
