@@ -1,4 +1,23 @@
-import { icebreaker } from '@icebreakers/eslint-config'
+if (typeof Object.groupBy !== 'function') {
+  Object.defineProperty(Object, 'groupBy', {
+    value(items, callback) {
+      const groups = {}
+      let index = 0
+
+      for (const item of items) {
+        const key = callback(item, index++)
+        groups[key] ??= []
+        groups[key].push(item)
+      }
+
+      return groups
+    },
+    configurable: true,
+    writable: true,
+  })
+}
+
+const { icebreaker } = await import('@icebreakers/eslint-config')
 
 export default icebreaker(
   {

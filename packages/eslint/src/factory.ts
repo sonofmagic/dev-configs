@@ -7,6 +7,7 @@ import type { UserConfigItem, UserDefinedOptions } from './types'
 import { antfu } from './antfu'
 import { getPresets } from './preset'
 import { hasAllPackages } from './utils'
+import './polyfills'
 
 const OPTIONAL_ANTFU_FEATURE_PACKAGES = {
   react: [
