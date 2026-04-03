@@ -3,7 +3,12 @@ import type {
   TypedFlatConfigItem,
 } from '@antfu/eslint-config'
 import type { FlatConfigComposer } from 'eslint-flat-config-utils'
-import type { UserConfigItem, UserDefinedOptions } from './types'
+import type {
+  NormalizableUserConfig,
+  ResolvableUserConfig,
+  UserConfigItem,
+  UserDefinedOptions,
+} from './types'
 import { antfu } from './antfu'
 import { getPresets } from './preset'
 import { hasAllPackages } from './utils'
@@ -63,8 +68,8 @@ function liftConfigIgnores(
 }
 
 function normalizeResolvedUserConfig(
-  userConfig: Exclude<Awaited<UserConfigItem>, FlatConfigComposer<any, any>>,
-): Exclude<UserConfigItem, FlatConfigComposer<any, any>> {
+  userConfig: NormalizableUserConfig,
+): Exclude<ResolvableUserConfig, FlatConfigComposer<any, any>> {
   if (Array.isArray(userConfig)) {
     return userConfig.flatMap(config => liftConfigIgnores(config as TypedFlatConfigItem))
   }
@@ -73,7 +78,7 @@ function normalizeResolvedUserConfig(
 }
 
 function isComposer(
-  value: Awaited<UserConfigItem>,
+  value: unknown,
 ): value is FlatConfigComposer<any, any> {
   return !!value
     && typeof value === 'object'
@@ -83,16 +88,18 @@ function isComposer(
 
 function normalizeUserConfig(
   userConfig: UserConfigItem,
-): UserConfigItem {
+): ResolvableUserConfig | Promise<ResolvableUserConfig> {
   if (typeof (userConfig as PromiseLike<Awaited<UserConfigItem>>)?.then === 'function') {
     return Promise.resolve(userConfig).then((resolved) => {
       return isComposer(resolved) ? resolved : normalizeResolvedUserConfig(resolved)
     })
   }
 
-  return isComposer(userConfig)
-    ? userConfig
-    : normalizeResolvedUserConfig(userConfig)
+  const resolvedUserConfig = userConfig as ResolvableUserConfig
+
+  return isComposer(resolvedUserConfig)
+    ? resolvedUserConfig
+    : normalizeResolvedUserConfig(resolvedUserConfig)
 }
 
 // for vue2 @see https://github.com/antfu/eslint-config/issues/367#issuecomment-1979646400

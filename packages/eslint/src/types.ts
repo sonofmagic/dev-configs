@@ -24,6 +24,17 @@ export interface StylelintBridgeOption extends IcebreakerStylelintOptions {
 }
 export type StylelintBridgeConfig = boolean | StylelintBridgeOption
 
+export type ResolvableUserConfig
+  = | TypedFlatConfigItem
+    | TypedFlatConfigItem[]
+    | FlatConfigComposer<any, any>
+    | Linter.Config[]
+
+export type NormalizableUserConfig = Exclude<
+  ResolvableUserConfig,
+  FlatConfigComposer<any, any>
+>
+
 export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
   /**
    * Enable Mini Program support.
@@ -73,12 +84,7 @@ export type UserDefinedOptions = OptionsConfig & TypedFlatConfigItem & {
   weapp?: boolean
 }
 
-export type UserConfigItem = Awaitable<
-  | TypedFlatConfigItem
-  | TypedFlatConfigItem[]
-  | FlatConfigComposer<any, any>
-  | Linter.Config[]
->
+export type UserConfigItem = Awaitable<ResolvableUserConfig>
 
 export type {
   OptionsConfig,

@@ -39,9 +39,20 @@ describe('runStylelintSync', () => {
 
     runStylelintSync('.demo {}', '/tmp/demo.css', '/tmp')
 
-    const [command, args, options] = vi.mocked(execFileSync).mock.calls[0]!
+    const call = vi.mocked(execFileSync).mock.calls[0]
+    expect(call).toBeDefined()
+    if (!call) {
+      throw new Error('Expected execFileSync to be called')
+    }
+
+    const [command, args, options] = call
 
     expect(command).toBe(process.execPath)
+    expect(args).toBeDefined()
+    if (!args) {
+      throw new Error('Expected execFileSync to receive args')
+    }
+
     const workerArg = args.at(-1)
     expect(workerArg).toBeDefined()
     if (workerArg?.endsWith('.mjs')) {

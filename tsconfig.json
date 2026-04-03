@@ -46,6 +46,10 @@
     "esModuleInterop": true,
 
     // 跳过库文件的类型检查，提高编译速度（库文件通常已经有类型声明）
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
+    // TypeScript 6 将 baseUrl 标记为废弃；当前各包仍在使用 paths/baseUrl 组合，
+    // 先显式接受 6.x 弃用提示，确保类型检查链路持续可用。
+    "ignoreDeprecations": "6.0"
   }
 }

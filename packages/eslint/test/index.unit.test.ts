@@ -15,6 +15,11 @@ describe('index exports', () => {
 
   it('polyfills Object.groupBy when the runtime does not provide it', () => {
     const original = Object.groupBy
+    const entries = [
+      ['a', 1],
+      ['a', 2],
+      ['b', 3],
+    ] as const
 
     // Simulate the Node 20 environment used by CI.
     Object.defineProperty(Object, 'groupBy', {
@@ -27,11 +32,7 @@ describe('index exports', () => {
       ensureObjectGroupBy()
 
       expect(typeof Object.groupBy).toBe('function')
-      expect(Object.groupBy?.([
-        ['a', 1],
-        ['a', 2],
-        ['b', 3],
-      ], entry => entry[0])).toEqual({
+      expect(Object.groupBy?.(entries, entry => entry[0])).toEqual({
         a: [
           ['a', 1],
           ['a', 2],

@@ -1,3 +1,4 @@
+import type { TypedFlatConfigItem } from '@/types'
 import { antfu } from '@/antfu'
 import { icebreaker, icebreakerLegacy } from '@/factory'
 import { getPresets } from '@/preset'
@@ -45,9 +46,9 @@ describe('factory helpers', () => {
       name: 'user',
       ignores: ['.agents/**'],
       rules: {
-        'no-console': 'error',
+        'no-console': 'error' as const,
       },
-    }
+    } satisfies TypedFlatConfigItem
 
     icebreaker({ vue: true }, userConfig)
 
@@ -72,9 +73,9 @@ describe('factory helpers', () => {
       files: ['src/**/*.js'],
       ignores: ['**/vendor/**'],
       rules: {
-        'no-console': 'error',
+        'no-console': 'error' as const,
       },
-    }
+    } satisfies TypedFlatConfigItem
 
     icebreaker({ vue: true }, userConfig)
 
