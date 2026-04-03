@@ -1,5 +1,3 @@
-import './polyfills'
-
 export * from './factory'
 export * from './preset'
 export type {
