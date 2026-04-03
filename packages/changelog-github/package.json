@@ -54,7 +54,7 @@
   "dependencies": {
     "@changesets/get-github-info": "^0.8.0",
     "@changesets/types": "^6.1.0",
-    "dotenv": "^17.3.1"
+    "dotenv": "^17.4.0"
   },
   "devDependencies": {
     "@changesets/parse": "^0.4.3"
