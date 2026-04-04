@@ -1,3 +1,6 @@
+<script setup lang="ts">
+</script>
+
 <template>
   <section class="demo-shell">
     <article class="demo-shell__card">
@@ -50,13 +53,19 @@
             unocss demo guide
           </a>
         </li>
+        <li>
+          <a
+            href="https://github.com/sonofmagic/dev-configs/blob/main/apps/mock/src/stylelint-demo/demo-formatting.md"
+            target="_blank"
+            rel="noreferrer"
+          >
+            safe formatting demo guide
+          </a>
+        </li>
       </ul>
     </article>
   </section>
 </template>
-
-<script setup lang="ts">
-</script>
 
 <style scoped>
 /* stylelint-disable unocss/no-atomic-class, unocss/no-invalid-apply, unocss/no-apply, unocss/no-arbitrary-value */

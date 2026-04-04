@@ -19,7 +19,10 @@
   ],
   "scripts": {
     "stylelint": "npx @icebreakers/stylelint-config",
-    "lint:styles:demo": "stylelint \"src/stylelint-demo/**/*.{css,scss,vue}\""
+    "lint:styles:demo": "stylelint \"src/stylelint-demo/**/*.{css,scss,vue}\"",
+    "lint:styles:demo:fix": "stylelint \"src/stylelint-demo/**/*.{css,scss,vue}\" --fix",
+    "lint:styles:formatting": "stylelint \"src/stylelint-demo/demo-formatting.css\"",
+    "lint:styles:formatting:fix": "stylelint \"src/stylelint-demo/demo-formatting.css\" --fix"
   },
   "dependencies": {
     "@icebreakers/stylelint-config": "workspace:*"

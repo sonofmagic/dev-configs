@@ -24,6 +24,7 @@ Expected behavior:
 - `@tailwind` and `@import "tailwindcss"` remain legal examples because they are valid Tailwind entry syntax and are not enabled by the recommended preset
 - UnoCSS variant groups such as `hover:(bg-red-500 text-white)` should fail with `unocss/no-variant-group`
 - CSS, SCSS, and Vue SFC style blocks should all be checked
+- the formatting demo should be auto-fixable with `stylelint --fix`, covering quoted attribute selectors, quoted `url(...)`, modern color notation, and shorthand collapse
 
 Files:
 
@@ -32,11 +33,25 @@ Files:
 - `DemoStylelint.vue` shows the same Tailwind-focused rules inside Vue SFC `<style>` blocks
 - `demo-unocss.css` focuses on UnoCSS selector pass/fail pairs
 - `demo-unocss.scss` adds UnoCSS `@apply`, arbitrary value, and variant-group cases
+- `demo-formatting.css` shows the conservative autofix behavior enabled by `formattingPreset: 'safe'`
 - `demo-unocss.md` explains the UnoCSS-specific demo files
 - `demo-css.md`, `demo-scss.md`, `demo-vue.md` are the GitHub-targeted walkthrough pages linked from the demo component
+- `demo-formatting.md` explains the safe formatting preset demo
 
 Terminal check:
 
 ```bash
 pnpm --dir apps/mock run lint:styles:demo
+```
+
+Fixable formatting check:
+
+```bash
+pnpm --dir apps/mock run lint:styles:formatting
+```
+
+Autofix check for the dedicated formatting demo:
+
+```bash
+pnpm --dir apps/mock run lint:styles:formatting:fix
 ```
