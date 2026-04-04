@@ -7,8 +7,13 @@ function isStylelintDemoFile(file) {
     || file.startsWith('apps/mock/src/stylelint-demo/')
 }
 
+function isGeneratedFixtureOutput(file) {
+  return file.includes('/packages/eslint/fixtures/output/')
+    || file.startsWith('packages/eslint/fixtures/output/')
+}
+
 function createStylelintCommand(files) {
-  const filteredFiles = files.filter(file => !isStylelintDemoFile(file))
+  const filteredFiles = files.filter(file => !isStylelintDemoFile(file) && !isGeneratedFixtureOutput(file))
 
   if (filteredFiles.length === 0) {
     return []
