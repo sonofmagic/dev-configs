@@ -88,6 +88,56 @@ describe('stylelint integration', () => {
       '  background-image: url("icon.png");',
       '}',
     ].join('\n'))
+    expect(result.results[0]?.warnings ?? []).toEqual([])
+  })
+
+  it('allows safe formatting rules to be explicitly disabled by user overrides', async () => {
+    const input = [
+      '.page-shell[data-state=open] {',
+      '  margin-top: 1px;',
+      '  margin-right: 2px;',
+      '  margin-bottom: 1px;',
+      '  margin-left: 2px;',
+      '  color: rgba(0, 0, 0, 0.5);',
+      '  background-image: url(icon.png);',
+      '}',
+    ].join('\n')
+
+    const result = await stylelint.lint({
+      code: input,
+      codeFilename: path.join(FIXTURE_DIR, 'formatting-off.css'),
+      config: createStylelintConfig({
+        rules: {
+          'alpha-value-notation': null,
+          'color-function-alias-notation': null,
+          'color-function-notation': null,
+          'declaration-block-no-redundant-longhand-properties': null,
+          'function-url-quotes': null,
+          'selector-attribute-quotes': null,
+        },
+      }) as StylelintConfig,
+      fix: true,
+    })
+
+    expect(result.code).toBe(input)
+  })
+
+  it('allows safe formatting rules to be selectively overridden', async () => {
+    const result = await stylelint.lint({
+      code: '.page-shell[data-state=open] { background-image: url(icon.png); }',
+      codeFilename: path.join(FIXTURE_DIR, 'formatting-override.css'),
+      config: createStylelintConfig({
+        formattingPreset: 'safe',
+        rules: {
+          'function-url-quotes': 'never',
+        },
+      }) as StylelintConfig,
+      fix: true,
+    })
+
+    expect(result.errored).toBe(false)
+    expect(result.code).toBe('.page-shell[data-state="open"] { background-image: url(icon.png); }')
+    expect(result.results[0]?.warnings ?? []).toEqual([])
   })
 
   it('ignores rpx, page, and unocss at-rules by default', async () => {

@@ -22,6 +22,12 @@ function createStylelintCommand(files) {
   return [`stylelint --fix --allow-empty-input ${filteredFiles.map(shellQuote).join(' ')}`]
 }
 
+export {
+  createStylelintCommand,
+  isGeneratedFixtureOutput,
+  isStylelintDemoFile,
+}
+
 export default {
   '*.{js,jsx,mjs,ts,tsx,mts}': [
     'eslint --fix',

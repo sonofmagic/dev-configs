@@ -166,4 +166,30 @@ describe('index', () => {
     expect(config.rules?.['declaration-block-no-redundant-longhand-properties']).toBe(true)
     expect(config.rules?.['shorthand-property-no-redundant-values']).toBe(true)
   })
+
+  it('does not add safe formatting rules when formattingPreset is off', () => {
+    const config = createStylelintConfig({
+      formattingPreset: 'off',
+    })
+
+    expect(config.rules?.['color-function-notation']).toBeUndefined()
+    expect(config.rules?.['function-url-quotes']).toBeUndefined()
+    expect(config.rules?.['selector-attribute-quotes']).toBeUndefined()
+    expect(config.rules?.['declaration-block-no-redundant-longhand-properties']).toBeUndefined()
+    expect(config.rules?.['shorthand-property-no-redundant-values']).toBeUndefined()
+  })
+
+  it('lets user rules override safe formatting preset defaults', () => {
+    const config = createStylelintConfig({
+      formattingPreset: 'safe',
+      rules: {
+        'function-url-quotes': 'never',
+        'selector-attribute-quotes': 'never',
+      },
+    })
+
+    expect(config.rules?.['function-url-quotes']).toBe('never')
+    expect(config.rules?.['selector-attribute-quotes']).toBe('never')
+    expect(config.rules?.['color-function-notation']).toBe('modern')
+  })
 })
