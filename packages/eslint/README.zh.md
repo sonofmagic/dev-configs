@@ -97,7 +97,7 @@ export default icebreaker({
 - `a11y`：按需引入 JSX 与 Vue 的无障碍规则，缺少某一侧插件时只跳过对应框架配置。
 - `typescript`：开启 TypeScript 预设，加强未使用诊断，可与 `nestjs` 搭配使用以获得 Nest 专属优化。
 - `nestjs`：针对 NestJS 场景做 TypeScript 调整（允许带装饰器的空构造函数、依赖注入参数属性、声明合并等）。
-- `formatters`：默认启用格式化辅助规则。
+- `formatters`：默认启用非样式文件的格式化辅助规则。CSS / SCSS / Less 的格式化建议交给 Stylelint。
 - `test`：放宽 Vitest / Jest 常见规则，例如关闭 `test/prefer-lowercase-title`。
 - `weapp`：`miniProgram` 的兼容别名，保留但不再推荐作为主入口。
 
@@ -191,6 +191,30 @@ export default icebreaker({
 `@icebreakers/stylelint-config` 的选项结构，例如 `presets`、
 `tailwindcssPreset`、`ignores`、`extends`、`overrides`、`rules`。
 
+需要注意的是，这个 bridge 只负责把 Stylelint 诊断桥接到 ESLint，
+不会通过 `eslint --fix` 自动修复样式文件。样式格式化与修复请单独运行
+Stylelint，例如：
+
+```bash
+stylelint "**/*.{css,scss,vue}" --fix
+```
+
+推荐给接入方使用的脚本约定：
+
+```json
+{
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:styles": "stylelint \"src/**/*.{css,scss,vue}\"",
+    "lint:styles:fix": "stylelint \"src/**/*.{css,scss,vue}\" --fix"
+  }
+}
+```
+
+这样可以让 ESLint 专注于 JS / TS / Vue 代码质量，而把样式文件的诊断和
+格式化统一交给 Stylelint。
+
 ### NestJS 项目
 
 建议在 Nest 项目中同时开启 `typescript` 与 `nestjs`，以便应用以下定制：
@@ -223,7 +247,8 @@ export default icebreaker(
 
 - VS Code 安装 ESLint 扩展（版本需 ≥ 3.0.10）。
 - 老版本 VS Code 需在设置中启用 `"eslint.experimental.useFlatConfig": true`。
-- 在 Git 钩子或 CI 中执行 `pnpm lint -- --fix` 确保格式一致。
+- JS / TS / Vue 代码风格运行 `lint:fix`，样式文件格式化运行
+  `lint:styles:fix`。
 
 ## 常见问题
 

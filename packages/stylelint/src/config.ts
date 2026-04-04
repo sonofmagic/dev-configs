@@ -63,6 +63,15 @@ const MINI_PROGRAM_IGNORE_FILES = [
   'miniprogram_npm/**',
 ] as const
 
+const SAFE_FORMATTING_RULES: NonNullable<StylelintConfig['rules']> = {
+  'color-function-notation': 'modern',
+  'declaration-block-no-redundant-longhand-properties': true,
+  'function-url-quotes': 'always',
+  'hue-degree-notation': 'number',
+  'selector-attribute-quotes': 'always',
+  'shorthand-property-no-redundant-values': true,
+}
+
 function resolvePresetExtends(presets: PresetToggles | undefined): string[] {
   const entries: string[] = []
   if (presets?.scss !== false) {
@@ -179,6 +188,16 @@ function resolveTailwindcssPreset(options: IcebreakerStylelintOptions | undefine
   }
 }
 
+function resolveFormattingPresetRules(
+  options: IcebreakerStylelintOptions | undefined,
+): NonNullable<StylelintConfig['rules']> {
+  if (options?.formattingPreset === 'safe') {
+    return SAFE_FORMATTING_RULES
+  }
+
+  return {}
+}
+
 export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOptions = {}): StylelintConfig {
   const extendsConfig = resolveExtends(options)
   const overrides = resolveOverrides(options)
@@ -186,6 +205,7 @@ export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOpti
   const ignoreFiles = resolveIgnoreFiles(options)
   const rules = resolveRules(options)
   const tailwindcssPreset = resolveTailwindcssPreset(options)
+  const formattingPresetRules = resolveFormattingPresetRules(options)
 
   return {
     ...(extendsConfig !== undefined ? { extends: extendsConfig } : {}),
@@ -209,6 +229,7 @@ export function createIcebreakerStylelintConfig(options: IcebreakerStylelintOpti
         [unocssNoArbitraryValueRuleName]: true,
         [unocssNoVariantGroupRuleName]: true,
       }),
+      ...formattingPresetRules,
       ...rules,
     },
   }

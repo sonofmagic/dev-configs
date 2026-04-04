@@ -13,9 +13,7 @@ function identity(x) {
 
 ```css
 /* This should be handled by Prettier */
-.foo {
-	color: red;
-}
+.foo { color:red;}
 ```
 
 | Pilot    | Airport | Hours |

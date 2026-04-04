@@ -141,10 +141,10 @@ describe('resolveUserOptions', () => {
     const formatters = toFormatterOptions(resolved.formatters)
     const prettierOptions = toFormatterOptions(formatters['prettierOptions'])
 
-    expect(formatters['css']).toBe(true)
     expect(formatters['html']).toBe(true)
     expect(formatters['markdown']).toBe(true)
     expect(formatters['graphql']).toBe(true)
+    expect(formatters['css']).toBeUndefined()
     expect(prettierOptions['endOfLine']).toBe('lf')
   })
 
@@ -157,10 +157,10 @@ describe('resolveUserOptions', () => {
 
     const formatters = toFormatterOptions(resolved.formatters)
 
-    expect(formatters['css']).toBe(true)
     expect(formatters['html']).toBe(true)
     expect(formatters['graphql']).toBe(true)
     expect(formatters['markdown']).toBe(false)
+    expect(formatters['css']).toBeUndefined()
   })
 })
 
@@ -308,7 +308,7 @@ describe('formatters integration', () => {
       const resolved = toFormatterOptions(__resolveFormattersOption(true, tempDir))
       const prettierOptions = toFormatterOptions(resolved['prettierOptions'])
 
-      expect(resolved['css']).toBe(true)
+      expect(resolved['css']).toBeUndefined()
       expect(resolved['markdown']).toBe(true)
       expect(prettierOptions['endOfLine']).toBe('cr')
     }
@@ -337,9 +337,6 @@ describe('formatters integration', () => {
 
       const configs = await icebreaker().toConfigs()
       const formatterNames = [
-        'antfu/formatter/css',
-        'antfu/formatter/scss',
-        'antfu/formatter/less',
         'antfu/formatter/html',
         'antfu/formatter/markdown',
         'antfu/formatter/graphql',
@@ -366,9 +363,6 @@ describe('formatters integration', () => {
 
     const formatterNames = [
       'antfu/formatter/setup',
-      'antfu/formatter/css',
-      'antfu/formatter/scss',
-      'antfu/formatter/less',
       'antfu/formatter/html',
       'antfu/formatter/markdown',
       'antfu/formatter/graphql',
@@ -378,7 +372,7 @@ describe('formatters integration', () => {
       expect(configs.some(config => config.name === name)).toBe(true)
     }
 
-    expect(getFormatterRuleOptions(configs, 'antfu/formatter/css')['endOfLine']).toBe('lf')
     expect(getFormatterRuleOptions(configs, 'antfu/formatter/markdown')['endOfLine']).toBe('lf')
+    expect(configs.some(config => config.name === 'antfu/formatter/css')).toBe(false)
   })
 })

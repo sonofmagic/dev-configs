@@ -59,6 +59,7 @@ export interface IgnoreListOptions {
 }
 
 export type TailwindcssPresetLevel = 'base' | 'recommended' | 'strict'
+export type FormattingPresetLevel = 'off' | 'safe'
 
 export interface IcebreakerStylelintOptions {
   /** Enable Mini Program defaults such as common ignore paths. */
@@ -67,6 +68,8 @@ export interface IcebreakerStylelintOptions {
   presets?: PresetToggles
   /** Control the bundled Tailwind/UnoCSS policy layer. */
   tailwindcssPreset?: TailwindcssPresetLevel
+  /** Enable fix-oriented formatting conventions that remain supported in Stylelint 16+. */
+  formattingPreset?: FormattingPresetLevel
   /** Append extra extends entries. */
   extends?: StylelintConfig['extends']
   /** Append override entries. */

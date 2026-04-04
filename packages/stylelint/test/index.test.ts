@@ -154,4 +154,16 @@ describe('index', () => {
       'miniprogram_npm/**',
     ])
   })
+
+  it('adds safe formatting rules when formattingPreset is enabled', () => {
+    const config = createStylelintConfig({
+      formattingPreset: 'safe',
+    })
+
+    expect(config.rules?.['color-function-notation']).toBe('modern')
+    expect(config.rules?.['function-url-quotes']).toBe('always')
+    expect(config.rules?.['selector-attribute-quotes']).toBe('always')
+    expect(config.rules?.['declaration-block-no-redundant-longhand-properties']).toBe(true)
+    expect(config.rules?.['shorthand-property-no-redundant-values']).toBe(true)
+  })
 })

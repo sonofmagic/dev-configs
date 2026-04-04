@@ -75,7 +75,7 @@ export default icebreaker({
 - `a11y` – wires in JSX (React) and Vue accessibility plugins. Missing framework-specific plugins are skipped independently.
 - `typescript` – extends the TypeScript preset and applies stricter unused diagnostics. Pair with `nestjs` for Nest specific adjustments.
 - `nestjs` – enables NestJS-centric TypeScript tweaks (empty decorated constructors, declaration merging, DI parameter properties, etc.).
-- `formatters` – keeps the built-in formatting rules enabled by default.
+- `formatters` – keeps the built-in non-style formatting rules enabled by default. CSS/SCSS/Less formatting is expected to run through Stylelint instead.
 - `test` – relaxes certain Vitest/Jest style rules (`test/prefer-lowercase-title`).
 - `weapp` – legacy alias for `miniProgram`; kept for backward compatibility.
 
@@ -166,6 +166,30 @@ export default icebreaker({
 the `@icebreakers/stylelint-config` options (`presets`, `tailwindcssPreset`,
 `ignores`, `extends`, `overrides`, `rules`).
 
+The ESLint bridge surfaces Stylelint diagnostics, but it does not autofix style
+files through `eslint --fix`. Use a dedicated Stylelint script for style
+formatting and fixes, for example:
+
+```bash
+stylelint "**/*.{css,scss,vue}" --fix
+```
+
+Recommended consumer scripts:
+
+```json
+{
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:styles": "stylelint \"src/**/*.{css,scss,vue}\"",
+    "lint:styles:fix": "stylelint \"src/**/*.{css,scss,vue}\" --fix"
+  }
+}
+```
+
+This keeps ESLint focused on JS/TS/Vue code quality while Stylelint owns style
+file diagnostics and formatting.
+
 ### UnoCSS Projects
 
 The UnoCSS integration is still powered by the upstream Antfu preset, but
@@ -228,7 +252,8 @@ You may also pass other flat configs (e.g. from in-house presets) as additional 
 
 - Install the VS Code ESLint extension (`>=3.0.10`).
 - Set `"eslint.experimental.useFlatConfig": true` for older VS Code builds.
-- Use `pnpm lint -- --fix` in a pre-commit hook for consistent formatting.
+- Use `lint:fix` for JS/TS/Vue code style, and `lint:styles:fix` for
+  CSS/SCSS/Vue `<style>` formatting.
 
 ## Troubleshooting
 

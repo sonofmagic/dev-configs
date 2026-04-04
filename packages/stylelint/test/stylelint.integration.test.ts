@@ -61,6 +61,35 @@ describe('stylelint integration', () => {
     expect(mediaWarnings).toHaveLength(1)
   })
 
+  it('applies safe formatting fixes when formattingPreset is enabled', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.page-shell[data-state=open] {',
+        '  margin-top: 1px;',
+        '  margin-right: 2px;',
+        '  margin-bottom: 1px;',
+        '  margin-left: 2px;',
+        '  color: rgba(0, 0, 0, 0.5);',
+        '  background-image: url(icon.png);',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'formatting.css'),
+      config: createStylelintConfig({
+        formattingPreset: 'safe',
+      }) as StylelintConfig,
+      fix: true,
+    })
+
+    expect(result.errored).toBe(false)
+    expect(result.code).toBe([
+      '.page-shell[data-state="open"] {',
+      '  margin: 1px 2px;',
+      '  color: rgb(0 0 0 / 50%);',
+      '  background-image: url("icon.png");',
+      '}',
+    ].join('\n'))
+  })
+
   it('ignores rpx, page, and unocss at-rules by default', async () => {
     const result = await stylelint.lint({
       code: [

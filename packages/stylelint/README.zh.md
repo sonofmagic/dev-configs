@@ -46,6 +46,7 @@ import { createStylelintConfig } from '@icebreakers/stylelint-config'
 
 export default createStylelintConfig({
   miniProgram: true,
+  formattingPreset: 'safe',
   tailwindcssPreset: 'recommended',
   presets: {
     vue: false, // 纯 SCSS 项目无需 Vue 规则
@@ -75,6 +76,7 @@ export default createStylelintConfig({
 - `presets.scss`：是否包含 `stylelint-config-standard-scss`，默认开启
 - `presets.vue`：是否包含 `stylelint-config-recommended-vue/scss`，默认开启
 - `presets.order`：是否包含 `stylelint-config-recess-order`，默认开启
+- `formattingPreset`：是否启用面向 `--fix` 的保守格式化约定层。`'safe'` 表示启用，`'off'`（默认）表示只保留 lint 预设。
 - `tailwindcssPreset`：选择内置 utility 策略层，支持 `'base'`（默认）、`'recommended'` 或 `'strict'`
 - `ignores.*`：替换默认的忽略列表（单位、选择器类型、指令）
 - `ignores.add*`：在默认忽略列表基础上追加项
@@ -89,6 +91,30 @@ export default createStylelintConfig({
 - 忽略 Tailwind / UnoCSS 常见指令（如 `apply`、`screen`）
 - 禁止在手写样式中声明 `.flex`、`.hover\:bg-red-500` 这类 Tailwind 原子类选择器
 - 忽略多端平台常见的 `page` 选择器
+
+### Safe Formatting 预设
+
+如果你希望样式文件的部分可修复格式约定由 Stylelint 承担，可以开启：
+
+```ts
+import { createStylelintConfig } from '@icebreakers/stylelint-config'
+
+export default createStylelintConfig({
+  formattingPreset: 'safe',
+})
+```
+
+`formattingPreset: 'safe'` 是一层刻意保守的配置，只包含 Stylelint 16+
+仍支持、且 `--fix` 行为稳定的规则，例如：
+
+- 使用现代颜色函数写法（如 `rgba()` 转成 `rgb(... / ...)`）
+- 为 `url(...)` 补齐引号
+- 为属性选择器值补齐引号
+- 将冗余的 longhand 属性折叠为 shorthand
+- 移除冗余的 shorthand 值
+
+它不是 Prettier 那种“完整格式化器”，而是一层适合配合
+`stylelint --fix` 使用的可修复约定集。
 
 ## 小程序模板推荐用法
 

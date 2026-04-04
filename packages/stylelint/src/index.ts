@@ -3,6 +3,7 @@ import { createIcebreakerStylelintConfig } from './config'
 
 export { createIcebreakerStylelintConfig as createStylelintConfig } from './config'
 export type {
+  FormattingPresetLevel,
   IcebreakerStylelintOptions,
   IgnoreListOptions,
   PresetToggles,

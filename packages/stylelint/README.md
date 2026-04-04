@@ -48,6 +48,7 @@ import { createStylelintConfig } from '@icebreakers/stylelint-config'
 
 export default createStylelintConfig({
   miniProgram: true,
+  formattingPreset: 'safe',
   tailwindcssPreset: 'recommended',
   presets: {
     vue: false, // disable Vue rules for pure SCSS projects
@@ -77,6 +78,7 @@ export default createStylelintConfig({
 - `presets.scss` – include `stylelint-config-standard-scss` (default `true`)
 - `presets.vue` – include `stylelint-config-recommended-vue/scss` (default `true`)
 - `presets.order` – include `stylelint-config-recess-order` (default `true`)
+- `formattingPreset` – enable fix-oriented formatting conventions. Use `'safe'` for a conservative autofix layer, or `'off'` (default) to keep only the linting presets.
 - `tailwindcssPreset` – choose the bundled utility-policy layer: `'base'` (default), `'recommended'`, or `'strict'`
 - `ignores.*` – replace the default ignore lists (units, selector types, at-rules)
 - `ignores.add*` – append to the default ignore allowlists
@@ -91,6 +93,31 @@ Defaults include:
 - Ignoring Tailwind/UnoCSS style at-rules (`apply`, `screen`, etc.)
 - Disallowing authored Tailwind utility selectors such as `.flex` or `.hover\:bg-red-500`
 - Ignoring the `page` selector used by various platforms
+
+### Safe Formatting Preset
+
+If you want Stylelint to own a small set of autofix-friendly formatting
+conventions, enable:
+
+```ts
+import { createStylelintConfig } from '@icebreakers/stylelint-config'
+
+export default createStylelintConfig({
+  formattingPreset: 'safe',
+})
+```
+
+`formattingPreset: 'safe'` is intentionally conservative. It focuses on rules
+that Stylelint 16+ still supports and can fix reliably, such as:
+
+- modern color function notation (`rgba()` -> `rgb(... / ...)`)
+- quoted `url(...)` values
+- quoted attribute selector values
+- collapsing redundant longhand declarations into shorthand
+- removing redundant shorthand values
+
+This is not a full Prettier-style formatter. It is a fix-oriented convention
+layer for style files that works well with `stylelint --fix`.
 
 ### Mini Program Templates
 

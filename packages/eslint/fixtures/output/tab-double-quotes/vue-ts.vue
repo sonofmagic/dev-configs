@@ -22,17 +22,14 @@ function incrementCounter() {
 </template>
 
 <style>
-.a {
-	color: red;
-}
+.a {  color:   red }
 </style>
 
 <style lang="scss">
-$font-stack: Helvetica, sans-serif;
+$font-stack: helvetica, sans-serif;
 $primary-color: #333;
 
-body {
-	font: 100% $font-stack;
-	color: $primary-color;
+body { font: 100% $font-stack;
+  color: $primary-color;
 }
 </style>

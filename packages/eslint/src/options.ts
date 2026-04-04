@@ -142,7 +142,6 @@ function getDefaultFormatterOptions(cwd = process.cwd()): FormatterOptions {
 
   return {
     astro: isPackageAvailable('prettier-plugin-astro', [ANTFU_PACKAGE_DIR]),
-    css: true,
     graphql: true,
     html: true,
     markdown: true,
