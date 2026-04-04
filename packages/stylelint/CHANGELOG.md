@@ -1,5 +1,14 @@
 # @icebreakers/stylelint-config
 
+## 3.0.1
+
+### Patch Changes
+
+- 🐛 **lint: shift style formatting ownership to stylelint** [`4b14479`](https://github.com/sonofmagic/dev-configs/commit/4b1447914aa34716d5ddf34af02622c170b8150e) by @sonofmagic
+  - stop enabling CSS-family formatter rules by default in `@icebreakers/eslint-config`
+  - document separate ESLint and Stylelint fix flows for consumers
+  - add a safe fix-oriented formatting preset to `@icebreakers/stylelint-config`
+
 ## 3.0.0
 
 ### Major Changes
