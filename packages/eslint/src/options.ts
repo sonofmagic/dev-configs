@@ -58,6 +58,7 @@ export type ResolvedUserOptions = UserDefinedOptions & {
 
 type FormatterOptions = Exclude<UserDefinedOptions['formatters'], boolean | undefined>
 type FormatterPrettierOptions = NonNullable<FormatterOptions['prettierOptions']>
+type FormatterOxfmtOptions = NonNullable<FormatterOptions['oxfmtOptions']>
 type EditorConfigEndOfLine = Extract<
   FormatterPrettierOptions['endOfLine'],
   'lf' | 'crlf' | 'cr'
@@ -139,14 +140,19 @@ function isPackageAvailable(name: string, paths?: string[]): boolean {
 
 function getDefaultFormatterOptions(cwd = process.cwd()): FormatterOptions {
   const hasXmlPlugin = isPackageAvailable('@prettier/plugin-xml', [ANTFU_PACKAGE_DIR])
+  const hasSlidev = isPackageAvailable('@slidev/cli', [cwd])
 
   return {
     astro: isPackageAvailable('prettier-plugin-astro', [ANTFU_PACKAGE_DIR]),
-    css: true,
-    graphql: true,
-    html: true,
+    css: 'oxfmt',
+    graphql: 'oxfmt',
+    html: 'oxfmt',
     markdown: true,
-    slidev: isPackageAvailable('@slidev/cli', [cwd]),
+    oxfmtOptions: {
+      semi: false,
+      singleQuote: true,
+    },
+    slidev: hasSlidev,
     svg: hasXmlPlugin,
     xml: hasXmlPlugin,
   }
@@ -269,9 +275,12 @@ function resolveFormattersOption(
 
   const defaults = getDefaultFormatterOptions(cwd)
   const inferredEndOfLine = inferPrettierEndOfLineFromEditorConfig(cwd)
-  const defaultsWithPrettier = inferredEndOfLine
+  const defaultsWithFormattingEngines = inferredEndOfLine
     ? defu<FormatterOptions, [FormatterOptions]>(
         {
+          oxfmtOptions: {
+            endOfLine: inferredEndOfLine,
+          } satisfies FormatterOxfmtOptions,
           prettierOptions: {
             endOfLine: inferredEndOfLine,
           },
@@ -281,18 +290,18 @@ function resolveFormattersOption(
     : defaults
 
   if (input === undefined) {
-    return inferredEndOfLine ? defaultsWithPrettier : true
+    return defaultsWithFormattingEngines
   }
 
   if (input === true) {
-    return defaultsWithPrettier
+    return defaultsWithFormattingEngines
   }
 
   if (isObject(input)) {
-    return defu(input, defaultsWithPrettier)
+    return defu(input, defaultsWithFormattingEngines)
   }
 
-  return defaultsWithPrettier
+  return defaultsWithFormattingEngines
 }
 
 export function resolveUserOptions(options?: UserDefinedOptions): ResolvedUserOptions {
@@ -353,5 +362,6 @@ export function createBaseRuleSet(isLegacy: boolean): Partial<Linter.RulesRecord
 
 export { applyVueVersionSpecificRules as __applyVueVersionSpecificRules }
 export { inferPrettierEndOfLineFromEditorConfig as __inferPrettierEndOfLineFromEditorConfig }
+export { isPackageAvailable as __isPackageAvailable }
 export { parseEditorConfig as __parseEditorConfig }
 export { resolveFormattersOption as __resolveFormattersOption }

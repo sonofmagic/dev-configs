@@ -17,10 +17,10 @@ const VUE_A11Y_PACKAGES = ['eslint-plugin-vuejs-accessibility']
 const REACT_A11Y_PACKAGES = ['eslint-plugin-jsx-a11y']
 const QUERY_PACKAGES = ['@tanstack/eslint-plugin-query']
 
-function resolveStylelintConfigLoader() {
-  return import.meta.url.endsWith('.ts')
-    ? new URL('./stylelint.ts', import.meta.url).href
-    : new URL('./stylelint.js', import.meta.url).href
+function resolveStylelintConfigLoader(moduleUrl = import.meta.url) {
+  return moduleUrl.endsWith('.ts')
+    ? new URL('./stylelint.ts', moduleUrl).href
+    : new URL('./stylelint.js', moduleUrl).href
 }
 
 export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']): UserConfigItem[] {
@@ -229,3 +229,5 @@ export function resolveQueryPresets(isEnabled: UserDefinedOptions['query']): Use
     ).then(pluginQuery => pluginQuery.configs['flat/recommended']),
   ]
 }
+
+export { resolveStylelintConfigLoader as __resolveStylelintConfigLoader }

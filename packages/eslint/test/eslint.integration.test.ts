@@ -325,6 +325,113 @@ describe('eslint integration fixtures', () => {
     expect(result?.messages).toEqual([])
   })
 
+  it('uses oxfmt by default for css/html/graphql formatter targets', async () => {
+    const cases = [
+      {
+        filePath: 'default.css',
+        text: '.demo{color:red}',
+        expected: '.demo {\n  color: red;\n}\n',
+      },
+      {
+        filePath: 'default.html',
+        text: '<div><span>hi</span></div>',
+        expected: '<div><span>hi</span></div>\n',
+      },
+      {
+        filePath: 'default.graphql',
+        text: 'type Query{hello:String}',
+        expected: 'type Query {\n  hello: String\n}\n',
+      },
+    ] as const
+
+    const configs = await icebreaker().toConfigs()
+    const eslint = new ESLint({
+      cwd: ROOT_DIR,
+      fix: true,
+      overrideConfig: configs,
+      overrideConfigFile: true,
+    })
+
+    for (const testCase of cases) {
+      const [result] = await eslint.lintText(testCase.text, {
+        filePath: path.join(ROOT_DIR, testCase.filePath),
+      })
+
+      expect(result?.output).toBe(testCase.expected)
+      expect(result?.messages).toEqual([])
+    }
+  })
+
+  it('uses Icebreaker oxfmt style defaults for supported formatter targets', async () => {
+    const configs = await icebreaker().toConfigs()
+    const eslint = new ESLint({
+      cwd: ROOT_DIR,
+      fix: true,
+      overrideConfig: configs,
+      overrideConfigFile: true,
+    })
+
+    const [htmlResult] = await eslint.lintText(
+      '<!doctype html><html><body><script>window.ga=function(){ga.q.push(arguments)};ga.q=[];ga("create","UA","auto")</script></body></html>',
+      {
+        filePath: path.join(ROOT_DIR, 'style-defaults.html'),
+      },
+    )
+    const [cssResult] = await eslint.lintText(
+      `.a>[class^='col-']{color:red}`,
+      {
+        filePath: path.join(ROOT_DIR, 'style-defaults.css'),
+      },
+    )
+
+    expect(htmlResult?.output).toContain(`ga('create', 'UA', 'auto')`)
+    expect(htmlResult?.output).not.toContain('ga("create", "UA", "auto");')
+    expect(cssResult?.output).toContain(`[class^='col-']`)
+    expect(cssResult?.output).not.toContain(`[class^="col-"]`)
+  })
+
+  it('keeps prettier-backed fallback formatters for markdown/xml/svg/astro', async () => {
+    const cases = [
+      {
+        filePath: 'fallback.md',
+        text: '# hi\n\n- a\n-  b',
+        expected: '# hi\n\n- a\n- b\n',
+      },
+      {
+        filePath: 'fallback.xml',
+        text: '<root><a>1</a></root>',
+        expected: '<root>\n  <a>1</a>\n</root>\n',
+      },
+      {
+        filePath: 'fallback.svg',
+        text: '<svg><g><path d="M0 0"/></g></svg>',
+        expected: '<svg>\n  <g>\n    <path d="M0 0" />\n  </g>\n</svg>\n',
+      },
+      {
+        filePath: 'fallback.astro',
+        text: '---\nconst a=1\n---\n<div>{a}</div>',
+        expected: '---\nconst a = 1\n---\n\n<div>{a}</div>\n',
+      },
+    ] as const
+
+    const configs = await icebreaker().toConfigs()
+    const eslint = new ESLint({
+      cwd: ROOT_DIR,
+      fix: true,
+      overrideConfig: configs,
+      overrideConfigFile: true,
+    })
+
+    for (const testCase of cases) {
+      const [result] = await eslint.lintText(testCase.text, {
+        filePath: path.join(ROOT_DIR, testCase.filePath),
+      })
+
+      expect(result?.output).toBe(testCase.expected)
+      expect(result?.messages).toEqual([])
+    }
+  })
+
   it('lifts user ignores to a top-level flat config item', async () => {
     const tempDir = path.join(TEMP_ROOT, `ignores-${crypto.randomUUID()}`)
     await fs.rm(tempDir, { recursive: true, force: true })

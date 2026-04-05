@@ -1,6 +1,7 @@
 import type { TypedFlatConfigItem } from '@/types'
 import { nestjsTypeScriptRules } from '@/defaults'
 import {
+  __resolveStylelintConfigLoader,
   resolveAccessibilityPresets,
   resolveMdxPresets,
   resolveNestPresets,
@@ -431,5 +432,15 @@ describe('resolveStylelintBridgePresets', () => {
         },
       },
     })
+  })
+})
+
+describe('resolveStylelintConfigLoader', () => {
+  it('resolves the ts loader path when invoked from source modules', () => {
+    expect(__resolveStylelintConfigLoader('file:///repo/packages/eslint/src/features.ts')).toContain('/stylelint.ts')
+  })
+
+  it('resolves the js loader path when invoked from built modules', () => {
+    expect(__resolveStylelintConfigLoader('file:///repo/packages/eslint/dist/features.js')).toContain('/stylelint.js')
   })
 })
