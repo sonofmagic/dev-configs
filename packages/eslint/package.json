@@ -44,6 +44,7 @@
   "scripts": {
     "dev": "tsdown --watch --sourcemap",
     "build": "tsdown",
+    "bench:formatters": "node --import tsx ./scripts/benchmark-formatters.ts",
     "test": "vitest run",
     "test:types": "tsd",
     "test:dev": "vitest",

@@ -104,8 +104,8 @@ export default icebreaker({
 ### 格式化引擎
 
 `@icebreakers/eslint-config` 仍然通过 `eslint-plugin-format` 承载样式类与文档类文件的格式化链路。
-现在默认会把 CSS、HTML、GraphQL 切到 `oxfmt`，而 Markdown、XML、SVG、Astro、
-Slidev 继续保留在现有的 Prettier 链路上；你也可以继续手动覆写：
+默认行为仍然与上游 Prettier 链路保持一致；如果你想在项目里做专项实验，
+也可以继续手动把部分文件类型切到 `oxfmt`：
 
 ```ts
 import { icebreaker } from '@icebreakers/eslint-config'
@@ -125,8 +125,8 @@ export default icebreaker({
 
 支持范围：
 
-- 默认值：CSS / SCSS / Less、HTML、GraphQL 走 `format/oxfmt`
-- 默认值：Markdown、XML、SVG、Astro、Slidev 继续走上游 Prettier 链路
+- 默认值：CSS / SCSS / Less、HTML、GraphQL、Markdown、XML、SVG、Astro、Slidev
+  继续走上游 Prettier 链路
 - `css: 'oxfmt'`：会同时切换 CSS / SCSS / Less
 - `html: 'oxfmt'`：切换 HTML
 - `markdown: 'oxfmt'`：切换 Markdown
@@ -135,7 +135,6 @@ export default icebreaker({
 当前限制：
 
 - 这不是一次完整的 `format/prettier -> format/oxfmt` 全量迁移
-- Markdown 目前默认仍保留在 Prettier 上，因为和现有规则栈组合时稳定性更高
 - `markdown: 'oxfmt'` 不能与 `formatters.slidev` 同时开启
 - `oxfmtOptions` 会原样透传给 `format/oxfmt`
 

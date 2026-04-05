@@ -144,14 +144,10 @@ function getDefaultFormatterOptions(cwd = process.cwd()): FormatterOptions {
 
   return {
     astro: isPackageAvailable('prettier-plugin-astro', [ANTFU_PACKAGE_DIR]),
-    css: 'oxfmt',
-    graphql: 'oxfmt',
-    html: 'oxfmt',
+    css: true,
+    graphql: true,
+    html: true,
     markdown: true,
-    oxfmtOptions: {
-      semi: false,
-      singleQuote: true,
-    },
     slidev: hasSlidev,
     svg: hasXmlPlugin,
     xml: hasXmlPlugin,

@@ -44,10 +44,10 @@ describe('getPresets', () => {
     const base = toConfigObject(baseConfig)
 
     expect(resolved.formatters).toEqual(expect.objectContaining({
-      css: 'oxfmt',
-      html: 'oxfmt',
+      css: true,
+      html: true,
       markdown: true,
-      graphql: 'oxfmt',
+      graphql: true,
     }))
     expect(base.rules?.['pnpm/json-enforce-catalog']).toBe('off')
     expect(resolveStylelintBridgePresetsMock).toHaveBeenCalledWith(undefined)

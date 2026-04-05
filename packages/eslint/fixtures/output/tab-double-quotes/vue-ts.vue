@@ -23,7 +23,7 @@ function incrementCounter() {
 
 <style>
 .a {
-  color: red;
+	color: red;
 }
 </style>
 
@@ -32,7 +32,7 @@ $font-stack: Helvetica, sans-serif;
 $primary-color: #333;
 
 body {
-  font: 100% $font-stack;
-  color: $primary-color;
+	font: 100% $font-stack;
+	color: $primary-color;
 }
 </style>

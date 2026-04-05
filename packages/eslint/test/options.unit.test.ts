@@ -142,15 +142,12 @@ describe('resolveUserOptions', () => {
     })
 
     const formatters = toFormatterOptions(resolved.formatters)
-    const oxfmtOptions = toFormatterOptions(formatters['oxfmtOptions'])
     const prettierOptions = toFormatterOptions(formatters['prettierOptions'])
 
-    expect(formatters['css']).toBe('oxfmt')
-    expect(formatters['html']).toBe('oxfmt')
+    expect(formatters['css']).toBe(true)
+    expect(formatters['html']).toBe(true)
     expect(formatters['markdown']).toBe(true)
-    expect(formatters['graphql']).toBe('oxfmt')
-    expect(oxfmtOptions['semi']).toBe(false)
-    expect(oxfmtOptions['singleQuote']).toBe(true)
+    expect(formatters['graphql']).toBe(true)
     expect(prettierOptions['endOfLine']).toBe('lf')
   })
 
@@ -163,9 +160,9 @@ describe('resolveUserOptions', () => {
 
     const formatters = toFormatterOptions(resolved.formatters)
 
-    expect(formatters['css']).toBe('oxfmt')
-    expect(formatters['html']).toBe('oxfmt')
-    expect(formatters['graphql']).toBe('oxfmt')
+    expect(formatters['css']).toBe(true)
+    expect(formatters['html']).toBe(true)
+    expect(formatters['graphql']).toBe(true)
     expect(formatters['markdown']).toBe(false)
   })
 })
@@ -291,14 +288,10 @@ describe('formatters integration', () => {
 
     try {
       expect(__resolveFormattersOption(undefined, tempDir)).toEqual(expect.objectContaining({
-        css: 'oxfmt',
-        html: 'oxfmt',
+        css: true,
+        html: true,
         markdown: true,
-        graphql: 'oxfmt',
-        oxfmtOptions: {
-          semi: false,
-          singleQuote: true,
-        },
+        graphql: true,
       }))
     }
     finally {
@@ -333,14 +326,10 @@ describe('formatters integration', () => {
 
     try {
       const resolved = toFormatterOptions(__resolveFormattersOption(true, tempDir))
-      const oxfmtOptions = toFormatterOptions(resolved['oxfmtOptions'])
       const prettierOptions = toFormatterOptions(resolved['prettierOptions'])
 
-      expect(resolved['css']).toBe('oxfmt')
+      expect(resolved['css']).toBe(true)
       expect(resolved['markdown']).toBe(true)
-      expect(oxfmtOptions['endOfLine']).toBe('cr')
-      expect(oxfmtOptions['semi']).toBe(false)
-      expect(oxfmtOptions['singleQuote']).toBe(true)
       expect(prettierOptions['endOfLine']).toBe('cr')
     }
     finally {
@@ -379,12 +368,6 @@ describe('formatters integration', () => {
       for (const name of formatterNames) {
         expect(getFormatterRuleOptions(configs, name)['endOfLine']).toBe('lf')
       }
-
-      expect(toFormatterOptions(__resolveFormattersOption(true, tempDir))['oxfmtOptions']).toEqual({
-        semi: false,
-        singleQuote: true,
-        endOfLine: 'lf',
-      })
     }
     finally {
       cwdSpy.mockRestore()
@@ -422,28 +405,10 @@ describe('formatters integration', () => {
   it('falls back to normalized defaults for unsupported formatter option shapes', async () => {
     const resolved = toFormatterOptions(__resolveFormattersOption('unexpected' as any))
 
-    expect(resolved['css']).toBe('oxfmt')
-    expect(resolved['html']).toBe('oxfmt')
+    expect(resolved['css']).toBe(true)
+    expect(resolved['html']).toBe(true)
     expect(resolved['markdown']).toBe(true)
-    expect(resolved['graphql']).toBe('oxfmt')
-    expect(resolved['oxfmtOptions']).toEqual(expect.objectContaining({
-      semi: false,
-      singleQuote: true,
-    }))
-  })
-
-  it('preserves default oxfmt style options when adding custom oxfmt overrides', () => {
-    const resolved = toFormatterOptions(__resolveFormattersOption({
-      oxfmtOptions: {
-        lineWidth: 100,
-      },
-    }))
-
-    expect(resolved['oxfmtOptions']).toEqual(expect.objectContaining({
-      lineWidth: 100,
-      semi: false,
-      singleQuote: true,
-    }))
+    expect(resolved['graphql']).toBe(true)
   })
 
   it('overrides css/html/graphql formatter rules to oxfmt when requested', async () => {

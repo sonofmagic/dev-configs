@@ -82,9 +82,9 @@ export default icebreaker({
 ### Formatter Engines
 
 `@icebreakers/eslint-config` still uses `eslint-plugin-format` as the formatter
-bridge. Icebreaker now defaults CSS, HTML, and GraphQL formatting to `oxfmt`
-while keeping Markdown, XML, SVG, Astro, and Slidev on the existing Prettier
-path. You can still override the engine explicitly:
+bridge. The default formatter path stays aligned with the upstream Prettier
+setup. Icebreaker still lets you opt specific file types into `oxfmt` when you
+want to experiment or tune a project explicitly:
 
 ```ts
 import { icebreaker } from '@icebreakers/eslint-config'
@@ -104,8 +104,8 @@ export default icebreaker({
 
 Support matrix:
 
-- default: CSS/SCSS/Less, HTML, and GraphQL use `format/oxfmt`
-- default: Markdown, XML, SVG, Astro, and Slidev stay on the upstream Prettier path
+- default: CSS/SCSS/Less, HTML, GraphQL, Markdown, XML, SVG, Astro, and Slidev
+  stay on the upstream Prettier path
 - `css: 'oxfmt'` also switches SCSS and Less to `format/oxfmt`
 - `html: 'oxfmt'` switches HTML to `format/oxfmt`
 - `markdown: 'oxfmt'` switches Markdown to `format/oxfmt`
@@ -114,8 +114,6 @@ Support matrix:
 Current limits:
 
 - This is not a full `format/prettier` to `format/oxfmt` migration layer
-- Markdown is still Prettier-backed by default because the current rule stack is
-  more stable that way
 - `markdown: 'oxfmt'` cannot be combined with `formatters.slidev`
 - `oxfmtOptions` are passed directly to `format/oxfmt`
 

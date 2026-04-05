@@ -325,7 +325,7 @@ describe('eslint integration fixtures', () => {
     expect(result?.messages).toEqual([])
   })
 
-  it('uses oxfmt by default for css/html/graphql formatter targets', async () => {
+  it('keeps prettier by default for css/html/graphql formatter targets', async () => {
     const cases = [
       {
         filePath: 'default.css',
@@ -360,34 +360,6 @@ describe('eslint integration fixtures', () => {
       expect(result?.output).toBe(testCase.expected)
       expect(result?.messages).toEqual([])
     }
-  })
-
-  it('uses Icebreaker oxfmt style defaults for supported formatter targets', async () => {
-    const configs = await icebreaker().toConfigs()
-    const eslint = new ESLint({
-      cwd: ROOT_DIR,
-      fix: true,
-      overrideConfig: configs,
-      overrideConfigFile: true,
-    })
-
-    const [htmlResult] = await eslint.lintText(
-      '<!doctype html><html><body><script>window.ga=function(){ga.q.push(arguments)};ga.q=[];ga("create","UA","auto")</script></body></html>',
-      {
-        filePath: path.join(ROOT_DIR, 'style-defaults.html'),
-      },
-    )
-    const [cssResult] = await eslint.lintText(
-      `.a>[class^='col-']{color:red}`,
-      {
-        filePath: path.join(ROOT_DIR, 'style-defaults.css'),
-      },
-    )
-
-    expect(htmlResult?.output).toContain(`ga('create', 'UA', 'auto')`)
-    expect(htmlResult?.output).not.toContain('ga("create", "UA", "auto");')
-    expect(cssResult?.output).toContain(`[class^='col-']`)
-    expect(cssResult?.output).not.toContain(`[class^="col-"]`)
   })
 
   it('keeps prettier-backed fallback formatters for markdown/xml/svg/astro', async () => {
