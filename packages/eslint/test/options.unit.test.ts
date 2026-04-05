@@ -16,11 +16,12 @@ function toFormatterOptions(value: unknown) {
 function getFormatterRuleOptions(
   configs: Linter.Config[],
   name: string,
+  ruleId = 'format/prettier',
 ): Record<string, unknown> {
   const config = configs.find(item => item.name === name)
 
   expect(config).toBeDefined()
-  const rule = config?.rules?.['format/prettier']
+  const rule = config?.rules?.[ruleId]
 
   expect(Array.isArray(rule)).toBe(true)
 
@@ -380,5 +381,36 @@ describe('formatters integration', () => {
 
     expect(getFormatterRuleOptions(configs, 'antfu/formatter/css')['endOfLine']).toBe('lf')
     expect(getFormatterRuleOptions(configs, 'antfu/formatter/markdown')['endOfLine']).toBe('lf')
+  })
+
+  it('overrides css/html/graphql formatter rules to oxfmt when requested', async () => {
+    const configs = await icebreaker({
+      formatters: {
+        css: 'oxfmt',
+        html: 'oxfmt',
+        graphql: 'oxfmt',
+        oxfmtOptions: {
+          lineWidth: 90,
+        },
+      },
+    }).toConfigs()
+
+    for (const name of ['antfu/formatter/css', 'antfu/formatter/scss', 'antfu/formatter/less', 'antfu/formatter/html', 'antfu/formatter/graphql']) {
+      expect(configs.some(config => config.name === name)).toBe(true)
+      expect(getFormatterRuleOptions(configs, name, 'format/oxfmt')['lineWidth']).toBe(90)
+    }
+  })
+
+  it('overrides markdown formatter rule to oxfmt when requested', async () => {
+    const configs = await icebreaker({
+      formatters: {
+        markdown: 'oxfmt',
+        oxfmtOptions: {
+          lineWidth: 88,
+        },
+      },
+    }).toConfigs()
+
+    expect(getFormatterRuleOptions(configs, 'antfu/formatter/markdown', 'format/oxfmt')['lineWidth']).toBe(88)
   })
 })

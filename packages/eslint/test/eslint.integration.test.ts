@@ -264,6 +264,67 @@ describe('eslint integration fixtures', () => {
     ]))
   })
 
+  it('formats css/html/markdown with oxfmt when selected via formatters', async () => {
+    const cases = [
+      {
+        filePath: 'sample.css',
+        text: '.demo{color:red}',
+        formatters: { css: 'oxfmt' },
+        expected: '.demo {\n  color: red;\n}\n',
+      },
+      {
+        filePath: 'sample.html',
+        text: '<div><span>hi</span></div>',
+        formatters: { html: 'oxfmt' },
+        expected: '<div><span>hi</span></div>\n',
+      },
+      {
+        filePath: 'sample.md',
+        text: '# hi\n\n- a\n-  b',
+        formatters: { markdown: 'oxfmt' },
+        expected: '# hi\n\n- a\n- b\n',
+      },
+    ] as const
+
+    for (const testCase of cases) {
+      const eslint = new ESLint({
+        cwd: ROOT_DIR,
+        fix: true,
+        overrideConfig: await icebreaker({
+          formatters: testCase.formatters,
+        }).toConfigs(),
+        overrideConfigFile: true,
+      })
+
+      const [result] = await eslint.lintText(testCase.text, {
+        filePath: path.join(ROOT_DIR, testCase.filePath),
+      })
+
+      expect(result?.output).toBe(testCase.expected)
+      expect(result?.messages).toEqual([])
+    }
+  })
+
+  it('formats graphql with oxfmt when selected via formatters', async () => {
+    const eslint = new ESLint({
+      cwd: ROOT_DIR,
+      fix: true,
+      overrideConfig: await icebreaker({
+        formatters: {
+          graphql: 'oxfmt',
+        },
+      }).toConfigs(),
+      overrideConfigFile: true,
+    })
+
+    const [result] = await eslint.lintText('type Query{hello:String}', {
+      filePath: path.join(ROOT_DIR, 'sample.graphql'),
+    })
+
+    expect(result?.output).toBe('type Query {\n  hello: String\n}\n')
+    expect(result?.messages).toEqual([])
+  })
+
   it('lifts user ignores to a top-level flat config item', async () => {
     const tempDir = path.join(TEMP_ROOT, `ignores-${crypto.randomUUID()}`)
     await fs.rm(tempDir, { recursive: true, force: true })

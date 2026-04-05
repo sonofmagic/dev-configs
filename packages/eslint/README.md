@@ -79,6 +79,42 @@ export default icebreaker({
 - `test` – relaxes certain Vitest/Jest style rules (`test/prefer-lowercase-title`).
 - `weapp` – legacy alias for `miniProgram`; kept for backward compatibility.
 
+### Formatter Engines
+
+`@icebreakers/eslint-config` still uses `eslint-plugin-format` as the formatter
+bridge. The default engine remains Prettier-based, but Icebreaker now allows a
+partial switch to `oxfmt` for a subset of non-JS file types:
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  formatters: {
+    css: 'oxfmt',
+    html: 'oxfmt',
+    markdown: 'oxfmt',
+    graphql: 'oxfmt',
+    oxfmtOptions: {
+      lineWidth: 100,
+    },
+  },
+})
+```
+
+Support matrix:
+
+- `css: 'oxfmt'` also switches SCSS and Less to `format/oxfmt`
+- `html: 'oxfmt'` switches HTML to `format/oxfmt`
+- `markdown: 'oxfmt'` switches Markdown to `format/oxfmt`
+- `graphql: 'oxfmt'` switches GraphQL to `format/oxfmt`
+- XML, SVG, Astro, and Slidev still stay on the upstream formatter path
+
+Current limits:
+
+- This is not a full `format/prettier` to `format/oxfmt` migration layer
+- `markdown: 'oxfmt'` cannot be combined with `formatters.slidev`
+- `oxfmtOptions` are passed directly to `format/oxfmt`
+
 ### Mini Program Preset
 
 `miniProgram: true` is the recommended API for `weapp-vite`, `wevu`, and native
@@ -253,6 +289,8 @@ You may also pass other flat configs (e.g. from in-house presets) as additional 
 - Use `lint:fix` for the default ESLint-driven formatting flow, including
   CSS/SCSS/Less. Add `lint:styles:fix` when your project also uses standalone
   Stylelint runs.
+- If you opt specific file types into `oxfmt`, the same `eslint --fix` flow
+  continues to work. Only the formatter engine changes.
 
 ## Troubleshooting
 

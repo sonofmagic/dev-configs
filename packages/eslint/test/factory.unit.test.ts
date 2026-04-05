@@ -5,8 +5,13 @@ import { getPresets } from '@/preset'
 import { hasAllPackages } from '@/utils'
 
 vi.mock('@/antfu', () => {
+  const composer = {
+    override: vi.fn(function override() {
+      return this
+    }),
+  }
   return {
-    antfu: vi.fn(() => 'composer'),
+    antfu: vi.fn(() => composer),
   }
 })
 
@@ -26,6 +31,12 @@ const antfuMock = vi.mocked(antfu)
 const getPresetsMock = vi.mocked(getPresets)
 const hasAllPackagesMock = vi.mocked(hasAllPackages)
 
+function getComposerMock() {
+  return antfuMock.mock.results.at(-1)?.value as {
+    override: ReturnType<typeof vi.fn>
+  }
+}
+
 describe('factory helpers', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -38,7 +49,7 @@ describe('factory helpers', () => {
 
     expect(getPresetsMock).toHaveBeenCalledWith({ vue: true })
     expect(antfuMock).toHaveBeenCalledWith({}, { name: 'preset' }, userConfig)
-    expect(result).toBe('composer')
+    expect(result).toBe(getComposerMock())
   })
 
   it('lifts ignores into a standalone config item before the user config', () => {
@@ -88,7 +99,7 @@ describe('factory helpers', () => {
 
     expect(getPresetsMock).toHaveBeenCalledWith({ react: true }, 'legacy')
     expect(antfuMock).toHaveBeenCalledWith({}, { name: 'preset' }, userConfig)
-    expect(result).toBe('composer')
+    expect(result).toBe(getComposerMock())
   })
 
   it('disables optional antfu react and next features when their plugins are unavailable', () => {
@@ -352,5 +363,65 @@ describe('factory helpers', () => {
       },
       { name: 'preset' },
     )
+  })
+
+  it('overrides css/html/graphql formatters to oxfmt when requested', () => {
+    getPresetsMock.mockReturnValueOnce([
+      {
+        formatters: {
+          css: 'oxfmt',
+          html: 'oxfmt',
+          graphql: 'oxfmt',
+          oxfmtOptions: {
+            lineWidth: 100,
+          },
+        },
+      } as any,
+      { name: 'preset' },
+    ])
+
+    const result = icebreaker({
+      formatters: {
+        css: 'oxfmt',
+        html: 'oxfmt',
+        graphql: 'oxfmt',
+        oxfmtOptions: {
+          lineWidth: 100,
+        },
+      },
+    } as any)
+
+    const composer = result as unknown as { override: ReturnType<typeof vi.fn> }
+    expect(composer.override).toHaveBeenCalledWith('antfu/formatter/css', expect.objectContaining({
+      rules: expect.objectContaining({
+        'format/oxfmt': ['error', { lineWidth: 100 }],
+        'format/prettier': 'off',
+      }),
+    }))
+    expect(composer.override).toHaveBeenCalledWith('antfu/formatter/scss', expect.any(Object))
+    expect(composer.override).toHaveBeenCalledWith('antfu/formatter/less', expect.any(Object))
+    expect(composer.override).toHaveBeenCalledWith('antfu/formatter/html', expect.any(Object))
+    expect(composer.override).toHaveBeenCalledWith('antfu/formatter/graphql', expect.any(Object))
+  })
+
+  it('throws when markdown oxfmt is combined with slidev', () => {
+    getPresetsMock.mockReturnValueOnce([
+      {
+        formatters: {
+          markdown: 'oxfmt',
+          slidev: true,
+        },
+      } as any,
+      { name: 'preset' },
+    ])
+
+    expect(() => {
+      icebreaker({
+        formatters: {
+          markdown: 'oxfmt',
+          slidev: true,
+        },
+      } as any)
+    }).toThrow(/markdown: "oxfmt".*slidev/u)
   })
 })

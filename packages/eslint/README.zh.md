@@ -101,6 +101,41 @@ export default icebreaker({
 - `test`：放宽 Vitest / Jest 常见规则，例如关闭 `test/prefer-lowercase-title`。
 - `weapp`：`miniProgram` 的兼容别名，保留但不再推荐作为主入口。
 
+### 格式化引擎
+
+`@icebreakers/eslint-config` 仍然通过 `eslint-plugin-format` 承载样式类与文档类文件的格式化链路。
+默认仍走 Prettier，但现在额外支持把一部分文件类型切到 `oxfmt`：
+
+```ts
+import { icebreaker } from '@icebreakers/eslint-config'
+
+export default icebreaker({
+  formatters: {
+    css: 'oxfmt',
+    html: 'oxfmt',
+    markdown: 'oxfmt',
+    graphql: 'oxfmt',
+    oxfmtOptions: {
+      lineWidth: 100,
+    },
+  },
+})
+```
+
+支持范围：
+
+- `css: 'oxfmt'`：会同时切换 CSS / SCSS / Less
+- `html: 'oxfmt'`：切换 HTML
+- `markdown: 'oxfmt'`：切换 Markdown
+- `graphql: 'oxfmt'`：切换 GraphQL
+- XML、SVG、Astro、Slidev 仍然保持上游默认格式化链路
+
+当前限制：
+
+- 这不是一次完整的 `format/prettier -> format/oxfmt` 全量迁移
+- `markdown: 'oxfmt'` 不能与 `formatters.slidev` 同时开启
+- `oxfmtOptions` 会原样透传给 `format/oxfmt`
+
 ### 小程序预设
 
 推荐在 `weapp-vite`、`wevu`、原生小程序模板里统一使用 `miniProgram: true`。
@@ -248,6 +283,8 @@ export default icebreaker(
 - 默认可使用 `lint:fix` 作为 ESLint 主修复链路，其中包含 CSS / SCSS /
   Less 的格式化。只有在项目额外启用独立 Stylelint 工作流时，再运行
   `lint:styles:fix`。
+- 如果你把部分文件类型切到 `oxfmt`，仍然继续使用同一条 `eslint --fix`
+  链路，只是底层格式化引擎发生变化。
 
 ## 常见问题
 

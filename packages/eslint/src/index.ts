@@ -1,6 +1,7 @@
 export * from './factory'
 export * from './preset'
 export type {
+  IcebreakerFormatterOptions,
   StylelintBridgeConfig,
   StylelintBridgeOption,
   TailwindcssConfig,

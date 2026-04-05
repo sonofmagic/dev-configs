@@ -4,6 +4,7 @@ import type {
 } from '@antfu/eslint-config'
 import type { FlatConfigComposer } from 'eslint-flat-config-utils'
 import type {
+  IcebreakerFormatterOptions,
   NormalizableUserConfig,
   ResolvableUserConfig,
   UserConfigItem,
@@ -206,6 +207,75 @@ function normalizeUserConfig(
     : normalizeResolvedUserConfig(resolvedUserConfig)
 }
 
+function isFormatterOptionsObject(
+  value: UserDefinedOptions['formatters'],
+): value is IcebreakerFormatterOptions {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+}
+
+function toOxfmtRuleEntry(
+  options: Record<string, unknown> | undefined,
+) {
+  return ['error', { ...(options ?? {}) }] as const
+}
+
+function applyOxfmtFormatterOverrides(
+  composer: FlatConfigComposer<TypedFlatConfigItem, ConfigNames>,
+  formatters: UserDefinedOptions['formatters'],
+): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
+  if (!isFormatterOptionsObject(formatters)) {
+    return composer
+  }
+
+  if (formatters.markdown === 'oxfmt' && formatters.slidev) {
+    throw new Error('`formatters.markdown: "oxfmt"` cannot be combined with `formatters.slidev`.')
+  }
+
+  const oxfmtOptions = formatters.oxfmtOptions
+  let nextComposer = composer
+
+  if (formatters.css === 'oxfmt') {
+    for (const name of ['antfu/formatter/css', 'antfu/formatter/scss', 'antfu/formatter/less'] as const) {
+      nextComposer = nextComposer.override(name, {
+        rules: {
+          'format/oxfmt': toOxfmtRuleEntry(oxfmtOptions),
+          'format/prettier': 'off',
+        },
+      })
+    }
+  }
+
+  if (formatters.html === 'oxfmt') {
+    nextComposer = nextComposer.override('antfu/formatter/html', {
+      rules: {
+        'format/oxfmt': toOxfmtRuleEntry(oxfmtOptions),
+        'format/prettier': 'off',
+      },
+    })
+  }
+
+  if (formatters.markdown === 'oxfmt') {
+    nextComposer = nextComposer.override('antfu/formatter/markdown', {
+      rules: {
+        'format/oxfmt': toOxfmtRuleEntry(oxfmtOptions),
+        'format/prettier': 'off',
+        'format/dprint': 'off',
+      },
+    })
+  }
+
+  if (formatters.graphql === 'oxfmt') {
+    nextComposer = nextComposer.override('antfu/formatter/graphql', {
+      rules: {
+        'format/oxfmt': toOxfmtRuleEntry(oxfmtOptions),
+        'format/prettier': 'off',
+      },
+    })
+  }
+
+  return nextComposer
+}
+
 // for vue2 @see https://github.com/antfu/eslint-config/issues/367#issuecomment-1979646400
 export function icebreaker(
   options: UserDefinedOptions = {},
@@ -213,11 +283,12 @@ export function icebreaker(
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
   const [resolved, ...presets] = getPresets(options)
   const normalized = normalizeUnoCssOptions(normalizeOptionalAntfuFeatures(resolved))
-  return antfu(
+  const composer = antfu(
     normalized,
     ...presets,
     ...userConfigs.map(normalizeUserConfig),
   )
+  return applyOxfmtFormatterOverrides(composer, normalized.formatters)
 }
 
 export type IcebreakerEslintConfig = ReturnType<typeof icebreaker>
@@ -228,11 +299,12 @@ export function icebreakerLegacy(
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
   const [resolved, ...presets] = getPresets(options, 'legacy')
   const normalized = normalizeUnoCssOptions(normalizeOptionalAntfuFeatures(resolved))
-  return antfu(
+  const composer = antfu(
     normalized,
     ...presets,
     ...userConfigs.map(normalizeUserConfig),
   )
+  return applyOxfmtFormatterOverrides(composer, normalized.formatters)
 }
 
 export type IcebreakerLegacyEslintConfig = ReturnType<

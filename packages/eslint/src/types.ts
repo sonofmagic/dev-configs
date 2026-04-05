@@ -51,7 +51,44 @@ export type NormalizableUserConfig = Exclude<
   FlatConfigComposer<any, any>
 >
 
-export type UserDefinedOptions = Omit<OptionsConfig, 'unocss'> & TypedFlatConfigItem & {
+type BaseFormatterOptions = Exclude<OptionsConfig['formatters'], boolean | undefined>
+
+export interface IcebreakerFormatterOptions extends Omit<
+  BaseFormatterOptions,
+  'css' | 'html' | 'graphql' | 'markdown'
+> {
+  /**
+   * Enable formatting support for CSS, Less, Sass, and SCSS.
+   * Icebreaker additionally supports `oxfmt`.
+   */
+  css?: 'prettier' | 'oxfmt' | boolean
+  /**
+   * Enable formatting support for HTML.
+   * Icebreaker additionally supports `oxfmt`.
+   */
+  html?: 'prettier' | 'oxfmt' | boolean
+  /**
+   * Enable formatting support for Markdown.
+   * Icebreaker additionally supports `oxfmt`.
+   */
+  markdown?: 'prettier' | 'dprint' | 'oxfmt' | boolean
+  /**
+   * Enable formatting support for GraphQL.
+   * Icebreaker additionally supports `oxfmt`.
+   */
+  graphql?: 'prettier' | 'oxfmt' | boolean
+  /**
+   * Custom options passed to `format/oxfmt`.
+   */
+  oxfmtOptions?: Record<string, unknown>
+}
+
+export type UserDefinedOptions = Omit<OptionsConfig, 'formatters' | 'unocss'> & TypedFlatConfigItem & {
+  /**
+   * Enable external formatters for non-JS file types.
+   * Icebreaker additionally supports `oxfmt` for css/html/markdown/graphql.
+   */
+  formatters?: boolean | IcebreakerFormatterOptions
   /**
    * Enable Mini Program support.
    * @default false
