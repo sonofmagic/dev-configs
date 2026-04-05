@@ -75,7 +75,7 @@ export default icebreaker({
 - `a11y` – wires in JSX (React) and Vue accessibility plugins. Missing framework-specific plugins are skipped independently.
 - `typescript` – extends the TypeScript preset and applies stricter unused diagnostics. Pair with `nestjs` for Nest specific adjustments.
 - `nestjs` – enables NestJS-centric TypeScript tweaks (empty decorated constructors, declaration merging, DI parameter properties, etc.).
-- `formatters` – keeps the built-in non-style formatting rules enabled by default. CSS/SCSS/Less formatting is expected to run through Stylelint instead.
+- `formatters` – keeps the built-in formatting rules enabled by default, including CSS/SCSS/Less formatting through `eslint-plugin-format`.
 - `test` – relaxes certain Vitest/Jest style rules (`test/prefer-lowercase-title`).
 - `weapp` – legacy alias for `miniProgram`; kept for backward compatibility.
 
@@ -166,13 +166,10 @@ export default icebreaker({
 the `@icebreakers/stylelint-config` options (`presets`, `tailwindcssPreset`,
 `ignores`, `extends`, `overrides`, `rules`).
 
-The ESLint bridge surfaces Stylelint diagnostics, but it does not autofix style
-files through `eslint --fix`. Use a dedicated Stylelint script for style
-formatting and fixes, for example:
-
-```bash
-stylelint "**/*.{css,scss,vue}" --fix
-```
+The ESLint bridge surfaces Stylelint diagnostics, but it does not replace a
+full standalone Stylelint workflow. If you want Stylelint CLI, editor-native
+Stylelint integration, or dedicated `stylelint --fix` runs, install `stylelint`
+and `@icebreakers/stylelint-config` in the consuming project as well.
 
 Recommended consumer scripts:
 
@@ -187,8 +184,9 @@ Recommended consumer scripts:
 }
 ```
 
-This keeps ESLint focused on JS/TS/Vue code quality while Stylelint owns style
-file diagnostics and formatting.
+Use `lint:fix` when you want a single ESLint-driven formatting pass, including
+CSS-family files via `formatters`. Add the separate Stylelint scripts when you
+want the full Stylelint toolchain on top.
 
 ### UnoCSS Projects
 
@@ -252,8 +250,9 @@ You may also pass other flat configs (e.g. from in-house presets) as additional 
 
 - Install the VS Code ESLint extension (`>=3.0.10`).
 - Set `"eslint.experimental.useFlatConfig": true` for older VS Code builds.
-- Use `lint:fix` for JS/TS/Vue code style, and `lint:styles:fix` for
-  CSS/SCSS/Vue `<style>` formatting.
+- Use `lint:fix` for the default ESLint-driven formatting flow, including
+  CSS/SCSS/Less. Add `lint:styles:fix` when your project also uses standalone
+  Stylelint runs.
 
 ## Troubleshooting
 
