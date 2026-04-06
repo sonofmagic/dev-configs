@@ -1,5 +1,22 @@
 # @icebreakers/eslint-config
 
+## 4.0.1
+
+### Patch Changes
+
+- 🐛 **lint: shift style formatting ownership to stylelint** [`4b14479`](https://github.com/sonofmagic/dev-configs/commit/4b1447914aa34716d5ddf34af02622c170b8150e) by @sonofmagic
+  - stop enabling CSS-family formatter rules by default in `@icebreakers/eslint-config`
+  - document separate ESLint and Stylelint fix flows for consumers
+  - add a safe fix-oriented formatting preset to `@icebreakers/stylelint-config`
+
+- 🐛 **eslint: add optional oxfmt formatter overrides for css, html, markdown, and graphql** [`d9cf42b`](https://github.com/sonofmagic/dev-configs/commit/d9cf42b907bc5e2ffe71c04303375b64952be2b1) by @sonofmagic
+
+- 🐛 **eslint: add unocss wrapper config support** [#258](https://github.com/sonofmagic/dev-configs/pull/258) by @daguanren21
+
+- 🐛 **eslint: default css, html, and graphql formatters to oxfmt** [`649d918`](https://github.com/sonofmagic/dev-configs/commit/649d9187a395cc8c330067bf9450293c1cb04b9e) by @sonofmagic
+- 📦 **Dependencies** [`4b14479`](https://github.com/sonofmagic/dev-configs/commit/4b1447914aa34716d5ddf34af02622c170b8150e)
+  → `@icebreakers/stylelint-config@3.0.1`
+
 ## 4.0.0
 
 ### Major Changes
