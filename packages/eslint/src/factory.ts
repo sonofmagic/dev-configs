@@ -1,5 +1,6 @@
 import type {
   ConfigNames,
+  OptionsConfig,
   TypedFlatConfigItem,
 } from '@antfu/eslint-config'
 import type { FlatConfigComposer } from 'eslint-flat-config-utils'
@@ -215,8 +216,50 @@ function isFormatterOptionsObject(
 
 function toOxfmtRuleEntry(
   options: Record<string, unknown> | undefined,
-) {
-  return ['error', { ...(options ?? {}) }] as const
+): ['error', Record<string, unknown>] {
+  return ['error', { ...(options ?? {}) }]
+}
+
+function normalizePrettierFormatterForAntfu(
+  formatter: 'prettier' | 'oxfmt' | boolean,
+): 'prettier' | boolean {
+  return formatter === 'oxfmt' ? true : formatter
+}
+
+function normalizeMarkdownFormatterForAntfu(
+  formatter: 'prettier' | 'dprint' | 'oxfmt' | boolean,
+): 'prettier' | 'dprint' | boolean {
+  return formatter === 'oxfmt' ? true : formatter
+}
+
+function toAntfuOptions(
+  options: UserDefinedOptions,
+): OptionsConfig & Omit<TypedFlatConfigItem, 'files' | 'ignores'> {
+  const { formatters, ...restOptions } = options
+
+  if (!isFormatterOptionsObject(formatters)) {
+    return restOptions
+  }
+
+  const {
+    oxfmtOptions: _oxfmtOptions,
+    css,
+    html,
+    markdown,
+    graphql,
+    ...restFormatters
+  } = formatters
+
+  return {
+    ...restOptions,
+    formatters: {
+      ...restFormatters,
+      ...(css === undefined ? {} : { css: normalizePrettierFormatterForAntfu(css) }),
+      ...(html === undefined ? {} : { html: normalizePrettierFormatterForAntfu(html) }),
+      ...(markdown === undefined ? {} : { markdown: normalizeMarkdownFormatterForAntfu(markdown) }),
+      ...(graphql === undefined ? {} : { graphql: normalizePrettierFormatterForAntfu(graphql) }),
+    },
+  }
 }
 
 function applyOxfmtFormatterOverrides(
@@ -283,8 +326,9 @@ export function icebreaker(
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
   const [resolved, ...presets] = getPresets(options)
   const normalized = normalizeUnoCssOptions(normalizeOptionalAntfuFeatures(resolved))
+  const antfuOptions = toAntfuOptions(normalized)
   const composer = antfu(
-    normalized,
+    antfuOptions,
     ...presets,
     ...userConfigs.map(normalizeUserConfig),
   )
@@ -299,8 +343,9 @@ export function icebreakerLegacy(
 ): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
   const [resolved, ...presets] = getPresets(options, 'legacy')
   const normalized = normalizeUnoCssOptions(normalizeOptionalAntfuFeatures(resolved))
+  const antfuOptions = toAntfuOptions(normalized)
   const composer = antfu(
-    normalized,
+    antfuOptions,
     ...presets,
     ...userConfigs.map(normalizeUserConfig),
   )

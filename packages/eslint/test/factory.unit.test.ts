@@ -5,11 +5,10 @@ import { getPresets } from '@/preset'
 import { hasAllPackages } from '@/utils'
 
 vi.mock('@/antfu', () => {
-  const composer = {
-    override: vi.fn(function override() {
-      return this
-    }),
+  const composer = {} as {
+    override: ReturnType<typeof vi.fn>
   }
+  composer.override = vi.fn(() => composer)
   return {
     antfu: vi.fn(() => composer),
   }

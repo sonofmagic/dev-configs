@@ -33,7 +33,7 @@ jobs:
           changed_files="$(git diff --name-only "$base_sha" "$head_sha")"
 
           publishable_changes="$(printf '%s\n' "$changed_files" | \
-            rg '^packages/(changelog-github|commitlint|eslint|stylelint)/(src/|bin/|package\.json$|tsconfig\.json$|tsup\.config\.ts$|build\.config\.ts$)' \
+            rg '^packages/(changelog-github|commitlint|eslint|eslint-plugin-better-stylelint|lightningcss-tailwindcss|postcss-tailwindcss|stylelint|stylelint-plugin-tailwindcss)/(src/|bin/|package\.json$|tsconfig\.json$|tsup\.config\.ts$|tsdown\.config\.ts$|build\.config\.ts$)' \
             || true)"
 
           if [ -z "$publishable_changes" ]; then
