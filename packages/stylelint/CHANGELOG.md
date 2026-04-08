@@ -1,5 +1,12 @@
 # @icebreakers/stylelint-config
 
+## 3.0.2
+
+### Patch Changes
+
+- 📦 **Dependencies**
+  → `stylelint-plugin-tailwindcss@2.0.1`
+
 ## 3.0.1
 
 ### Patch Changes

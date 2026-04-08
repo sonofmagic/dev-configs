@@ -1,5 +1,11 @@
 # @icebreakers/changelog-github
 
+## 1.0.1
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`70dc018`](https://github.com/sonofmagic/dev-configs/commit/70dc01865748ba0aa9ec558e0ea11821e7f2f6cd) by @sonofmagic
+
 ## 1.0.0
 
 ### Major Changes
