@@ -1,5 +1,13 @@
 # @icebreakers/eslint-config
 
+## 4.0.3
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`8cad8e7`](https://github.com/sonofmagic/dev-configs/commit/8cad8e791ae9cc6e7286b38b3b3f1e7c71cd8569) by @sonofmagic
+- 📦 **Dependencies** [`8cad8e7`](https://github.com/sonofmagic/dev-configs/commit/8cad8e791ae9cc6e7286b38b3b3f1e7c71cd8569)
+  → `@icebreakers/stylelint-config@3.0.3`
+
 ## 4.0.2
 
 ### Patch Changes
