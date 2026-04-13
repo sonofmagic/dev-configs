@@ -259,7 +259,8 @@ describe('eslint integration fixtures', () => {
 
     expect(result?.messages).toEqual(expect.arrayContaining([
       expect.objectContaining({
-        message: expect.stringContaining('Unexpected named color "red"'),
+        ruleId: 'color-named',
+        message: expect.stringContaining('named color "red"'),
       }),
     ]))
   })

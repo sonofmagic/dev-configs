@@ -54,7 +54,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "comment-json": "^4.6.2",
+    "comment-json": "^5.0.0",
     "postcss-html": "^1.8.1",
     "stylelint-config-recess-order": "^7.6.1",
     "stylelint-config-recommended-scss": "^17.0.1",
