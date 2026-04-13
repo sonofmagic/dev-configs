@@ -1,5 +1,13 @@
 # eslint-plugin-better-stylelint
 
+## 1.0.1
+
+### Patch Changes
+
+- 🐛 **Refresh package dependencies across the linting toolchain and update the** [`9a44d9b`](https://github.com/sonofmagic/dev-configs/commit/9a44d9bdb0cd42ce67376446eb0dfd2a095d2698) by @sonofmagic
+  - ESLint integration test to remain compatible with the latest Stylelint
+  - diagnostic wording.
+
 ## 1.0.0
 
 ### Major Changes
