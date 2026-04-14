@@ -628,3 +628,60 @@ describe('eslint integration fixtures', () => {
     ]))
   })
 })
+
+describe('tailwind integration', () => {
+  it('does not apply better-tailwindcss rules to package.json when using object options', async () => {
+    const tempDir = path.join(ROOT_DIR, `.tmp-tailwind-package-json-${crypto.randomUUID()}`)
+    const entryPoint = path.join(tempDir, 'src', 'style.css')
+    const packageJsonPath = path.join(tempDir, 'package.json')
+    const vueFilePath = path.join(tempDir, 'src', 'App.vue')
+
+    await fs.rm(tempDir, { recursive: true, force: true })
+    await fs.mkdir(path.dirname(entryPoint), { recursive: true })
+    await fs.writeFile(entryPoint, '@import "tailwindcss";\n', 'utf8')
+    await fs.writeFile(packageJsonPath, '{\n  "name": "tailwind-fixture"\n}\n', 'utf8')
+    await fs.writeFile(
+      vueFilePath,
+      '<template><div class="flex flex"></div></template>\n',
+      'utf8',
+    )
+
+    try {
+      const eslint = new ESLint({
+        cwd: tempDir,
+        overrideConfig: await icebreaker({
+          vue: true,
+          tailwindcss: {
+            entryPoint,
+          },
+        }).toConfigs(),
+        overrideConfigFile: true,
+      })
+
+      const packageJsonConfig = await eslint.calculateConfigForFile(packageJsonPath)
+      const packageJsonTailwindRules = Object.keys(packageJsonConfig.rules ?? {}).filter(ruleId =>
+        ruleId.startsWith('better-tailwindcss/'),
+      )
+      expect(packageJsonTailwindRules).toEqual([])
+
+      const [packageJsonResult] = await eslint.lintText(
+        '{\n  "name": "tailwind-fixture"\n}\n',
+        { filePath: packageJsonPath },
+      )
+      expect(packageJsonResult?.messages).toEqual([])
+
+      const [vueResult] = await eslint.lintText(
+        '<template><div class="flex flex"></div></template>\n',
+        { filePath: vueFilePath },
+      )
+      expect(vueResult?.messages).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          ruleId: 'better-tailwindcss/no-duplicate-classes',
+        }),
+      ]))
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+})

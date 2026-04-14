@@ -13,6 +13,11 @@ export interface TailwindcssOption {
    */
   entryPoint?: string
   /**
+   * Working directory passed to eslint-plugin-better-tailwindcss.
+   * Defaults to `dirname(entryPoint)` when present, otherwise `process.cwd()`.
+   */
+  cwd?: string
+  /**
    * Tailwind CSS v3 config file path, e.g. `tailwind.config.js`.
    */
   tailwindConfig?: string

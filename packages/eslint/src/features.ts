@@ -5,6 +5,8 @@ import type {
   UserConfigItem,
   UserDefinedOptions,
 } from './types'
+import path from 'node:path'
+import process from 'node:process'
 import { interopDefault } from './antfu'
 import { nestjsTypeScriptRules } from './defaults'
 import { hasAllPackages } from './utils'
@@ -16,6 +18,26 @@ const MDX_PACKAGES = ['eslint-plugin-mdx']
 const VUE_A11Y_PACKAGES = ['eslint-plugin-vuejs-accessibility']
 const REACT_A11Y_PACKAGES = ['eslint-plugin-jsx-a11y']
 const QUERY_PACKAGES = ['@tanstack/eslint-plugin-query']
+const BETTER_TAILWIND_FILES = [
+  '**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx,vue,html,md,mdx,astro,svelte}',
+]
+const BETTER_TAILWIND_IGNORES = [
+  '**/*.json',
+  '**/*.json5',
+  '**/*.yaml',
+  '**/*.yml',
+  '**/*.{lock,lockb}',
+  '**/package.json',
+  '**/package-lock.json',
+  '**/pnpm-lock.yaml',
+  '**/yarn.lock',
+  '**/bun.lock',
+  '**/bun.lockb',
+  '**/composer.lock',
+  '**/Cargo.lock',
+  '**/Gemfile.lock',
+  '**/go.sum',
+]
 
 function resolveStylelintConfigLoader(moduleUrl = import.meta.url) {
   return moduleUrl.endsWith('.ts')
@@ -37,6 +59,9 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
       interopDefault(
         import('eslint-plugin-better-tailwindcss'),
       ).then((eslintPluginBetterTailwindcss) => {
+        const cwd = option.cwd
+          ?? (option.entryPoint ? path.dirname(option.entryPoint) : undefined)
+          ?? process.cwd()
         const betterTailwindcssRules: Linter.RulesRecord = {
           ...eslintPluginBetterTailwindcss.configs['recommended-warn'].rules,
           ...eslintPluginBetterTailwindcss.configs['recommended-error'].rules,
@@ -44,12 +69,15 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
 
         return {
           name: 'icebreaker/better-tailwindcss',
+          files: BETTER_TAILWIND_FILES,
+          ignores: BETTER_TAILWIND_IGNORES,
           plugins: {
             'better-tailwindcss': eslintPluginBetterTailwindcss,
           },
           rules: betterTailwindcssRules,
           settings: {
             'better-tailwindcss': {
+              cwd,
               entryPoint: option.entryPoint,
               tailwindConfig: option.tailwindConfig,
             },

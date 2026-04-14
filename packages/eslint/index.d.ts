@@ -10,6 +10,7 @@ import type { FlatConfigComposer } from 'eslint-flat-config-utils'
 
 export interface TailwindcssOption {
   entryPoint?: string
+  cwd?: string
   tailwindConfig?: string
 }
 

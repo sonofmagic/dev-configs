@@ -157,13 +157,39 @@ describe('resolveTailwindPresets', () => {
 
     const config = await configPromise as TypedFlatConfigItem
     expect(config.plugins?.['better-tailwindcss']).toBeDefined()
+    expect(config.files).toEqual([
+      '**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx,vue,html,md,mdx,astro,svelte}',
+    ])
+    expect(config.ignores).toEqual(expect.arrayContaining([
+      '**/*.json',
+      '**/*.json5',
+      '**/*.yaml',
+      '**/*.yml',
+      '**/package.json',
+      '**/pnpm-lock.yaml',
+    ]))
     expect(config.rules).toMatchObject({
       'better/warn': 'warn',
       'better/error': 'error',
     })
     expect(config.settings?.['better-tailwindcss']).toEqual({
+      cwd: 'src',
       entryPoint: 'src/main.css',
       tailwindConfig: 'tailwind.config.js',
+    })
+  })
+
+  it('prefers an explicit better-tailwindcss cwd over entryPoint-derived defaults', async () => {
+    const [configPromise] = resolveTailwindPresets({
+      cwd: '/repo/apps/demo',
+      entryPoint: 'src/main.css',
+    })
+
+    const config = await configPromise as TypedFlatConfigItem
+    expect(config.settings?.['better-tailwindcss']).toEqual({
+      cwd: '/repo/apps/demo',
+      entryPoint: 'src/main.css',
+      tailwindConfig: undefined,
     })
   })
 

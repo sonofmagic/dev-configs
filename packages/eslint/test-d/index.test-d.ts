@@ -16,6 +16,12 @@ expectAssignable<UserDefinedOptions>({ miniProgram: true })
 expectAssignable<UserDefinedOptions>({ weapp: true })
 expectAssignable<UserDefinedOptions>({ unocss: true })
 expectAssignable<UserDefinedOptions>({
+  tailwindcss: {
+    entryPoint: './src/style.css',
+    cwd: './apps/demo',
+  },
+})
+expectAssignable<UserDefinedOptions>({
   unocss: {
     strict: true,
     attributify: false,
