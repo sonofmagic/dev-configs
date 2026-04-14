@@ -1,5 +1,17 @@
 # @icebreakers/eslint-config
 
+## 4.0.5
+
+### Patch Changes
+
+- 🐛 **Limit `eslint-plugin-better-tailwindcss` to source-like files when** [`e23612f`](https://github.com/sonofmagic/dev-configs/commit/e23612fafd404dfebff56e5bcbe363cd8258f322) by @sonofmagic
+  - `tailwindcss` is configured with an object, and pass a stable
+  - `better-tailwindcss.cwd` derived from the explicit `cwd`, the Tailwind entry
+  - point directory, or `process.cwd()`.
+  - This avoids loading Tailwind rules for files such as `package.json` and reduces
+  - crashes in pnpm workspace and broken symlink resolution scenarios while keeping
+  - existing Tailwind rule behavior for source files.
+
 ## 4.0.4
 
 ### Patch Changes
