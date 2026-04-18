@@ -1,5 +1,12 @@
 # stylelint-plugin-tailwindcss
 
+## 2.0.2
+
+### Patch Changes
+
+- 📦 **Dependencies** [`f652a19`](https://github.com/sonofmagic/dev-configs/commit/f652a19ca5160a64f27ac5edc4533e7ed151444d)
+  → `postcss-tailwindcss@2.0.2`
+
 ## 2.0.1
 
 ### Patch Changes

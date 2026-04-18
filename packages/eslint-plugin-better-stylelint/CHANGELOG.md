@@ -1,5 +1,11 @@
 # eslint-plugin-better-stylelint
 
+## 1.0.2
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`f652a19`](https://github.com/sonofmagic/dev-configs/commit/f652a19ca5160a64f27ac5edc4533e7ed151444d) by @sonofmagic
+
 ## 1.0.1
 
 ### Patch Changes
