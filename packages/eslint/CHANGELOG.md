@@ -1,5 +1,14 @@
 # @icebreakers/eslint-config
 
+## 4.0.7
+
+### Patch Changes
+
+- 🐛 **Fix the ESLint preset runtime dependency graph by bundling** [`4de8afc`](https://github.com/sonofmagic/dev-configs/commit/4de8afca701e384de05a47e965a45ca803113c57) by @sonofmagic
+  - `@typescript-eslint/utils` directly. This avoids clean pnpm installs
+  - failing to start ESLint when `eslint-plugin-antfu` reaches for that module
+  - without it being present in the consumer's dependency tree.
+
 ## 4.0.6
 
 ### Patch Changes
