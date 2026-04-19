@@ -23,6 +23,10 @@ const BUNDLED_REACT_PACKAGES = [
   'eslint-plugin-react-refresh',
 ] as const
 
+const BUNDLED_RUNTIME_PACKAGES = [
+  '@typescript-eslint/utils',
+] as const
+
 const ANTFU_PEER_CHECK_PACKAGES = [
   '@eslint-react/eslint-plugin',
   'eslint-plugin-jsx-a11y',
@@ -52,6 +56,11 @@ function readInstalledPackageJson(name: string): { version: string } {
 
 describe('peer compatibility', () => {
   it.each(BUNDLED_REACT_PACKAGES)('bundles %s as a runtime dependency', (name) => {
+    expect(packageJson.dependencies?.[name]).toBeTruthy()
+    expect(packageJson.optionalDependencies?.[name]).toBeUndefined()
+  })
+
+  it.each(BUNDLED_RUNTIME_PACKAGES)('bundles %s as a runtime dependency', (name) => {
     expect(packageJson.dependencies?.[name]).toBeTruthy()
     expect(packageJson.optionalDependencies?.[name]).toBeUndefined()
   })
