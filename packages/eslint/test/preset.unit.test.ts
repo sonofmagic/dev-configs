@@ -78,6 +78,7 @@ describe('getPresets', () => {
       .filter((name): name is string => typeof name === 'string')
 
     expect(presetNames).toEqual([
+      'icebreaker/vue-style-blocks-parser',
       'stylelint',
       'tailwind',
       'mdx',

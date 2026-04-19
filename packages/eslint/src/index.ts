@@ -1,3 +1,4 @@
+export { parserPlain } from './antfu'
 export * from './factory'
 export * from './preset'
 export type {

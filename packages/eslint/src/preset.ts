@@ -1,4 +1,5 @@
 import type { UserConfigItem, UserDefinedOptions } from './types'
+import { parserPlain } from './antfu'
 import { resolveAccessibilityPresets, resolveMdxPresets, resolveNestPresets, resolveQueryPresets, resolveStylelintBridgePresets, resolveTailwindPresets } from './features'
 import { createBaseRuleSet, resolveUserOptions } from './options'
 
@@ -48,6 +49,22 @@ export function getPresets(options?: UserDefinedOptions, mode?: 'legacy'): [User
       },
     },
   ]
+
+  // When Vue is enabled, eslint-processor-vue-blocks extracts <style> blocks
+  // as virtual CSS files (e.g. Foo.vue/1_style.css). These need parserPlain so
+  // ESLint doesn't try to parse them as JavaScript. The formatter configs
+  // normally provide this parser, but when formatters: false the virtual files
+  // would hit the default JS parser and throw "Parsing error: Unexpected token ."
+  if (resolved.vue !== false && resolved.vue !== undefined) {
+    presets.push({
+      name: 'icebreaker/vue-style-blocks-parser',
+      files: ['**/*.vue/*.css', '**/*.vue/*.scss', '**/*.vue/*.less', '**/*.vue/*.postcss', '**/*.vue/*.pcss'],
+      languageOptions: {
+        parser: parserPlain,
+      },
+      rules: {},
+    })
+  }
 
   presets.push(
     ...resolveStylelintBridgePresets(resolved.stylelint),
