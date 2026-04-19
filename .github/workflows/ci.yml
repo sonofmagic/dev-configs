@@ -43,6 +43,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Check tracked build artifacts
+        run: pnpm check:no-tracked-build-artifacts
+
       - name: Security Audit
         run: pnpm audit --audit-level=moderate
         continue-on-error: true

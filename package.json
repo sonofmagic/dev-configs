@@ -25,9 +25,10 @@
   },
   "scripts": {
     "build": "turbo run build",
+    "check:no-tracked-build-artifacts": "node ./scripts/check-no-tracked-build-artifacts.mjs",
     "dev": "turbo run dev --parallel",
-    "test": "node -e \"require('node:fs').mkdirSync('coverage/.tmp', { recursive: true })\" && vitest run && pnpm test:types",
-    "test:dev": "node -e \"require('node:fs').mkdirSync('coverage/.tmp', { recursive: true })\" && vitest",
+    "test": "node -e \"require('node:fs').mkdirSync('coverage/.tmp', { recursive: true })\" && pnpm check:no-tracked-build-artifacts && vitest run && pnpm test:types",
+    "test:dev": "node -e \"require('node:fs').mkdirSync('coverage/.tmp', { recursive: true })\" && pnpm check:no-tracked-build-artifacts && vitest",
     "test:types": "turbo run test:types",
     "test:release-scripts": "vitest run -c scripts/release/vitest.config.mjs",
     "lint": "turbo run lint",
