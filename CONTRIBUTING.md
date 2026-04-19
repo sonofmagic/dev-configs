@@ -12,6 +12,13 @@ This repository uses Changesets for package releases.
 Pull requests that touch publishable package files without a changeset will fail
 the `Changeset Check` workflow.
 
+## Build Artifacts
+
+Generated build outputs such as `packages/*/dist` should not be committed to
+Git. Keep source changes in `src/`, run the package build when you need to
+verify publish output locally, and rely on the package `files` field plus
+`pnpm pack`/release automation to include `dist` in the published tarball.
+
 ## Publishing Auth
 
 The release workflow supports two npm authentication modes:
