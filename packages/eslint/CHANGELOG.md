@@ -1,5 +1,13 @@
 # @icebreakers/eslint-config
 
+## 4.0.8
+
+### Patch Changes
+
+- 🐛 **register `parserPlain` for Vue `<style>` virtual files when `formatters: false`** [`a94efbb`](https://github.com/sonofmagic/dev-configs/commit/a94efbbc866349e10be8d5460e62c726002e0c3e) by @sonofmagic
+  - When `formatters: false`, `eslint-processor-vue-blocks` still extracts `<style>` blocks as virtual `.css` files, but no parser was registered for them — causing `Parsing error: Unexpected token .`. Now `parserPlain` is always registered for `**/*.vue/*.css` (and scss/less/postcss) whenever `vue` is enabled, regardless of the `formatters` setting.
+  - Also re-exports `parserPlain` from the package entry so users can import it directly.
+
 ## 4.0.7
 
 ### Patch Changes
