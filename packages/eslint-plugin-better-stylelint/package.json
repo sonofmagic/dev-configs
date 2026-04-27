@@ -58,7 +58,7 @@
     }
   },
   "dependencies": {
-    "stylelint": "^17.8.0"
+    "stylelint": "^17.9.1"
   },
   "publishConfig": {
     "access": "public",
