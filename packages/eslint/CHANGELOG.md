@@ -1,5 +1,13 @@
 # @icebreakers/eslint-config
 
+## 4.0.9
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`eaefeee`](https://github.com/sonofmagic/dev-configs/commit/eaefeee2174b6221dc6e31a3383f967896ab628f) by @sonofmagic
+- 📦 **Dependencies** [`eaefeee`](https://github.com/sonofmagic/dev-configs/commit/eaefeee2174b6221dc6e31a3383f967896ab628f)
+  → `eslint-plugin-better-stylelint@1.0.3`, `@icebreakers/stylelint-config@3.0.6`
+
 ## 4.0.8
 
 ### Patch Changes

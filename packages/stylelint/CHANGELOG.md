@@ -1,5 +1,15 @@
 # @icebreakers/stylelint-config
 
+## 3.0.6
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`eaefeee`](https://github.com/sonofmagic/dev-configs/commit/eaefeee2174b6221dc6e31a3383f967896ab628f) by @sonofmagic
+
+- 🐛 **Downgrade `property-no-vendor-prefix` to a warning by default and disable it for Mini Program configs.** [`8f14d4f`](https://github.com/sonofmagic/dev-configs/commit/8f14d4fcc5b8445a494f8ec4a68daed032dde218) by @sonofmagic
+- 📦 **Dependencies**
+  → `stylelint-plugin-tailwindcss@2.0.3`
+
 ## 3.0.5
 
 ### Patch Changes
