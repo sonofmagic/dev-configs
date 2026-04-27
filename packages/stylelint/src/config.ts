@@ -123,10 +123,19 @@ function resolveRules(options: IcebreakerStylelintOptions | undefined): NonNulla
   const ignoreUnits = resolveIgnoreList('units', options?.ignores)
   const ignoreTypes = resolveIgnoreList('types', options?.ignores)
   const ignoreAtRules = resolveIgnoreList('atRules', options?.ignores)
+  const propertyNoVendorPrefixRule = options?.miniProgram
+    ? null
+    : [
+        true,
+        {
+          severity: 'warning',
+        },
+      ]
 
   const rules: NonNullable<StylelintConfig['rules']> = {
     'function-name-case': null,
     'media-feature-range-notation': 'prefix',
+    'property-no-vendor-prefix': propertyNoVendorPrefixRule,
     'selector-class-pattern': [
       new RegExp(BEM_OOCSS_CLASS_NAME_PATTERN),
       {

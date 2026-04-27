@@ -88,6 +88,7 @@ export default createStylelintConfig({
 
 - 允许 BEM / OOCSS 风格的类名（如 `block__element--modifier`、`object--state`）
 - 允许 `rpx` 单位，兼容小程序
+- 将 `property-no-vendor-prefix` 降级为 warning；小程序模式下关闭该规则，允许 `-webkit-background-clip` 等平台前缀属性
 - 忽略 Tailwind / UnoCSS 常见指令（如 `apply`、`screen`）
 - 禁止在手写样式中声明 `.flex`、`.hover\:bg-red-500` 这类 Tailwind 原子类选择器
 - 忽略多端平台常见的 `page` 选择器

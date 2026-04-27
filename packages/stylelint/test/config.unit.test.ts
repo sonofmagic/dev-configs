@@ -63,6 +63,12 @@ describe('createIcebreakerStylelintConfig', () => {
     expect(config.rules?.['tailwindcss/no-invalid-apply']).toBe(true)
     expect(config.rules?.['unocss/no-atomic-class']).toBe(true)
     expect(config.rules?.['unocss/no-invalid-apply']).toBe(true)
+    expect(config.rules?.['property-no-vendor-prefix']).toEqual([
+      true,
+      {
+        severity: 'warning',
+      },
+    ])
     expect(config.rules?.['tailwindcss/no-apply']).toBeUndefined()
     expect(config.rules?.['tailwindcss/no-invalid-theme-function']).toBeUndefined()
     expect(config.rules?.['unocss/no-apply']).toBeUndefined()
@@ -192,6 +198,7 @@ describe('createIcebreakerStylelintConfig', () => {
       'miniprogram_npm/**',
       'coverage/**',
     ])
+    expect(config.rules?.['property-no-vendor-prefix']).toBeNull()
   })
 
   it('uses require.resolve when import.meta.resolve is disabled', async () => {

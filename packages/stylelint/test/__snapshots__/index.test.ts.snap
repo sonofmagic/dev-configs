@@ -55,6 +55,12 @@ exports[`index > common 1`] = `
     ],
     "function-name-case": null,
     "media-feature-range-notation": "prefix",
+    "property-no-vendor-prefix": [
+      true,
+      {
+        "severity": "warning",
+      },
+    ],
     "scss/at-rule-no-unknown": [
       true,
       {

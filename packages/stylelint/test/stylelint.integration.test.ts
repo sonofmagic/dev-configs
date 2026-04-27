@@ -91,6 +91,50 @@ describe('stylelint integration', () => {
     expect(result.results[0]?.warnings ?? []).toEqual([])
   })
 
+  it('reports vendor-prefixed properties as warnings by default', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.heading-title {',
+        '  color: transparent;',
+        '  -webkit-background-clip: text;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'vendor-prefix.css'),
+      config: icebreaker() as StylelintConfig,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === 'property-no-vendor-prefix',
+    )
+
+    expect(result.errored).toBe(false)
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]?.severity).toBe('warning')
+    expect(warnings[0]?.text).toContain('-webkit-background-clip')
+  })
+
+  it('allows vendor-prefixed properties in mini program configs', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.heading-title {',
+        '  color: transparent;',
+        '  -webkit-background-clip: text;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'vendor-prefix.wxss'),
+      config: createStylelintConfig({
+        miniProgram: true,
+      }) as StylelintConfig,
+    })
+
+    const warnings = (result.results[0]?.warnings ?? []).filter(
+      warning => warning.rule === 'property-no-vendor-prefix',
+    )
+
+    expect(result.errored).toBe(false)
+    expect(warnings).toHaveLength(0)
+  })
+
   it('allows safe formatting rules to be explicitly disabled by user overrides', async () => {
     const input = [
       '.page-shell[data-state=open] {',

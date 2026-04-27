@@ -90,6 +90,7 @@ Defaults include:
 
 - Allowing BEM/OOCSS class selectors (e.g. `block__element--modifier`, `object--state`)
 - Allowing the `rpx` unit for mini-program compatibility
+- Lowering `property-no-vendor-prefix` to a warning; Mini Program mode disables the rule so platform-prefixed properties such as `-webkit-background-clip` are allowed
 - Ignoring Tailwind/UnoCSS style at-rules (`apply`, `screen`, etc.)
 - Disallowing authored Tailwind utility selectors such as `.flex` or `.hover\:bg-red-500`
 - Ignoring the `page` selector used by various platforms
