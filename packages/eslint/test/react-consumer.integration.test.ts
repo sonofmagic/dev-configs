@@ -7,13 +7,12 @@ import { hasAllPackages } from '@/utils'
 
 const BUNDLED_REACT_PACKAGES = [
   '@eslint-react/eslint-plugin',
-  'eslint-plugin-jsx-a11y',
   'eslint-plugin-react-hooks',
   'eslint-plugin-react-refresh',
 ] as const
 
 describe('react consumer smoke test', () => {
-  it('resolves bundled react plugins from the package itself', async () => {
+  it('resolves bundled react core plugins from the package itself', async () => {
     const originalCwd = process.cwd()
     const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'icebreaker-react-consumer-'))
     const filePath = path.join(tempDir, 'App.jsx')
@@ -44,7 +43,6 @@ describe('react consumer smoke test', () => {
         cwd: tempDir,
         overrideConfig: await icebreaker({
           react: true,
-          a11y: true,
         }).toConfigs(),
         overrideConfigFile: true,
       })
@@ -52,7 +50,7 @@ describe('react consumer smoke test', () => {
       const config = await eslint.calculateConfigForFile(filePath)
       const [result] = await eslint.lintFiles([filePath])
 
-      expect(config.rules?.['jsx-a11y/alt-text']).toBeDefined()
+      expect(config.rules?.['react/rules-of-hooks']).toBeDefined()
       expect(result?.messages.filter(message => message.fatal)).toEqual([])
     }
     finally {

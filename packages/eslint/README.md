@@ -10,8 +10,8 @@
 
 - Node.js 22 or newer
 - ESLint 9 with flat config support
-- React related plugins are bundled with this package. Next.js, Query, and other ecosystem presets remain optional and are skipped automatically when their plugins are missing.
-- Install optional peer plugins when you turn on Tailwind (`eslint-plugin-tailwindcss` or `eslint-plugin-better-tailwindcss`), MDX (`eslint-plugin-mdx`), or UnoCSS (`@unocss/eslint-plugin`)
+- React core plugins are bundled with this package. Next.js, Query, accessibility, and other ecosystem presets remain optional and are skipped automatically when their plugins are missing.
+- Install optional plugins when you turn on Tailwind (`eslint-plugin-tailwindcss` or `eslint-plugin-better-tailwindcss`), MDX (`eslint-plugin-mdx`), UnoCSS (`@unocss/eslint-plugin`), React accessibility (`eslint-plugin-jsx-a11y`), or Vue accessibility (`eslint-plugin-vuejs-accessibility` plus its `globals` peer).
 
 ## Installation
 
@@ -67,7 +67,7 @@ export default icebreaker({
 
 - `miniProgram` – injects Mini Program globals, ignores common outputs/config files, and enables Vue-side Mini Program compatibility tweaks when `vue` is on.
 - `vue` – enables Vue + optionally version specific overrides (Vue 2/3) and ionic/miniProgram adjustments.
-- `react` – defers to the upstream React preset and unlocks accessibility helpers when `a11y` is enabled. The required React lint plugins are bundled with this package.
+- `react` – defers to the upstream React preset. The required React core lint plugins are bundled with this package; React accessibility still requires `eslint-plugin-jsx-a11y` when `a11y` is enabled.
 - `query` – toggles the TanStack Query plugin (`@tanstack/eslint-plugin-query`) and its recommended lint rules. Missing plugin installs are treated as a no-op.
 - `tailwindcss` – pass `true` to use the built-in Tailwind flat config or provide `{ entryPoint, tailwindConfig }` for Tailwind v4/v3 projects.
 - `unocss` – pass `true` to use the upstream Antfu UnoCSS preset, or provide `{ strict, attributify, configPath }` to keep the same preset while using the Icebreaker wrapper API.

@@ -18,7 +18,6 @@ const antfuPackageJson = require('@antfu/eslint-config/package.json') as {
 
 const BUNDLED_REACT_PACKAGES = [
   '@eslint-react/eslint-plugin',
-  'eslint-plugin-jsx-a11y',
   'eslint-plugin-react-hooks',
   'eslint-plugin-react-refresh',
 ] as const
@@ -29,11 +28,23 @@ const BUNDLED_RUNTIME_PACKAGES = [
 
 const ANTFU_PEER_CHECK_PACKAGES = [
   '@eslint-react/eslint-plugin',
-  'eslint-plugin-jsx-a11y',
   'eslint-plugin-react-refresh',
 ] as const
 
-const OPTIONAL_UNOCSS_PACKAGES = [
+const OPTIONAL_A11Y_PACKAGES = [
+  'eslint-plugin-jsx-a11y',
+  'eslint-plugin-vuejs-accessibility',
+] as const
+
+const CONSUMER_PROVIDED_FEATURE_PACKAGES = [
+  '@next/eslint-plugin-next',
+  '@tanstack/eslint-plugin-query',
+  '@unocss/eslint-plugin',
+  'eslint-plugin-mdx',
+] as const
+
+const ANTFU_OPTIONAL_PEER_PACKAGES = [
+  '@next/eslint-plugin-next',
   '@unocss/eslint-plugin',
 ] as const
 
@@ -65,9 +76,9 @@ describe('peer compatibility', () => {
     expect(packageJson.optionalDependencies?.[name]).toBeUndefined()
   })
 
-  it.each(OPTIONAL_UNOCSS_PACKAGES)('ships %s as an optional dependency', (name) => {
-    expect(packageJson.optionalDependencies?.[name]).toBeTruthy()
+  it.each([...OPTIONAL_A11Y_PACKAGES, ...CONSUMER_PROVIDED_FEATURE_PACKAGES])('keeps %s consumer provided', (name) => {
     expect(packageJson.dependencies?.[name]).toBeUndefined()
+    expect(packageJson.optionalDependencies?.[name]).toBeUndefined()
   })
 
   it.each(ANTFU_PEER_CHECK_PACKAGES)(
@@ -85,18 +96,7 @@ describe('peer compatibility', () => {
     },
   )
 
-  it.each(OPTIONAL_UNOCSS_PACKAGES)(
-    'keeps the installed %s version within the @antfu/eslint-config peer range',
-    (name) => {
-      const installedPackageJson = readInstalledPackageJson(name)
-      const peerRange = antfuPackageJson.peerDependencies?.[name]
-
-      expect(peerRange).toBeTruthy()
-      expect(
-        semver.satisfies(installedPackageJson.version, peerRange!, {
-          includePrerelease: true,
-        }),
-      ).toBe(true)
-    },
-  )
+  it.each(ANTFU_OPTIONAL_PEER_PACKAGES)('documents %s as an @antfu optional peer', (name) => {
+    expect(antfuPackageJson.peerDependencies?.[name]).toBeTruthy()
+  })
 })

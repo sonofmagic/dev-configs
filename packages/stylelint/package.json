@@ -57,9 +57,11 @@
     "comment-json": "^5.0.0",
     "postcss-html": "^1.8.1",
     "stylelint-config-recess-order": "^7.6.1",
+    "stylelint-config-recommended": "^18.0.0",
     "stylelint-config-recommended-scss": "^17.0.1",
     "stylelint-config-recommended-vue": "^1.6.1",
     "stylelint-config-standard-scss": "^17.0.0",
+    "stylelint-order": "^7.0.0",
     "stylelint-plugin-tailwindcss": "workspace:*"
   },
   "publishConfig": {
