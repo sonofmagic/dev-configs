@@ -1,5 +1,16 @@
 # @icebreakers/stylelint-config
 
+## 4.0.0
+
+### Major Changes
+
+- 🚀 **deps: upgrade** [`7cc41ca`](https://github.com/sonofmagic/dev-configs/commit/7cc41caca95921bf7e59d1cc352c4504cbee30aa) by @sonofmagic
+
+### Patch Changes
+
+- 📦 **Dependencies**
+  → `stylelint-plugin-tailwindcss@2.0.4`
+
 ## 3.0.7
 
 ### Patch Changes
