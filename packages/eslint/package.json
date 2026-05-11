@@ -61,14 +61,14 @@
     }
   },
   "dependencies": {
-    "@antfu/eslint-config": "8.2.0",
-    "@eslint-react/eslint-plugin": "^3.0.0",
+    "@antfu/eslint-config": "9.0.0",
+    "@eslint-react/eslint-plugin": "^5.7.5",
     "@icebreakers/stylelint-config": "workspace:*",
     "@typescript-eslint/rule-tester": "^8.59.2",
     "@typescript-eslint/typescript-estree": "^8.59.2",
     "@typescript-eslint/utils": "^8.59.2",
     "@vue/compiler-sfc": "^3.5.34",
-    "eslint-flat-config-utils": "3.1.0",
+    "eslint-flat-config-utils": "3.2.0",
     "eslint-plugin-better-stylelint": "workspace:*",
     "eslint-plugin-better-tailwindcss": "^4.5.0",
     "eslint-plugin-format": "2.0.1",
