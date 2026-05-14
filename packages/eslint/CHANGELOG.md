@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 4.0.12
+
+### Patch Changes
+
+- 🐛 **Keep the v4 release line installable on Node.js 20.19 and publish the next v4 dist-tag release from the latest v4 package version.** [#272](https://github.com/sonofmagic/dev-configs/pull/272) by @github-actions
+
 ## 5.0.1
 
 ### Patch Changes
