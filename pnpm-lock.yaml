@@ -286,6 +286,9 @@ importers:
       eslint-plugin-tailwindcss:
         specifier: 3.18.3
         version: 3.18.3(tailwindcss@4.2.1)
+      eslint-plugin-unicorn:
+        specifier: ^62.0.0
+        version: 62.0.0(eslint@9.39.4(jiti@2.7.0))
     devDependencies:
       eslint:
         specifier: ^9.39.2

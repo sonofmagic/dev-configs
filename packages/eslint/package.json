@@ -74,7 +74,8 @@
     "eslint-plugin-format": "2.0.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.4.24",
-    "eslint-plugin-tailwindcss": "3.18.3"
+    "eslint-plugin-tailwindcss": "3.18.3",
+    "eslint-plugin-unicorn": "^62.0.0"
   },
   "devDependencies": {
     "eslint": "^9.39.2"

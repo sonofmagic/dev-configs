@@ -24,6 +24,7 @@ const BUNDLED_REACT_PACKAGES = [
 
 const BUNDLED_RUNTIME_PACKAGES = [
   '@typescript-eslint/utils',
+  'eslint-plugin-unicorn',
 ] as const
 
 const ANTFU_PEER_CHECK_PACKAGES = [
@@ -98,5 +99,14 @@ describe('peer compatibility', () => {
 
   it.each(ANTFU_OPTIONAL_PEER_PACKAGES)('documents %s as an @antfu optional peer', (name) => {
     expect(antfuPackageJson.peerDependencies?.[name]).toBeTruthy()
+  })
+
+  it('pins eslint-plugin-unicorn past the prefer-includes Vue SFC fixer regression', () => {
+    const dependencyRange = packageJson.dependencies?.['eslint-plugin-unicorn']
+    const installedPackageJson = readInstalledPackageJson('eslint-plugin-unicorn')
+
+    expect(dependencyRange).toBeTruthy()
+    expect(semver.minVersion(dependencyRange!)?.version).toBe('62.0.0')
+    expect(semver.gte(installedPackageJson.version, '61.0.0')).toBe(true)
   })
 })
