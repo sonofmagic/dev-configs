@@ -112,12 +112,8 @@ jobs:
           case "$branch" in
             main)
               ;;
-            v3|legacy)
+            v3|v4|legacy)
               npm_tag="$branch"
-              ;;
-            v4)
-              npm_tag="$branch"
-              pre_tag="$branch"
               ;;
             alpha|beta|rc)
               npm_tag="$branch"
