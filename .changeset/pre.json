@@ -1,0 +1,16 @@
+{
+  "mode": "pre",
+  "tag": "v4",
+  "initialVersions": {
+    "@icebreakers/mock": "0.0.42",
+    "@icebreakers/changelog-github": "1.0.2",
+    "@icebreakers/commitlint-config": "3.0.1",
+    "@icebreakers/eslint-config": "5.0.1",
+    "eslint-plugin-better-stylelint": "1.0.4",
+    "lightningcss-tailwindcss": "1.0.0",
+    "postcss-tailwindcss": "2.0.5",
+    "@icebreakers/stylelint-config": "4.0.1",
+    "stylelint-plugin-tailwindcss": "2.0.5"
+  },
+  "changesets": []
+}
