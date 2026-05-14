@@ -11,6 +11,7 @@ import type {
   UserConfigItem,
   UserDefinedOptions,
 } from './types'
+import e18e from '@e18e/eslint-plugin'
 import { antfu } from './antfu'
 import { getPresets } from './preset'
 import { hasAllPackages } from './utils'
@@ -196,16 +197,19 @@ function normalizeUserConfig(
   userConfig: UserConfigItem,
 ): ResolvableUserConfig | Promise<ResolvableUserConfig> {
   if (typeof (userConfig as PromiseLike<Awaited<UserConfigItem>>)?.then === 'function') {
-    return Promise.resolve(userConfig).then((resolved) => {
-      return isComposer(resolved) ? resolved : normalizeResolvedUserConfig(resolved)
-    })
+    return (async (): Promise<ResolvableUserConfig> => {
+      const resolved = await (userConfig as PromiseLike<unknown>)
+      return isComposer(resolved)
+        ? resolved
+        : normalizeResolvedUserConfig(resolved as NormalizableUserConfig) as ResolvableUserConfig
+    })()
   }
 
   const resolvedUserConfig = userConfig as ResolvableUserConfig
 
   return isComposer(resolvedUserConfig)
     ? resolvedUserConfig
-    : normalizeResolvedUserConfig(resolvedUserConfig)
+    : normalizeResolvedUserConfig(resolvedUserConfig) as ResolvableUserConfig
 }
 
 function isFormatterOptionsObject(
@@ -319,6 +323,26 @@ function applyOxfmtFormatterOverrides(
   return nextComposer
 }
 
+function applyAntfuV7PluginCompatibility(
+  composer: FlatConfigComposer<TypedFlatConfigItem, ConfigNames>,
+): FlatConfigComposer<TypedFlatConfigItem, ConfigNames> {
+  if (typeof composer.prepend !== 'function') {
+    return composer
+  }
+
+  return composer.prepend({
+    name: 'icebreaker/antfu-v7-plugin-compat',
+    plugins: {
+      e18e,
+    },
+  }).append({
+    name: 'icebreaker/react-type-info-compat',
+    rules: {
+      'react/no-implicit-key': 'off',
+    },
+  })
+}
+
 // for vue2 @see https://github.com/antfu/eslint-config/issues/367#issuecomment-1979646400
 export function icebreaker(
   options: UserDefinedOptions = {},
@@ -327,11 +351,11 @@ export function icebreaker(
   const [resolved, ...presets] = getPresets(options)
   const normalized = normalizeUnoCssOptions(normalizeOptionalAntfuFeatures(resolved))
   const antfuOptions = toAntfuOptions(normalized)
-  const composer = antfu(
+  const composer = applyAntfuV7PluginCompatibility(antfu(
     antfuOptions,
     ...presets,
     ...userConfigs.map(normalizeUserConfig),
-  )
+  ))
   return applyOxfmtFormatterOverrides(composer, normalized.formatters)
 }
 
@@ -344,11 +368,11 @@ export function icebreakerLegacy(
   const [resolved, ...presets] = getPresets(options, 'legacy')
   const normalized = normalizeUnoCssOptions(normalizeOptionalAntfuFeatures(resolved))
   const antfuOptions = toAntfuOptions(normalized)
-  const composer = antfu(
+  const composer = applyAntfuV7PluginCompatibility(antfu(
     antfuOptions,
     ...presets,
     ...userConfigs.map(normalizeUserConfig),
-  )
+  ))
   return applyOxfmtFormatterOverrides(composer, normalized.formatters)
 }
 

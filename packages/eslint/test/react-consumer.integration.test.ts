@@ -50,7 +50,7 @@ describe('react consumer smoke test', () => {
       const config = await eslint.calculateConfigForFile(filePath)
       const [result] = await eslint.lintFiles([filePath])
 
-      expect(config.rules?.['react/rules-of-hooks']).toBeDefined()
+      expect(config.rules?.['react-hooks/rules-of-hooks']).toBeDefined()
       expect(result?.messages.filter(message => message.fatal)).toEqual([])
     }
     finally {
