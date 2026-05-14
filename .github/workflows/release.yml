@@ -4,6 +4,22 @@ on:
   push:
     branches:
       - main
+      - v3
+      - v4
+      - alpha
+      - beta
+      - rc
+      - legacy
+      - v3-alpha
+      - v3-beta
+      - v3-rc
+      - v3-legacy
+      - v4-alpha
+      - v4-beta
+      - v4-rc
+      - v4-legacy
+      - 'v3/**'
+      - 'v4/**'
   workflow_dispatch:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
@@ -83,15 +99,65 @@ jobs:
             echo "NPM_TOKEN is not set; relying on npm trusted publishing via OIDC"
           fi
 
+      - name: Resolve release channel
+        id: release-channel
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          branch="${GITHUB_REF_NAME}"
+          npm_tag="latest"
+          pre_tag=""
+
+          case "$branch" in
+            main)
+              ;;
+            v3|v4|legacy)
+              npm_tag="$branch"
+              ;;
+            alpha|beta|rc)
+              npm_tag="$branch"
+              pre_tag="$branch"
+              ;;
+            v3-alpha|v3/alpha|v4-alpha|v4/alpha)
+              npm_tag="${branch//\//-}"
+              pre_tag="alpha"
+              ;;
+            v3-beta|v3/beta|v4-beta|v4/beta)
+              npm_tag="${branch//\//-}"
+              pre_tag="beta"
+              ;;
+            v3-rc|v3/rc|v4-rc|v4/rc)
+              npm_tag="${branch//\//-}"
+              pre_tag="rc"
+              ;;
+            v3-legacy|v3/legacy|v4-legacy|v4/legacy)
+              npm_tag="${branch//\//-}"
+              ;;
+            *)
+              echo "Unsupported release branch: $branch" >&2
+              exit 1
+              ;;
+          esac
+
+          echo "npm_tag=$npm_tag" >> "$GITHUB_OUTPUT"
+          echo "pre_tag=$pre_tag" >> "$GITHUB_OUTPUT"
+          echo "Resolved npm dist-tag: $npm_tag"
+          if [ -n "$pre_tag" ]; then
+            echo "Resolved Changesets prerelease tag: $pre_tag"
+          fi
+
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
         with:
-          version: pnpm changeset version
-          publish: pnpm publish-packages
+          version: pnpm release:version
+          publish: pnpm release:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          CHANGESETS_NPM_TAG: ${{ steps.release-channel.outputs.npm_tag }}
+          CHANGESETS_PRE_TAG: ${{ steps.release-channel.outputs.pre_tag }}
           npm_config_registry: https://registry.npmjs.org
           NPM_CONFIG_PROVENANCE: true
 

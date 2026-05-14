@@ -34,6 +34,8 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "publish-packages": "turbo run build lint test test:types && changeset version && changeset publish",
+    "release:publish": "node ./scripts/release/publish-for-channel.mjs",
+    "release:version": "node ./scripts/release/version-for-channel.mjs",
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky",
     "postinstall": "pnpm run build",

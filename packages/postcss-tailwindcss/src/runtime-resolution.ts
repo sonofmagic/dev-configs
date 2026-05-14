@@ -9,8 +9,18 @@ import enhancedResolve from 'enhanced-resolve'
 import { createPathsMatcher, getTsconfig, parseTsconfig } from 'get-tsconfig'
 import { TAILWIND_CONFIG_FILENAMES } from './constants'
 
-const fileSystem = new enhancedResolve.CachedInputFileSystem(fs, 30_000)
-const pathsMatcherCache = new Map<string, ReturnType<typeof createPathsMatcher>>()
+type EnhancedResolveFileSystem = ConstructorParameters<
+  typeof enhancedResolve.CachedInputFileSystem
+>[0]
+
+const fileSystem = new enhancedResolve.CachedInputFileSystem(
+  fs as unknown as EnhancedResolveFileSystem,
+  30_000,
+)
+const pathsMatcherCache = new Map<
+  string,
+  ReturnType<typeof createPathsMatcher>
+>()
 
 function getPathsMatcher(tsconfigPath?: string) {
   if (!tsconfigPath) {
@@ -40,13 +50,11 @@ function getPathsMatcher(tsconfigPath?: string) {
   return matcher
 }
 
-function createResolver(
-  options: {
-    conditionNames: string[]
-    extensions: string[]
-    mainFields?: string[]
-  },
-) {
+function createResolver(options: {
+  conditionNames: string[]
+  extensions: string[]
+  mainFields?: string[]
+}) {
   return enhancedResolve.ResolverFactory.createResolver({
     conditionNames: options.conditionNames,
     extensions: options.extensions,
@@ -101,7 +109,10 @@ function resolveWithTsconfigPaths(
   return null
 }
 
-function findFileRecursive(cwd: string, filenames: readonly string[]): string | null {
+function findFileRecursive(
+  cwd: string,
+  filenames: readonly string[],
+): string | null {
   let currentDir = cwd
 
   while (true) {
@@ -126,7 +137,9 @@ function readTailwindVersion(packageJsonPath: string | null): string | null {
   }
 
   try {
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')) as {
+    const packageJson = JSON.parse(
+      fs.readFileSync(packageJsonPath, 'utf8'),
+    ) as {
       version?: string
     }
     return packageJson.version ?? null
@@ -150,14 +163,21 @@ export function resolveTailwindRuntime(
     mainFields: ['style'],
   })
 
-  const packageJsonPath = resolveWithResolver(jsResolver, context.cwd, 'tailwindcss/package.json')
-    ?? resolveWithTsconfigPaths(context, jsResolver, context.cwd, 'tailwindcss/package.json')
+  const packageJsonPath
+    = resolveWithResolver(jsResolver, context.cwd, 'tailwindcss/package.json')
+      ?? resolveWithTsconfigPaths(
+        context,
+        jsResolver,
+        context.cwd,
+        'tailwindcss/package.json',
+      )
   const installationPath = packageJsonPath
     ? path.dirname(packageJsonPath)
     : null
 
-  const cssEntryPath = resolveWithResolver(cssResolver, context.cwd, 'tailwindcss')
-    ?? resolveWithTsconfigPaths(context, cssResolver, context.cwd, 'tailwindcss')
+  const cssEntryPath
+    = resolveWithResolver(cssResolver, context.cwd, 'tailwindcss')
+      ?? resolveWithTsconfigPaths(context, cssResolver, context.cwd, 'tailwindcss')
 
   const configPath = findFileRecursive(context.cwd, TAILWIND_CONFIG_FILENAMES)
 
