@@ -56,6 +56,7 @@ describe('resolveUserOptions', () => {
     const resolved = resolveUserOptions()
 
     expect(resolved.vue).toBeUndefined()
+    expect(resolved.react).toBe(false)
 
     const resolvedTypescript = resolved.typescript
     if (!resolvedTypescript || typeof resolvedTypescript === 'boolean') {
@@ -69,6 +70,10 @@ describe('resolveUserOptions', () => {
 
     expect(resolved.vue).toBe(false)
     expect(resolved.typescript).toBe(false)
+  })
+
+  it('keeps react enabled when explicitly requested', () => {
+    expect(resolveUserOptions({ react: true }).react).toBe(true)
   })
 
   it('normalizes miniProgram and legacy weapp into one flag', () => {
