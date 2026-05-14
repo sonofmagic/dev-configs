@@ -244,6 +244,9 @@ importers:
       '@antfu/eslint-config':
         specifier: 7.2.0
         version: 7.2.0(bf1d95e89cffaf73392c576a9394ac30)
+      '@e18e/eslint-plugin':
+        specifier: ^0.4.1
+        version: 0.4.1(eslint@9.39.4(jiti@2.7.0))
       '@eslint-react/eslint-plugin':
         specifier: 2.13.0
         version: 2.13.0(eslint@9.39.4(jiti@2.7.0))(typescript@6.0.3)
@@ -9811,6 +9814,14 @@ snapshots:
       semver: 7.8.0
     optionalDependencies:
       eslint: 10.3.0(jiti@2.7.0)
+
+  '@e18e/eslint-plugin@0.4.1(eslint@9.39.4(jiti@2.7.0))':
+    dependencies:
+      empathic: 2.0.1
+      module-replacements: 3.0.0-beta.7
+      semver: 7.8.0
+    optionalDependencies:
+      eslint: 9.39.4(jiti@2.7.0)
 
   '@emnapi/core@1.10.0':
     dependencies:

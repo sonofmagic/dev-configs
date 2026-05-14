@@ -29,15 +29,7 @@ const BASE_RULES: Partial<Linter.RulesRecord> = {
   // `noPropertyAccessFromIndexSignature` requires bracket access (`obj['key']`)
   // for index-signature properties, which conflicts with ESLint core `dot-notation`.
   'dot-notation': 'off',
-  // Keep dependency bans visible without blocking CI on upstream preset defaults.
-  'e18e/ban-dependencies': ['warn', {
-    allowed: [
-      'axios',
-      'lint-staged',
-    ],
-  }],
-  // Disable until upstream fixes false positives on non-array iterables (Set, Map).
-  // See: [...new Set(arr)].sort() → new Set(arr).toSorted() is invalid.
+  'e18e/ban-dependencies': 'off',
   'e18e/prefer-array-to-sorted': 'off',
   // Disable all pnpm rules by default
   // @antfu/eslint-config auto-enables pnpm plugin when pnpm-workspace.yaml exists
