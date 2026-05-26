@@ -1,5 +1,15 @@
 # @icebreakers/eslint-config
 
+## 5.0.2
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`8200462`](https://github.com/sonofmagic/dev-configs/commit/82004621320d9655103f3457de8ac32e128d0fee) by @sonofmagic
+
+- 🐛 **Disable `vue/no-useless-template-attributes` when `miniProgram: true` is enabled so Mini Program compiler-only attributes on `<template #slot>` do not need local eslint comments.** [`e33db95`](https://github.com/sonofmagic/dev-configs/commit/e33db956d0253ad5eb28f0af8ac34de4a5061a88) by @sonofmagic
+- 📦 **Dependencies** [`8200462`](https://github.com/sonofmagic/dev-configs/commit/82004621320d9655103f3457de8ac32e128d0fee)
+  → `eslint-plugin-better-stylelint@1.0.5`, `@icebreakers/stylelint-config@4.0.2`
+
 ## 5.0.1
 
 ### Patch Changes
