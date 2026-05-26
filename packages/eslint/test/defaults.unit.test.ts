@@ -17,6 +17,7 @@ describe('getDefaultVueOptions', () => {
 
     const vueOverrides = vueOptions.overrides!
     expect(vueOverrides['vue/no-deprecated-slot-attribute']).toBe('off')
+    expect(vueOverrides['vue/no-useless-template-attributes']).toBe('off')
     expect(vueOverrides['vue/singleline-html-element-content-newline']).toMatchObject([
       'warn',
       {
@@ -33,6 +34,7 @@ describe('getDefaultVueOptions', () => {
     expect(vueOptions.overrides).toBeDefined()
     const vueOverrides = vueOptions.overrides!
     expect(vueOverrides['vue/no-deprecated-slot-attribute']).toBeUndefined()
+    expect(vueOverrides['vue/no-useless-template-attributes']).toBeUndefined()
     expect(vueOverrides['vue/singleline-html-element-content-newline']).toBeUndefined()
   })
 

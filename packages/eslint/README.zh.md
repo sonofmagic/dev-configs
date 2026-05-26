@@ -145,7 +145,7 @@ export default icebreaker({
 
 - 注入 `wx`、`Page`、`App`、`Component`、`getApp`、`getCurrentPages`、`requirePlugin`、`WechatMiniprogram` 全局变量
 - 忽略 `dist/**`、`.weapp-vite/**`、`miniprogram_npm/**`、`node_modules/**`、`project.config.json`、`project.private.config.json`
-- 当同时开启 `vue: true` 时，降低 `<text>` 等小程序内联标签的误报
+- 当同时开启 `vue: true` 时，降低 `<text>` 等小程序内联标签的误报，并关闭 `vue/no-useless-template-attributes`，允许 `<template #slot>` 上的编译器专用属性
 
 #### 原生小程序最小配置
 

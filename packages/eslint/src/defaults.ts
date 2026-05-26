@@ -109,6 +109,7 @@ export function getDefaultVueOptions(opts?: UserDefinedOptions) {
   }
   // 小程序启用
   if (isMiniProgramEnabled(opts)) {
+    overrides['vue/no-useless-template-attributes'] = 'off'
     overrides['vue/singleline-html-element-content-newline'] = [
       'warn',
       {
