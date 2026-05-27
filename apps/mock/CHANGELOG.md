@@ -1,5 +1,11 @@
 # @icebreakers/mock
 
+## 0.0.44
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`99cdf3a`](https://github.com/sonofmagic/dev-configs/commit/99cdf3abfd7adf611ed5b2d0b379694aa7db74a6) by @sonofmagic
+
 ## 0.0.43
 
 ### Patch Changes
