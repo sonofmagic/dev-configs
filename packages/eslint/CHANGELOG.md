@@ -1,5 +1,13 @@
 # @icebreakers/eslint-config
 
+## 5.0.3
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`99cdf3a`](https://github.com/sonofmagic/dev-configs/commit/99cdf3abfd7adf611ed5b2d0b379694aa7db74a6) by @sonofmagic
+
+- 🐛 **Relax Vue template rules when `miniProgram` is enabled so native Mini Program slot projection and inline third-party component content do not require local rule overrides.** [`e411731`](https://github.com/sonofmagic/dev-configs/commit/e4117318d377e8d5d2a1aed337f0bbd8a786c807) by @sonofmagic
+
 ## 5.0.2
 
 ### Patch Changes
