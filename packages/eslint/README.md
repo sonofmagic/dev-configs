@@ -124,7 +124,7 @@ Mini Program templates. It enables the following defaults:
 
 - injects readonly globals for `wx`, `Page`, `App`, `Component`, `getApp`, `getCurrentPages`, `requirePlugin`, and `WechatMiniprogram`
 - ignores `dist/**`, `.weapp-vite/**`, `miniprogram_npm/**`, `node_modules/**`, `project.config.json`, and `project.private.config.json`
-- when `vue: true` is also enabled, relaxes Vue template checks for Mini Program inline tags such as `<text>` and disables `vue/no-useless-template-attributes` so compiler-only `<template #slot>` attributes are allowed
+- when `vue: true` is also enabled, disables `vue/no-deprecated-slot-attribute`, `vue/no-useless-template-attributes`, and `vue/singleline-html-element-content-newline` so native Mini Program slot projection and compiler-only slot attributes are allowed
 
 #### Native Mini Program Minimal Config
 

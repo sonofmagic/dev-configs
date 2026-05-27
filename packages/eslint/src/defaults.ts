@@ -1,47 +1,6 @@
 import type { OptionsTypescript, OptionsVue } from './antfu'
 import type { UserDefinedOptions } from './types'
 
-const INLINE_ELEMENTS = [
-  'a',
-  'abbr',
-  'audio',
-  'b',
-  'bdi',
-  'bdo',
-  'canvas',
-  'cite',
-  'code',
-  'data',
-  'del',
-  'dfn',
-  'em',
-  'i',
-  'iframe',
-  'ins',
-  'kbd',
-  'label',
-  'map',
-  'mark',
-  'noscript',
-  'object',
-  'output',
-  'picture',
-  'q',
-  'ruby',
-  's',
-  'samp',
-  'small',
-  'span',
-  'strong',
-  'sub',
-  'sup',
-  'svg',
-  'time',
-  'u',
-  'var',
-  'video',
-]
-
 export const nestjsTypeScriptRules: NonNullable<OptionsTypescript['overrides']> = {
   'ts/explicit-function-return-type': 'off',
   'ts/explicit-module-boundary-types': 'off',
@@ -81,7 +40,6 @@ function isMiniProgramEnabled(opts?: UserDefinedOptions) {
   return opts?.miniProgram === true || opts?.weapp === true
 }
 
-//  'vue/no-deprecated-slot-attribute': 'off',
 export function getDefaultVueOptions(opts?: UserDefinedOptions) {
   const overrides: OptionsVue['overrides'] = {
     'vue/attribute-hyphenation': 'off',
@@ -109,20 +67,9 @@ export function getDefaultVueOptions(opts?: UserDefinedOptions) {
   }
   // 小程序启用
   if (isMiniProgramEnabled(opts)) {
+    overrides['vue/no-deprecated-slot-attribute'] = 'off'
     overrides['vue/no-useless-template-attributes'] = 'off'
-    overrides['vue/singleline-html-element-content-newline'] = [
-      'warn',
-      {
-        ignoreWhenNoAttributes: true,
-        ignoreWhenEmpty: true,
-        ignores: [
-          // 小程序标签
-          'text',
-          ...INLINE_ELEMENTS,
-        ],
-        externalIgnores: [],
-      },
-    ]
+    overrides['vue/singleline-html-element-content-newline'] = 'off'
   }
   const vueOptions: OptionsVue = {
     overrides,

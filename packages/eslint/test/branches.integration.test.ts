@@ -76,23 +76,28 @@ describe('eslint branch config behavior', () => {
     await fs.rm(tempDir, { recursive: true, force: true })
   })
 
-  it('enables weapp ignores for inline elements', async () => {
+  it('disables singleline content newline checks for mini program templates', async () => {
     const config = await eslint.calculateConfigForFile(
       path.join(tempDir, 'sample.vue'),
     )
-    const rule = config.rules?.['vue/singleline-html-element-content-newline'] as
-      | [string, { ignores?: string[] }]
-      | undefined
+    const rule = config.rules?.['vue/singleline-html-element-content-newline']
 
-    expect(rule).toBeDefined()
-    expect([1, 'warn']).toContain(rule?.[0])
-    expect(rule?.[1]?.ignores).toEqual(
-      expect.arrayContaining(['text']),
-    )
+    const ruleDisabled = rule === 'off'
+      || (Array.isArray(rule) && rule[0] === 0)
+    expect(ruleDisabled).toBe(true)
   })
 
-  it('disables deprecated slot attribute rule for ionic', async () => {
-    const config = await eslint.calculateConfigForFile(
+  it('disables deprecated slot attribute rule for mini program', async () => {
+    const configs = await icebreaker({
+      vue: true,
+      miniProgram: true,
+    }).toConfigs()
+    const miniProgramEslint = new ESLint({
+      cwd: tempDir,
+      overrideConfig: stripUnsupportedRules(configs),
+      overrideConfigFile: true,
+    })
+    const config = await miniProgramEslint.calculateConfigForFile(
       path.join(tempDir, 'sample.vue'),
     )
 

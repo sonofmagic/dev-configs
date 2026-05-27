@@ -548,6 +548,34 @@ describe('eslint integration fixtures', () => {
     expect(result?.messages.some(message => message.ruleId === 'no-undef')).toBe(false)
   })
 
+  it('allows mini program native slot projection in Vue templates', async () => {
+    const eslint = new ESLint({
+      cwd: ROOT_DIR,
+      overrideConfig: stripUnsupportedRules(await icebreaker({
+        vue: true,
+        miniProgram: true,
+      }).toConfigs()),
+      overrideConfigFile: true,
+    })
+
+    const [result] = await eslint.lintText(
+      [
+        '<template>',
+        '  <van-cell>',
+        '    <t-button slot="right-icon">Open</t-button>',
+        '    <template slot="title">Title</template>',
+        '  </van-cell>',
+        '</template>',
+        '',
+      ].join('\n'),
+      {
+        filePath: path.join(ROOT_DIR, 'mini-program-slots.vue'),
+      },
+    )
+
+    expect(result?.messages).toEqual([])
+  })
+
   it('discovers uno.config.ts from project root when unocss.configPath is omitted', async () => {
     const tempDir = path.join(TEMP_ROOT, `unocss-root-${crypto.randomUUID()}`)
     await fs.rm(tempDir, { recursive: true, force: true })

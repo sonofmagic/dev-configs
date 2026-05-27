@@ -10,22 +10,26 @@ describe('getDefaultVueOptions', () => {
     expect(vueOverrides['vue/no-unused-refs']).toBe('warn')
   })
 
-  it('adds ionic and weapp tweaks when enabled', () => {
-    const vueOptions = getDefaultVueOptions({ ionic: true, miniProgram: true })
+  it('adds ionic tweaks when enabled', () => {
+    const vueOptions = getDefaultVueOptions({ ionic: true })
+
+    expect(vueOptions.overrides).toBeDefined()
+
+    const vueOverrides = vueOptions.overrides!
+    expect(vueOverrides['vue/no-deprecated-slot-attribute']).toBe('off')
+    expect(vueOverrides['vue/no-useless-template-attributes']).toBeUndefined()
+    expect(vueOverrides['vue/singleline-html-element-content-newline']).toBeUndefined()
+  })
+
+  it('adds mini program tweaks when enabled', () => {
+    const vueOptions = getDefaultVueOptions({ miniProgram: true })
 
     expect(vueOptions.overrides).toBeDefined()
 
     const vueOverrides = vueOptions.overrides!
     expect(vueOverrides['vue/no-deprecated-slot-attribute']).toBe('off')
     expect(vueOverrides['vue/no-useless-template-attributes']).toBe('off')
-    expect(vueOverrides['vue/singleline-html-element-content-newline']).toMatchObject([
-      'warn',
-      {
-        ignoreWhenNoAttributes: true,
-        ignoreWhenEmpty: true,
-        ignores: expect.arrayContaining(['text', 'span']),
-      },
-    ])
+    expect(vueOverrides['vue/singleline-html-element-content-newline']).toBe('off')
   })
 
   it('keeps ionic and weapp overrides disabled by default', () => {
@@ -41,7 +45,8 @@ describe('getDefaultVueOptions', () => {
   it('keeps the legacy weapp alias working', () => {
     const vueOptions = getDefaultVueOptions({ weapp: true })
 
-    expect(vueOptions.overrides?.['vue/singleline-html-element-content-newline']).toBeDefined()
+    expect(vueOptions.overrides?.['vue/no-deprecated-slot-attribute']).toBe('off')
+    expect(vueOptions.overrides?.['vue/singleline-html-element-content-newline']).toBe('off')
   })
 })
 
