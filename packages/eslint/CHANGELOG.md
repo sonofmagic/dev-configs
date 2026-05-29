@@ -1,5 +1,11 @@
 # @icebreakers/eslint-config
 
+## 5.0.4
+
+### Patch Changes
+
+- 🐛 **增强小程序 Vue 场景默认规则：当 props 命名为 id 时给出 warning，避免小程序 properties 无法稳定取值。** [`1a83801`](https://github.com/sonofmagic/dev-configs/commit/1a838015e6bc75480bacf264ecf7f960afb33af5) by @sonofmagic
+
 ## 5.0.3
 
 ### Patch Changes
