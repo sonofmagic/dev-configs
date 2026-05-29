@@ -576,6 +576,48 @@ describe('eslint integration fixtures', () => {
     expect(result?.messages).toEqual([])
   })
 
+  it('warns mini program Vue props named id without blocking class and style props', async () => {
+    const eslint = new ESLint({
+      cwd: ROOT_DIR,
+      overrideConfig: stripUnsupportedRules(await icebreaker({
+        vue: true,
+        miniProgram: true,
+      }).toConfigs()),
+      overrideConfigFile: true,
+    })
+
+    const [result] = await eslint.lintText(
+      [
+        '<script setup lang="ts">',
+        'const props = defineProps<{',
+        '  id?: string',
+        '  class?: string',
+        '  style?: string',
+        '}>()',
+        '</script>',
+        '',
+        '<template>',
+        '  <view :class="props.class" :style="props.style" />',
+        '</template>',
+        '',
+      ].join('\n'),
+      {
+        filePath: path.join(ROOT_DIR, 'mini-program-props.vue'),
+      },
+    )
+
+    const restrictedPropMessages = result?.messages.filter(message =>
+      message.ruleId === 'vue/no-restricted-props',
+    )
+
+    expect(restrictedPropMessages).toEqual([
+      expect.objectContaining({
+        severity: 1,
+        message: expect.stringContaining('id prop'),
+      }),
+    ])
+  })
+
   it('discovers uno.config.ts from project root when unocss.configPath is omitted', async () => {
     const tempDir = path.join(TEMP_ROOT, `unocss-root-${crypto.randomUUID()}`)
     await fs.rm(tempDir, { recursive: true, force: true })

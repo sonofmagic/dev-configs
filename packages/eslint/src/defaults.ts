@@ -70,6 +70,14 @@ export function getDefaultVueOptions(opts?: UserDefinedOptions) {
     overrides['vue/no-deprecated-slot-attribute'] = 'off'
     overrides['vue/no-useless-template-attributes'] = 'off'
     overrides['vue/singleline-html-element-content-newline'] = 'off'
+    overrides['vue/no-restricted-props'] = [
+      'warn',
+      {
+        name: 'id',
+        message: '小程序组件中声明 id prop 可能无法在 properties 中正确取值，请改用其他 prop 名称。',
+        suggest: 'customId',
+      },
+    ]
   }
   const vueOptions: OptionsVue = {
     overrides,

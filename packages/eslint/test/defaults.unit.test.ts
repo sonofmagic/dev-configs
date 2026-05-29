@@ -30,6 +30,14 @@ describe('getDefaultVueOptions', () => {
     expect(vueOverrides['vue/no-deprecated-slot-attribute']).toBe('off')
     expect(vueOverrides['vue/no-useless-template-attributes']).toBe('off')
     expect(vueOverrides['vue/singleline-html-element-content-newline']).toBe('off')
+    expect(vueOverrides['vue/no-restricted-props']).toEqual([
+      'warn',
+      {
+        name: 'id',
+        message: expect.stringContaining('id prop'),
+        suggest: 'customId',
+      },
+    ])
   })
 
   it('keeps ionic and weapp overrides disabled by default', () => {
@@ -40,6 +48,7 @@ describe('getDefaultVueOptions', () => {
     expect(vueOverrides['vue/no-deprecated-slot-attribute']).toBeUndefined()
     expect(vueOverrides['vue/no-useless-template-attributes']).toBeUndefined()
     expect(vueOverrides['vue/singleline-html-element-content-newline']).toBeUndefined()
+    expect(vueOverrides['vue/no-restricted-props']).toBeUndefined()
   })
 
   it('keeps the legacy weapp alias working', () => {
@@ -47,6 +56,7 @@ describe('getDefaultVueOptions', () => {
 
     expect(vueOptions.overrides?.['vue/no-deprecated-slot-attribute']).toBe('off')
     expect(vueOptions.overrides?.['vue/singleline-html-element-content-newline']).toBe('off')
+    expect(vueOptions.overrides?.['vue/no-restricted-props']).toBeDefined()
   })
 })
 
