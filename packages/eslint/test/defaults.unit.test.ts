@@ -42,6 +42,11 @@ describe('getDefaultVueOptions', () => {
         message: expect.stringContaining('class prop'),
         suggest: 'customClass',
       },
+      {
+        name: 'slot',
+        message: expect.stringContaining('slot prop'),
+        suggest: 'customSlot',
+      },
     ])
   })
 

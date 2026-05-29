@@ -576,7 +576,7 @@ describe('eslint integration fixtures', () => {
     expect(result?.messages).toEqual([])
   })
 
-  it('warns mini program Vue props named id and class without blocking style props', async () => {
+  it('warns mini program Vue props named id, class, and slot without blocking readable props', async () => {
     const eslint = new ESLint({
       cwd: ROOT_DIR,
       overrideConfig: stripUnsupportedRules(await icebreaker({
@@ -592,12 +592,16 @@ describe('eslint integration fixtures', () => {
         'const props = defineProps<{',
         '  id?: string',
         '  class?: string',
+        '  slot?: string',
         '  style?: string',
+        '  hidden?: boolean',
+        '  dataFoo?: string',
+        '  markFoo?: string',
         '}>()',
         '</script>',
         '',
         '<template>',
-        '  <view :class="props.class" :style="props.style" />',
+        '  <view :class="props.class" :style="props.style" :hidden="props.hidden" :data-foo="props.dataFoo" :mark:foo="props.markFoo" />',
         '</template>',
         '',
       ].join('\n'),
@@ -618,6 +622,10 @@ describe('eslint integration fixtures', () => {
       expect.objectContaining({
         severity: 1,
         message: expect.stringContaining('class prop'),
+      }),
+      expect.objectContaining({
+        severity: 1,
+        message: expect.stringContaining('slot prop'),
       }),
     ])
   })
