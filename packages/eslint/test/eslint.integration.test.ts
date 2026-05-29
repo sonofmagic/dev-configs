@@ -576,7 +576,7 @@ describe('eslint integration fixtures', () => {
     expect(result?.messages).toEqual([])
   })
 
-  it('warns mini program Vue props named id without blocking class and style props', async () => {
+  it('warns mini program Vue props named id and class without blocking style props', async () => {
     const eslint = new ESLint({
       cwd: ROOT_DIR,
       overrideConfig: stripUnsupportedRules(await icebreaker({
@@ -614,6 +614,10 @@ describe('eslint integration fixtures', () => {
       expect.objectContaining({
         severity: 1,
         message: expect.stringContaining('id prop'),
+      }),
+      expect.objectContaining({
+        severity: 1,
+        message: expect.stringContaining('class prop'),
       }),
     ])
   })

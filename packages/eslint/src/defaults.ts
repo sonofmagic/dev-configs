@@ -77,6 +77,11 @@ export function getDefaultVueOptions(opts?: UserDefinedOptions) {
         message: '小程序组件中声明 id prop 可能无法在 properties 中正确取值，请改用其他 prop 名称。',
         suggest: 'customId',
       },
+      {
+        name: 'class',
+        message: '小程序组件中声明 class prop 可能无法在 properties 中正确取值，请改用其他 prop 名称。',
+        suggest: 'customClass',
+      },
     ]
   }
   const vueOptions: OptionsVue = {

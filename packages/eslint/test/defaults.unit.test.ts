@@ -37,6 +37,11 @@ describe('getDefaultVueOptions', () => {
         message: expect.stringContaining('id prop'),
         suggest: 'customId',
       },
+      {
+        name: 'class',
+        message: expect.stringContaining('class prop'),
+        suggest: 'customClass',
+      },
     ])
   })
 
