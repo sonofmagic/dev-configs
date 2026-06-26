@@ -39,6 +39,13 @@ const BETTER_TAILWIND_IGNORES = [
   '**/go.sum',
 ]
 
+interface TailwindPluginModule {
+  configs: {
+    'recommended'?: Linter.Config | Linter.Config[]
+    'flat/recommended'?: Linter.Config | Linter.Config[]
+  }
+}
+
 function resolveStylelintConfigLoader(moduleUrl = import.meta.url) {
   return moduleUrl.endsWith('.ts')
     ? new URL('./stylelint.ts', moduleUrl).href
@@ -92,11 +99,13 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
   }
 
   return [
-    // @ts-ignore optional dependency shape
     interopDefault(
       import('eslint-plugin-tailwindcss'),
     ).then((tailwind) => {
-      return tailwind.configs['flat/recommended']
+      const tailwindPlugin = tailwind as TailwindPluginModule
+      return tailwindPlugin.configs['flat/recommended']
+        ?? tailwindPlugin.configs.recommended
+        ?? []
     }),
     {
       rules: {

@@ -126,5 +126,10 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
+  },
+  "pnpm": {
+    "overrides": {
+      "eslint-plugin-unicorn": "64.0.0"
+    }
   }
 }
