@@ -48,6 +48,12 @@ export function getPresets(options?: UserDefinedOptions, mode?: 'legacy'): [User
         'style/eol-last': 'off',
       },
     },
+    {
+      files: ['**/*.{json,jsonc,json5}'],
+      rules: {
+        'unicorn/prefer-number-properties': 'off',
+      },
+    },
   ]
 
   // When Vue is enabled, eslint-processor-vue-blocks extracts <style> blocks

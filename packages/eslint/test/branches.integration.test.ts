@@ -134,6 +134,7 @@ describe('eslint branch config behavior', () => {
 
     const cssRule = cssConfig.rules?.['style/eol-last']
     const jsonRule = jsonConfig.rules?.['style/eol-last']
+    const jsonUnicornRule = jsonConfig.rules?.['unicorn/prefer-number-properties']
     const tsRule = tsConfig.rules?.['style/eol-last']
 
     const cssRuleDisabled = cssRule === 'off'
@@ -146,6 +147,7 @@ describe('eslint branch config behavior', () => {
 
     expect(cssRuleDisabled).toBe(true)
     expect(jsonRuleDisabled).toBe(true)
+    expect(jsonUnicornRule === 'off' || (Array.isArray(jsonUnicornRule) && jsonUnicornRule[0] === 0)).toBe(true)
     expect(tsRuleEnabled).toBe(true)
   })
 
