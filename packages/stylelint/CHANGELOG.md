@@ -1,5 +1,16 @@
 # @icebreakers/stylelint-config
 
+## 5.0.0
+
+### Major Changes
+
+- 🚀 **最低运行环境升级为 Node 22.12.0，发布校验不再覆盖 Node 20。** [`a759944`](https://github.com/sonofmagic/dev-configs/commit/a759944d539f3b6871430b6e951962965e03b493)
+
+### Patch Changes
+
+- 📦 **Dependencies** [`a759944`](https://github.com/sonofmagic/dev-configs/commit/a759944d539f3b6871430b6e951962965e03b493)
+  → `stylelint-plugin-tailwindcss@3.0.0`
+
 ## 4.0.2
 
 ### Patch Changes

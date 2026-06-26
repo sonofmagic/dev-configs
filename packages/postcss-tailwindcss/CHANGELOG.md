@@ -1,5 +1,15 @@
 # postcss-tailwindcss
 
+## 3.0.0
+
+### Major Changes
+
+- 🚀 **最低运行环境升级为 Node 22.12.0，发布校验不再覆盖 Node 20。** [`a759944`](https://github.com/sonofmagic/dev-configs/commit/a759944d539f3b6871430b6e951962965e03b493)
+
+### Patch Changes
+
+- 🐛 **deps: upgrade** [`cb7a75f`](https://github.com/sonofmagic/dev-configs/commit/cb7a75f40a086863586c3d4d99c0171e4072b2c6)
+
 ## 2.0.6
 
 ### Patch Changes

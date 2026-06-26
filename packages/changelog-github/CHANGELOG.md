@@ -1,5 +1,15 @@
 # @icebreakers/changelog-github
 
+## 2.0.0
+
+### Major Changes
+
+- 🚀 **最低运行环境升级为 Node 22.12.0，发布校验不再覆盖 Node 20。** [`a759944`](https://github.com/sonofmagic/dev-configs/commit/a759944d539f3b6871430b6e951962965e03b493)
+
+### Patch Changes
+
+- 🐛 **修复 GitHub 元数据请求偶发失败时中断 changeset version 的问题，失败时会保留基础提交链接并继续生成 changelog。** [`19cee04`](https://github.com/sonofmagic/dev-configs/commit/19cee04f5d0c89a268d00842cc37edadee790f56)
+
 ## 1.0.2
 
 ### Patch Changes

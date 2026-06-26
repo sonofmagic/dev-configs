@@ -1,5 +1,19 @@
 # @icebreakers/eslint-config
 
+## 6.0.0
+
+### Major Changes
+
+- 🚀 **最低运行环境升级为 Node 22.12.0，发布校验不再覆盖 Node 20。** [`a759944`](https://github.com/sonofmagic/dev-configs/commit/a759944d539f3b6871430b6e951962965e03b493)
+
+### Patch Changes
+
+- 🐛 **修复 Tailwind 插件配置类型兼容问题，确保发布校验在支持的 Node 版本上稳定运行。** [`4db46dc`](https://github.com/sonofmagic/dev-configs/commit/4db46dccb728bd1d4c716845c866e01ff0b4bd92)
+
+- 🐛 **deps: upgrade** [`cb7a75f`](https://github.com/sonofmagic/dev-configs/commit/cb7a75f40a086863586c3d4d99c0171e4072b2c6)
+- 📦 **Dependencies** [`a759944`](https://github.com/sonofmagic/dev-configs/commit/a759944d539f3b6871430b6e951962965e03b493)
+  → `@icebreakers/stylelint-config@5.0.0`, `eslint-plugin-better-stylelint@2.0.0`
+
 ## 5.0.4
 
 ### Patch Changes
