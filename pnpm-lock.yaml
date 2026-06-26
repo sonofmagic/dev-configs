@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  eslint-plugin-unicorn: 64.0.0
-
 importers:
 
   .:
@@ -4755,6 +4752,10 @@ packages:
     resolution: {integrity: sha512-reYkTUJAZb9gUuZ2RvVCNhVHdg62RHnJ7WJl8ftMi4diZ6NWlciOzQN88pUhSELEwflJht4oQDv0F0BMlwaYtA==}
     engines: {node: '>=8'}
 
+  detect-indent@7.0.2:
+    resolution: {integrity: sha512-y+8xyqdGLL+6sh0tVeHcfP/QDd8gUgbasolJJpY7NgeQGSZ739bDtSiaiDgtoicy+mtYB81dKLxO9xRhCyIB3A==}
+    engines: {node: '>=12.20'}
+
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
@@ -5252,6 +5253,12 @@ packages:
     engines: {node: ^20.10.0 || >=21.0.0}
     peerDependencies:
       eslint: '>=9.38.0'
+
+  eslint-plugin-unicorn@68.0.0:
+    resolution: {integrity: sha512-mHYWvX948Q4H3bGc39bsNMxD/leOuNI+Iws9NVsoSz5VA7EGP86wnz7mZ/SPSvRhefT8L4hd8DHfDuGC+lIoCQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      eslint: '>=10.4'
 
   eslint-plugin-unused-imports@4.4.1:
     resolution: {integrity: sha512-oZGYUz1X3sRMGUB+0cZyK2VcvRX5lm/vB56PgNNcU+7ficUCKm66oZWKUubXWnOuPjQ8PvmXtCViXBMONPe7tQ==}
@@ -9321,7 +9328,7 @@ snapshots:
       eslint-plugin-pnpm: 1.6.1(eslint@10.5.0(jiti@2.7.0))
       eslint-plugin-regexp: 3.1.1(eslint@10.5.0(jiti@2.7.0))
       eslint-plugin-toml: 1.4.0(eslint@10.5.0(jiti@2.7.0))
-      eslint-plugin-unicorn: 64.0.0(eslint@10.5.0(jiti@2.7.0))
+      eslint-plugin-unicorn: 68.0.0(eslint@10.5.0(jiti@2.7.0))
       eslint-plugin-unused-imports: 4.4.1(@typescript-eslint/eslint-plugin@8.62.0(@typescript-eslint/parser@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.5.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.5.0(jiti@2.7.0))
       eslint-plugin-vue: 10.9.2(@stylistic/eslint-plugin@5.10.0(eslint@10.5.0(jiti@2.7.0)))(@typescript-eslint/parser@8.62.0(eslint@10.5.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.5.0(jiti@2.7.0))(vue-eslint-parser@10.4.1(eslint@10.5.0(jiti@2.7.0)))
       eslint-plugin-yml: 3.5.0(eslint@10.5.0(jiti@2.7.0))
@@ -13840,6 +13847,8 @@ snapshots:
 
   detect-indent@6.1.0: {}
 
+  detect-indent@7.0.2: {}
+
   detect-libc@2.1.2: {}
 
   devalue@5.8.1: {}
@@ -14677,6 +14686,26 @@ snapshots:
       jsesc: 3.1.0
       pluralize: 8.0.0
       regexp-tree: 0.1.27
+      regjsparser: 0.13.2
+      semver: 7.8.5
+      strip-indent: 4.1.1
+
+  eslint-plugin-unicorn@68.0.0(eslint@10.5.0(jiti@2.7.0)):
+    dependencies:
+      '@babel/helper-validator-identifier': 7.29.7
+      '@eslint-community/eslint-utils': 4.9.1(eslint@10.5.0(jiti@2.7.0))
+      browserslist: 4.28.4
+      change-case: 5.4.4
+      ci-info: 4.4.0
+      core-js-compat: 3.49.0
+      detect-indent: 7.0.2
+      eslint: 10.5.0(jiti@2.7.0)
+      find-up-simple: 1.0.1
+      globals: 17.7.0
+      indent-string: 5.0.0
+      is-builtin-module: 5.0.0
+      jsesc: 3.1.0
+      pluralize: 8.0.0
       regjsparser: 0.13.2
       semver: 7.8.5
       strip-indent: 4.1.1

@@ -21,7 +21,7 @@
     "icebreakers"
   ],
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "build": "turbo run build",
@@ -126,10 +126,5 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
-  },
-  "pnpm": {
-    "overrides": {
-      "eslint-plugin-unicorn": "64.0.0"
-    }
   }
 }
