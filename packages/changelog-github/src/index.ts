@@ -34,6 +34,8 @@ const FALLBACK_USER_RE = /@([^\]]+)/
 const CODE_FENCE_RE = /^\s*```/
 const LIST_LIKE_RE = /^\s*(?:[-*+]\s+|\d+[.)]\s+)/
 const PARAGRAPH_BREAK_RE = /\n\s*\n/
+const GITHUB_METADATA_ERROR_RE
+  = /GitHub|fetch|parse|Premature close|network|socket|ECONNRESET|ETIMEDOUT|EAI_AGAIN/i
 
 type ReleaseTypeKey = keyof typeof releaseTypeMap
 
@@ -58,6 +60,55 @@ function assertRepo(
   }
 }
 
+function formatCommitLink(repo: string, commit: string): string {
+  const shortCommitId = commit.slice(0, 7)
+  return `[\`${shortCommitId}\`](https://github.com/${repo}/commit/${commit})`
+}
+
+function emptyLinks(): GitHubLinks {
+  return {
+    commit: null,
+    pull: null,
+    user: null,
+  }
+}
+
+function isOptionalGitHubMetadataError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false
+  }
+
+  return GITHUB_METADATA_ERROR_RE.test(error.message)
+}
+
+async function getOptionalInfo(
+  request: Parameters<typeof getInfo>[0],
+): Promise<Awaited<ReturnType<typeof getInfo>> | null> {
+  try {
+    return await getInfo(request)
+  }
+  catch (error) {
+    if (isOptionalGitHubMetadataError(error)) {
+      return null
+    }
+    throw error
+  }
+}
+
+async function getOptionalInfoFromPullRequest(
+  request: Parameters<typeof getInfoFromPullRequest>[0],
+): Promise<Awaited<ReturnType<typeof getInfoFromPullRequest>> | null> {
+  try {
+    return await getInfoFromPullRequest(request)
+  }
+  catch (error) {
+    if (isOptionalGitHubMetadataError(error)) {
+      return null
+    }
+    throw error
+  }
+}
+
 async function collectDependencyReferences(
   changesets: Parameters<ChangelogFunctions['getDependencyReleaseLine']>[0],
   repo: string,
@@ -68,12 +119,12 @@ async function collectDependencyReferences(
         return null
       }
 
-      const { links } = await getInfo({
+      const info = await getOptionalInfo({
         repo,
         commit: cs.commit,
       })
 
-      return links.commit
+      return info?.links.commit ?? formatCommitLink(repo, cs.commit)
     }),
   )
 
@@ -299,14 +350,14 @@ async function resolveLinks(
   changesetCommit: string | undefined,
 ): Promise<GitHubLinks> {
   if (parsed.prNumber !== undefined) {
-    const { links } = await getInfoFromPullRequest({
+    const info = await getOptionalInfoFromPullRequest({
       repo,
       pull: parsed.prNumber,
     })
+    const links = info?.links ?? emptyLinks()
 
     if (parsed.commitRef) {
-      const shortCommitId = parsed.commitRef.slice(0, 7)
-      links.commit = `[\`${shortCommitId}\`](https://github.com/${repo}/commit/${parsed.commitRef})`
+      links.commit = formatCommitLink(repo, parsed.commitRef)
     }
 
     return links
@@ -314,19 +365,18 @@ async function resolveLinks(
 
   const commitToUse = parsed.commitRef ?? changesetCommit
   if (commitToUse) {
-    const { links } = await getInfo({
+    const info = await getOptionalInfo({
       repo,
       commit: commitToUse,
     })
 
-    return links
+    return info?.links ?? {
+      ...emptyLinks(),
+      commit: formatCommitLink(repo, commitToUse),
+    }
   }
 
-  return {
-    commit: null,
-    pull: null,
-    user: null,
-  }
+  return emptyLinks()
 }
 
 function buildUserMentions(

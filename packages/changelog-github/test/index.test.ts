@@ -69,6 +69,35 @@ describe('getReleaseLine', () => {
     })
     expect(getInfoMock).not.toHaveBeenCalled()
   })
+
+  it('falls back to explicit commit metadata when GitHub pull request lookup fails', async () => {
+    getInfoFromPullRequestMock.mockRejectedValueOnce(
+      new Error('Failed to parse data from GitHub\nPremature close'),
+    )
+
+    const result = await getReleaseLine(
+      { ...baseChangeset },
+      'minor',
+      { repo },
+    )
+
+    expect(result).toContain('**Add new lint rule** [`abcdef1`](https://github.com/sonofmagic/dev-configs/commit/abcdef1234567890) by @lint-bot')
+    expect(result).not.toContain('[#123]')
+  })
+
+  it('rethrows non-GitHub metadata errors', async () => {
+    getInfoFromPullRequestMock.mockRejectedValueOnce(
+      new Error('Unexpected formatter failure'),
+    )
+
+    await expect(
+      getReleaseLine(
+        { ...baseChangeset },
+        'minor',
+        { repo },
+      ),
+    ).rejects.toThrow('Unexpected formatter failure')
+  })
 })
 
 describe('getDependencyReleaseLine', () => {
@@ -119,6 +148,28 @@ describe('getDependencyReleaseLine', () => {
       repo,
       commit: 'abcdef1234567890',
     })
+  })
+
+  it('keeps dependency commit references when GitHub commit lookup fails', async () => {
+    getInfoMock.mockRejectedValueOnce(
+      new Error('Failed to parse data from GitHub\nPremature close'),
+    )
+
+    const line = await getDependencyReleaseLine(
+      [
+        {
+          id: 'test',
+          summary: 'Update deps',
+          releases: [],
+          commit: 'abcdef1234567890',
+        },
+      ],
+      dependenciesUpdated as any,
+      { repo },
+    )
+
+    expect(line).toContain('- 📦 **Dependencies** [`abcdef1`](https://github.com/sonofmagic/dev-configs/commit/abcdef1234567890)')
+    expect(line).toContain('  → `@icebreakers/eslint-config@1.2.3`, `vitest@1.0.0`')
   })
 })
 
