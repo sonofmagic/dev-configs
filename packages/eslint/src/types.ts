@@ -7,14 +7,28 @@ import type { IcebreakerStylelintOptions } from '@icebreakers/stylelint-config'
 import type { Linter } from 'eslint'
 import type { FlatConfigComposer } from 'eslint-flat-config-utils'
 
-export interface TailwindcssOption {
+export interface BetterTailwindcssOption {
   /**
    * Tailwind CSS v4 entry point, e.g. `src/global.css`.
    */
   entryPoint?: string
   /**
+   * Files that should receive better-tailwindcss rules.
+   * Defaults to the entry point directory for relative entry points, otherwise source-like files.
+   */
+  files?: string[]
+  /**
+   * Rule preset for object mode.
+   *
+   * `syntax` keeps the fast rules that do not need Tailwind class analysis.
+   * `recommended` enables the full eslint-plugin-better-tailwindcss recommended preset.
+   *
+   * @default 'syntax'
+   */
+  rules?: 'syntax' | 'recommended'
+  /**
    * Working directory passed to eslint-plugin-better-tailwindcss.
-   * Defaults to `dirname(entryPoint)` when present, otherwise `process.cwd()`.
+   * Defaults to ESLint's current working directory.
    */
   cwd?: string
   /**
@@ -23,7 +37,8 @@ export interface TailwindcssOption {
   tailwindConfig?: string
 }
 
-export type TailwindcssConfig = boolean | TailwindcssOption
+export type BetterTailwindcssConfig = boolean | BetterTailwindcssOption
+export type TailwindcssConfig = boolean
 export interface UnocssOption {
   /**
    * UnoCSS config file path, e.g. `uno.config.ts`.
@@ -100,10 +115,15 @@ export type UserDefinedOptions = Omit<OptionsConfig, 'formatters' | 'unocss'> & 
    */
   miniProgram?: boolean
   /**
-   * Enable TailwindCSS support
+   * Enable eslint-plugin-tailwindcss support.
    * @default false
    */
   tailwindcss?: TailwindcssConfig
+  /**
+   * Enable eslint-plugin-better-tailwindcss support.
+   * @default false
+   */
+  betterTailwindcss?: BetterTailwindcssConfig
   /**
    * Enable UnoCSS support.
    * @default false

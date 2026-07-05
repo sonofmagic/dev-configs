@@ -76,8 +76,10 @@ export default icebreaker({
   query: true,
   typescript: true,
   test: true,
-  tailwindcss: {
-    tailwindConfig: './tailwind.config.ts',
+  tailwindcss: true,
+  betterTailwindcss: {
+    entryPoint: './src/tailwind.css',
+    rules: 'recommended',
   },
   mdx: process.env.LINT_MDX === 'true',
   a11y: true,
@@ -92,7 +94,8 @@ export default icebreaker({
 - `vue`：启用 Vue 规则，可根据 Vue 2/3 自动切换，并在 `ionic`、`miniProgram` 选项开启时追加对应覆盖。
 - `react`：复用上游 React 预设；React 核心 lint 插件已内置在当前包里，配合 `a11y` 使用的 React 无障碍插件仍需按需安装。
 - `query`：按需启用 TanStack Query 插件（`@tanstack/eslint-plugin-query`）及其推荐规则；缺少插件时按 no-op 处理。
-- `tailwindcss`：传入 `true` 使用内置 Tailwind flat 配置，或通过对象指定 Tailwind v4 的入口文件 / v3 的配置文件路径。
+- `tailwindcss`：传入 `true` 启用 `eslint-plugin-tailwindcss`。
+- `betterTailwindcss`：传入 `true` 或 `{ entryPoint, tailwindConfig }` 启用 `eslint-plugin-better-tailwindcss`，用于 Tailwind v4 / v3 项目。对象模式默认只启用较快的语法检查（`no-duplicate-classes` 和 `no-unnecessary-whitespace`），并会把相对入口文件限制到对应源码目录；如需完整推荐规则，可设置 `rules: 'recommended'`。
 - `mdx`：激活 `eslint-plugin-mdx` 处理 `.mdx` 文件。
 - `a11y`：按需引入 JSX 与 Vue 的无障碍规则，缺少某一侧插件时只跳过对应框架配置。
 - `typescript`：开启 TypeScript 预设，加强未使用诊断，可与 `nestjs` 搭配使用以获得 Nest 专属优化。

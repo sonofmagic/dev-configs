@@ -3,6 +3,7 @@ import { nestjsTypeScriptRules } from '@/defaults'
 import {
   __resolveStylelintConfigLoader,
   resolveAccessibilityPresets,
+  resolveBetterTailwindPresets,
   resolveMdxPresets,
   resolveNestPresets,
   resolveQueryPresets,
@@ -55,6 +56,11 @@ const mockRemarkProcessor = vi.fn((options: Record<string, unknown>) => {
 vi.mock('eslint-plugin-better-tailwindcss', () => {
   const plugin = {
     configs: {
+      'recommended': {
+        rules: {
+          'better/recommended': 'warn',
+        },
+      },
       'recommended-warn': {
         rules: {
           'better/warn': 'warn',
@@ -136,6 +142,76 @@ vi.mock('@tanstack/eslint-plugin-query', () => {
   return { default: plugin }
 })
 
+describe('resolveBetterTailwindPresets', () => {
+  beforeEach(() => {
+    hasAllPackagesMock.mockReturnValue(true)
+  })
+
+  it('returns empty array when disabled', () => {
+    expect(resolveBetterTailwindPresets(false)).toEqual([])
+  })
+
+  it('returns empty array when undefined', () => {
+    expect(resolveBetterTailwindPresets(undefined)).toEqual([])
+  })
+
+  it('wires up better-tailwindcss when config is provided', async () => {
+    const [configPromise] = resolveBetterTailwindPresets({
+      entryPoint: 'src/main.css',
+      tailwindConfig: 'tailwind.config.js',
+    })
+
+    const config = await configPromise as TypedFlatConfigItem
+    expect(config.plugins?.['better-tailwindcss']).toBeDefined()
+    expect(config.files).toEqual([
+      'src/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx,vue,html,md,mdx,astro,svelte}',
+    ])
+    expect(config.ignores).toEqual(expect.arrayContaining([
+      '**/*.json',
+      '**/*.json5',
+      '**/*.yaml',
+      '**/*.yml',
+      '**/package.json',
+      '**/pnpm-lock.yaml',
+    ]))
+    expect(config.rules).toEqual({
+      'better-tailwindcss/no-duplicate-classes': 'warn',
+      'better-tailwindcss/no-unnecessary-whitespace': 'warn',
+    })
+    expect(config.settings?.['better-tailwindcss']).toEqual({
+      cwd: undefined,
+      entryPoint: 'src/main.css',
+      tailwindConfig: 'tailwind.config.js',
+    })
+  })
+
+  it('can enable the full better-tailwindcss recommended rules in object config', async () => {
+    const [configPromise] = resolveBetterTailwindPresets({
+      entryPoint: 'src/main.css',
+      rules: 'recommended',
+    })
+
+    const config = await configPromise as TypedFlatConfigItem
+    expect(config.rules).toEqual({
+      'better/recommended': 'warn',
+    })
+  })
+
+  it('prefers an explicit better-tailwindcss cwd over entryPoint-derived defaults', async () => {
+    const [configPromise] = resolveBetterTailwindPresets({
+      cwd: '/repo/apps/demo',
+      entryPoint: 'src/main.css',
+    })
+
+    const config = await configPromise as TypedFlatConfigItem
+    expect(config.settings?.['better-tailwindcss']).toEqual({
+      cwd: '/repo/apps/demo',
+      entryPoint: 'src/main.css',
+      tailwindConfig: undefined,
+    })
+  })
+})
+
 describe('resolveTailwindPresets', () => {
   beforeEach(() => {
     hasAllPackagesMock.mockReturnValue(true)
@@ -149,51 +225,7 @@ describe('resolveTailwindPresets', () => {
     expect(resolveTailwindPresets(undefined)).toEqual([])
   })
 
-  it('wires up better-tailwindcss when an object config is provided', async () => {
-    const [configPromise] = resolveTailwindPresets({
-      entryPoint: 'src/main.css',
-      tailwindConfig: 'tailwind.config.js',
-    })
-
-    const config = await configPromise as TypedFlatConfigItem
-    expect(config.plugins?.['better-tailwindcss']).toBeDefined()
-    expect(config.files).toEqual([
-      '**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx,vue,html,md,mdx,astro,svelte}',
-    ])
-    expect(config.ignores).toEqual(expect.arrayContaining([
-      '**/*.json',
-      '**/*.json5',
-      '**/*.yaml',
-      '**/*.yml',
-      '**/package.json',
-      '**/pnpm-lock.yaml',
-    ]))
-    expect(config.rules).toMatchObject({
-      'better/warn': 'warn',
-      'better/error': 'error',
-    })
-    expect(config.settings?.['better-tailwindcss']).toEqual({
-      cwd: 'src',
-      entryPoint: 'src/main.css',
-      tailwindConfig: 'tailwind.config.js',
-    })
-  })
-
-  it('prefers an explicit better-tailwindcss cwd over entryPoint-derived defaults', async () => {
-    const [configPromise] = resolveTailwindPresets({
-      cwd: '/repo/apps/demo',
-      entryPoint: 'src/main.css',
-    })
-
-    const config = await configPromise as TypedFlatConfigItem
-    expect(config.settings?.['better-tailwindcss']).toEqual({
-      cwd: '/repo/apps/demo',
-      entryPoint: 'src/main.css',
-      tailwindConfig: undefined,
-    })
-  })
-
-  it('falls back to eslint-plugin-tailwindcss when enabled as boolean', async () => {
+  it('wires up eslint-plugin-tailwindcss when enabled', async () => {
     const [tailwindPreset, overrides] = resolveTailwindPresets(true)
 
     await expect(tailwindPreset).resolves.toMatchObject({ name: 'tailwind-flat' })
@@ -208,7 +240,7 @@ describe('resolveTailwindPresets', () => {
     hasAllPackagesMock.mockReturnValue(false)
 
     expect(resolveTailwindPresets(true)).toEqual([])
-    expect(resolveTailwindPresets({ tailwindConfig: 'tailwind.config.js' })).toEqual([])
+    expect(resolveBetterTailwindPresets({ tailwindConfig: 'tailwind.config.js' })).toEqual([])
   })
 })
 

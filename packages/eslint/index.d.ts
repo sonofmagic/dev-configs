@@ -8,13 +8,16 @@ import type { IcebreakerStylelintOptions } from '@icebreakers/stylelint-config'
 import type { Linter } from 'eslint'
 import type { FlatConfigComposer } from 'eslint-flat-config-utils'
 
-export interface TailwindcssOption {
+export interface BetterTailwindcssOption {
   entryPoint?: string
+  files?: string[]
+  rules?: 'syntax' | 'recommended'
   cwd?: string
   tailwindConfig?: string
 }
 
-export type TailwindcssConfig = boolean | TailwindcssOption
+export type BetterTailwindcssConfig = boolean | BetterTailwindcssOption
+export type TailwindcssConfig = boolean
 export interface UnocssOption {
   configPath?: string
   attributify?: boolean
@@ -29,6 +32,7 @@ export type StylelintBridgeConfig = boolean | StylelintBridgeOption
 export type UserDefinedOptions = Omit<OptionsConfig, 'unocss'> & TypedFlatConfigItem & {
   miniProgram?: boolean
   tailwindcss?: TailwindcssConfig
+  betterTailwindcss?: BetterTailwindcssConfig
   unocss?: UnocssConfig
   stylelint?: StylelintBridgeConfig
   mdx?: boolean

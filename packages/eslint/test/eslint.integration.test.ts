@@ -712,7 +712,7 @@ describe('eslint integration fixtures', () => {
 })
 
 describe('tailwind integration', () => {
-  it('does not apply better-tailwindcss rules to package.json when using object options', async () => {
+  it('does not apply better-tailwindcss rules to package.json when enabled', async () => {
     const tempDir = path.join(ROOT_DIR, `.tmp-tailwind-package-json-${crypto.randomUUID()}`)
     const entryPoint = path.join(tempDir, 'src', 'style.css')
     const packageJsonPath = path.join(tempDir, 'package.json')
@@ -733,7 +733,7 @@ describe('tailwind integration', () => {
         cwd: tempDir,
         overrideConfig: await icebreaker({
           vue: true,
-          tailwindcss: {
+          betterTailwindcss: {
             entryPoint,
           },
         }).toConfigs(),

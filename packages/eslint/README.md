@@ -50,8 +50,10 @@ export default icebreaker({
   query: true,
   typescript: true,
   test: true,
-  tailwindcss: {
-    tailwindConfig: './tailwind.config.ts',
+  tailwindcss: true,
+  betterTailwindcss: {
+    entryPoint: './src/tailwind.css',
+    rules: 'recommended',
   },
   unocss: {
     strict: true,
@@ -69,7 +71,8 @@ export default icebreaker({
 - `vue` – enables Vue + optionally version specific overrides (Vue 2/3) and ionic/miniProgram adjustments.
 - `react` – defers to the upstream React preset. The required React core lint plugins are bundled with this package; React accessibility still requires `eslint-plugin-jsx-a11y` when `a11y` is enabled.
 - `query` – toggles the TanStack Query plugin (`@tanstack/eslint-plugin-query`) and its recommended lint rules. Missing plugin installs are treated as a no-op.
-- `tailwindcss` – pass `true` to use the built-in Tailwind flat config or provide `{ entryPoint, tailwindConfig }` for Tailwind v4/v3 projects.
+- `tailwindcss` – pass `true` to enable `eslint-plugin-tailwindcss`.
+- `betterTailwindcss` – pass `true` or `{ entryPoint, tailwindConfig }` to enable `eslint-plugin-better-tailwindcss` for Tailwind v4/v3 projects. Object mode defaults to fast syntax checks (`no-duplicate-classes` and `no-unnecessary-whitespace`) and scopes relative entry points to their source directory; set `rules: 'recommended'` to opt into the full recommended preset.
 - `unocss` – pass `true` to use the upstream Antfu UnoCSS preset, or provide `{ strict, attributify, configPath }` to keep the same preset while using the Icebreaker wrapper API.
 - `mdx` – activates MDX linting via `eslint-plugin-mdx`.
 - `a11y` – wires in JSX (React) and Vue accessibility plugins. Missing framework-specific plugins are skipped independently.

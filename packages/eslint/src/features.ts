@@ -6,7 +6,6 @@ import type {
   UserDefinedOptions,
 } from './types'
 import path from 'node:path'
-import process from 'node:process'
 import { interopDefault } from './antfu'
 import { nestjsTypeScriptRules } from './defaults'
 import { hasAllPackages } from './utils'
@@ -18,8 +17,9 @@ const MDX_PACKAGES = ['eslint-plugin-mdx']
 const VUE_A11Y_PACKAGES = ['eslint-plugin-vuejs-accessibility']
 const REACT_A11Y_PACKAGES = ['eslint-plugin-jsx-a11y']
 const QUERY_PACKAGES = ['@tanstack/eslint-plugin-query']
+const BETTER_TAILWIND_EXTENSIONS = 'js,mjs,cjs,ts,mts,cts,jsx,tsx,vue,html,md,mdx,astro,svelte'
 const BETTER_TAILWIND_FILES = [
-  '**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx,vue,html,md,mdx,astro,svelte}',
+  `**/*.{${BETTER_TAILWIND_EXTENSIONS}}`,
 ]
 const BETTER_TAILWIND_IGNORES = [
   '**/*.json',
@@ -38,11 +38,21 @@ const BETTER_TAILWIND_IGNORES = [
   '**/Gemfile.lock',
   '**/go.sum',
 ]
+const BETTER_TAILWIND_SYNTAX_RULES: Linter.RulesRecord = {
+  'better-tailwindcss/no-duplicate-classes': 'warn',
+  'better-tailwindcss/no-unnecessary-whitespace': 'warn',
+}
 
 interface TailwindPluginModule {
   configs: {
     'recommended'?: Linter.Config | Linter.Config[]
     'flat/recommended'?: Linter.Config | Linter.Config[]
+  }
+}
+
+interface BetterTailwindPluginModule {
+  configs: {
+    recommended?: Linter.Config
   }
 }
 
@@ -52,46 +62,87 @@ function resolveStylelintConfigLoader(moduleUrl = import.meta.url) {
     : new URL('./stylelint.js', moduleUrl).href
 }
 
-export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']): UserConfigItem[] {
+function normalizeGlobPath(filePath: string) {
+  return filePath
+    .replaceAll(path.sep, '/')
+    .replace(/^\.\//, '')
+}
+
+function resolveBetterTailwindFiles(option: Exclude<UserDefinedOptions['betterTailwindcss'], boolean | undefined>) {
+  if (option.files?.length) {
+    return option.files
+  }
+
+  if (!option.entryPoint || path.isAbsolute(option.entryPoint)) {
+    return BETTER_TAILWIND_FILES
+  }
+
+  const sourceDir = normalizeGlobPath(path.dirname(option.entryPoint))
+  if (!sourceDir || sourceDir === '.') {
+    return BETTER_TAILWIND_FILES
+  }
+
+  return [
+    `${sourceDir}/**/*.{${BETTER_TAILWIND_EXTENSIONS}}`,
+  ]
+}
+
+function resolveBetterTailwindRules(
+  plugin: BetterTailwindPluginModule,
+  option: Exclude<UserDefinedOptions['betterTailwindcss'], boolean | undefined>,
+) {
+  if (option.rules === 'recommended') {
+    return (plugin.configs.recommended?.rules ?? {}) as Linter.RulesRecord
+  }
+
+  return BETTER_TAILWIND_SYNTAX_RULES
+}
+
+export function resolveBetterTailwindPresets(option: UserDefinedOptions['betterTailwindcss']): UserConfigItem[] {
   if (!option) {
     return []
   }
 
-  if (typeof option === 'object') {
-    if (!hasAllPackages(BETTER_TAILWIND_PACKAGES)) {
-      return []
-    }
+  if (!hasAllPackages(BETTER_TAILWIND_PACKAGES)) {
+    return []
+  }
 
-    return [
-      interopDefault(
-        import('eslint-plugin-better-tailwindcss'),
-      ).then((eslintPluginBetterTailwindcss) => {
-        const cwd = option.cwd
-          ?? (option.entryPoint ? path.dirname(option.entryPoint) : undefined)
-          ?? process.cwd()
-        const betterTailwindcssRules: Linter.RulesRecord = {
-          ...eslintPluginBetterTailwindcss.configs['recommended-warn'].rules,
-          ...eslintPluginBetterTailwindcss.configs['recommended-error'].rules,
-        }
+  const betterTailwindcssOption = typeof option === 'object'
+    ? option
+    : {}
 
-        return {
-          name: 'icebreaker/better-tailwindcss',
-          files: BETTER_TAILWIND_FILES,
-          ignores: BETTER_TAILWIND_IGNORES,
-          plugins: {
-            'better-tailwindcss': eslintPluginBetterTailwindcss,
+  return [
+    interopDefault(
+      import('eslint-plugin-better-tailwindcss'),
+    ).then((eslintPluginBetterTailwindcss) => {
+      const betterTailwindcssRules = resolveBetterTailwindRules(
+        eslintPluginBetterTailwindcss,
+        betterTailwindcssOption,
+      )
+
+      return {
+        name: 'icebreaker/better-tailwindcss',
+        files: resolveBetterTailwindFiles(betterTailwindcssOption),
+        ignores: BETTER_TAILWIND_IGNORES,
+        plugins: {
+          'better-tailwindcss': eslintPluginBetterTailwindcss,
+        },
+        rules: betterTailwindcssRules,
+        settings: {
+          'better-tailwindcss': {
+            cwd: betterTailwindcssOption.cwd,
+            entryPoint: betterTailwindcssOption.entryPoint,
+            tailwindConfig: betterTailwindcssOption.tailwindConfig,
           },
-          rules: betterTailwindcssRules,
-          settings: {
-            'better-tailwindcss': {
-              cwd,
-              entryPoint: option.entryPoint,
-              tailwindConfig: option.tailwindConfig,
-            },
-          },
-        } satisfies TypedFlatConfigItem
-      }),
-    ]
+        },
+      } satisfies TypedFlatConfigItem
+    }),
+  ]
+}
+
+export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']): UserConfigItem[] {
+  if (!option) {
+    return []
   }
 
   if (!hasAllPackages(TAILWIND_PACKAGES)) {

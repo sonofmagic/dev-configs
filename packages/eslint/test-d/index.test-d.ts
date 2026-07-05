@@ -15,8 +15,9 @@ expectAssignable<FlatConfigComposer<TypedFlatConfigItem, ConfigNames>>(icebreake
 expectAssignable<UserDefinedOptions>({ miniProgram: true })
 expectAssignable<UserDefinedOptions>({ weapp: true })
 expectAssignable<UserDefinedOptions>({ unocss: true })
+expectAssignable<UserDefinedOptions>({ tailwindcss: true })
 expectAssignable<UserDefinedOptions>({
-  tailwindcss: {
+  betterTailwindcss: {
     entryPoint: './src/style.css',
     cwd: './apps/demo',
   },

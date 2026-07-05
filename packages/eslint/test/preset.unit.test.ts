@@ -1,5 +1,6 @@
 import {
   resolveAccessibilityPresets,
+  resolveBetterTailwindPresets,
   resolveMdxPresets,
   resolveNestPresets,
   resolveQueryPresets,
@@ -12,6 +13,7 @@ vi.mock('@/features', () => {
   return {
     resolveStylelintBridgePresets: vi.fn(() => [{ name: 'stylelint' }]),
     resolveTailwindPresets: vi.fn(() => [{ name: 'tailwind' }]),
+    resolveBetterTailwindPresets: vi.fn(() => [{ name: 'better-tailwind' }]),
     resolveMdxPresets: vi.fn(() => [{ name: 'mdx' }]),
     resolveNestPresets: vi.fn(() => [{ name: 'nestjs' }]),
     resolveQueryPresets: vi.fn(() => [{ name: 'query' }]),
@@ -21,6 +23,7 @@ vi.mock('@/features', () => {
 
 const resolveStylelintBridgePresetsMock = vi.mocked(resolveStylelintBridgePresets)
 const resolveTailwindPresetsMock = vi.mocked(resolveTailwindPresets)
+const resolveBetterTailwindPresetsMock = vi.mocked(resolveBetterTailwindPresets)
 const resolveMdxPresetsMock = vi.mocked(resolveMdxPresets)
 const resolveNestPresetsMock = vi.mocked(resolveNestPresets)
 const resolveQueryPresetsMock = vi.mocked(resolveQueryPresets)
@@ -56,6 +59,7 @@ describe('getPresets', () => {
   it('appends feature presets in the expected order', () => {
     const [, baseConfig, ...presets] = getPresets({
       tailwindcss: true,
+      betterTailwindcss: true,
       mdx: true,
       nestjs: true,
       query: true,
@@ -68,6 +72,7 @@ describe('getPresets', () => {
     expect(base.rules?.['unicorn/prefer-number-properties']).toBe('warn')
     expect(resolveStylelintBridgePresetsMock).toHaveBeenCalledWith(undefined)
     expect(resolveTailwindPresetsMock).toHaveBeenCalledWith(true)
+    expect(resolveBetterTailwindPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveMdxPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveNestPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveQueryPresetsMock).toHaveBeenCalledWith(true)
@@ -81,6 +86,7 @@ describe('getPresets', () => {
       'icebreaker/vue-style-blocks-parser',
       'stylelint',
       'tailwind',
+      'better-tailwind',
       'mdx',
       'nestjs',
       'query',

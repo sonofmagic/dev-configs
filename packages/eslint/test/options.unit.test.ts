@@ -1,4 +1,5 @@
 import type { Linter } from 'eslint'
+import type { UserDefinedOptions } from '@/types'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
@@ -77,6 +78,19 @@ describe('resolveUserOptions', () => {
     const resolvedLegacy = resolveUserOptions({ weapp: true })
     expect(resolvedLegacy.miniProgram).toBe(true)
     expect(resolvedLegacy.weapp).toBeUndefined()
+  })
+
+  it('normalizes legacy object tailwindcss options into betterTailwindcss', () => {
+    const resolved = resolveUserOptions({
+      tailwindcss: {
+        entryPoint: './src/tailwind.css',
+      },
+    } as unknown as UserDefinedOptions)
+
+    expect(resolved.tailwindcss).toBeUndefined()
+    expect(resolved.betterTailwindcss).toEqual({
+      entryPoint: './src/tailwind.css',
+    })
   })
 
   it('applies vue2 specific overrides when requested', () => {

@@ -1,6 +1,6 @@
 import type { Linter } from 'eslint'
 import type { OptionsVue } from './antfu'
-import type { TailwindcssOption, UserDefinedOptions } from './types'
+import type { BetterTailwindcssOption, UserDefinedOptions } from './types'
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
@@ -53,7 +53,8 @@ const BASE_RULES: Partial<Linter.RulesRecord> = {
 }
 
 export type ResolvedUserOptions = UserDefinedOptions & {
-  tailwindcss?: TailwindcssOption | boolean
+  tailwindcss?: boolean
+  betterTailwindcss?: BetterTailwindcssOption | boolean
 }
 
 type FormatterOptions = Exclude<UserDefinedOptions['formatters'], boolean | undefined>
@@ -310,6 +311,12 @@ export function resolveUserOptions(options?: UserDefinedOptions): ResolvedUserOp
   if (isMiniProgramEnabled(options)) {
     resolved.miniProgram = true
     delete resolved.weapp
+  }
+
+  const legacyTailwindcssOption = resolved.tailwindcss as unknown
+  if (isObject(legacyTailwindcssOption)) {
+    resolved.betterTailwindcss ??= legacyTailwindcssOption as BetterTailwindcssOption
+    delete resolved.tailwindcss
   }
 
   const resolvedVue = mergeOptionWithDefaults(
