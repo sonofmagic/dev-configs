@@ -1,5 +1,23 @@
 # @icebreakers/eslint-config
 
+## 7.0.0
+
+### Major Changes
+
+- 🚀 **Split Tailwind lint integrations into separate options.** [`888d82a`](https://github.com/sonofmagic/dev-configs/commit/888d82a6dcc479cf7f2a24b583bd443d64d9e0c9) by @sonofmagic
+  - `tailwindcss` now represents `eslint-plugin-tailwindcss` only, while the new
+  - `betterTailwindcss` option enables `eslint-plugin-better-tailwindcss`. Existing
+  - runtime configs that pass an object to `tailwindcss` are still normalized to
+  - `betterTailwindcss`, but typed configs should migrate to the new option.
+
+### Patch Changes
+
+- 🐛 **Upgrade linting runtime dependencies and keep the Tailwind CSS ESLint preset** [`b2d1012`](https://github.com/sonofmagic/dev-configs/commit/b2d1012639aeae3253a6ee0d2ac612dce14e593e) by @sonofmagic
+  - usable with eslint-plugin-tailwindcss v4 by providing a resolvable default CSS
+  - config path.
+- 📦 **Dependencies**
+  → `@icebreakers/stylelint-config@5.0.1`
+
 ## 6.0.0
 
 ### Major Changes
