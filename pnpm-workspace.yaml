@@ -8,3 +8,4 @@ onlyBuiltDependencies:
   - esbuild
   - sharp
   - workerd
+minimumReleaseAge: 0
