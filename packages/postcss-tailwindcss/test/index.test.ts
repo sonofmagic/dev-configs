@@ -17,6 +17,30 @@ describe('postcss-tailwindcss', () => {
     expect(root.first?.type).toBe('rule')
   })
 
+  it('accepts already parsed PostCSS roots across analysis helpers', () => {
+    const root = parseTailwindCss([
+      '@import "tailwindcss" source(none);',
+      '.card { @apply flex gap-2; }',
+      '.text-brand { color: --alpha(var(--color-brand) / 50%); }',
+    ].join('\n'))
+
+    expect(detectTailwindVersion(root)).toBe(4)
+    expect(collectApplyCandidates(root).map(item => item.candidate)).toEqual([
+      'flex',
+      'gap-2',
+    ])
+    expect(collectImportDirectives(root).map(item => item.importTarget)).toEqual([
+      'tailwindcss',
+    ])
+    expect(analyzeTailwindCss(root)).toMatchObject({
+      version: 4,
+      applyCandidates: [
+        expect.objectContaining({ candidate: 'flex' }),
+        expect.objectContaining({ candidate: 'gap-2' }),
+      ],
+    })
+  })
+
   it('detects Tailwind v3 syntax', () => {
     const css = [
       '@config "./tailwind.config.js";',

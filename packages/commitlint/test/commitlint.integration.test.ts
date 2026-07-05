@@ -1,8 +1,11 @@
+import path from 'node:path'
 import lint from '@commitlint/lint'
+import loadCommitlintConfig from '@commitlint/load'
 import createPreset from 'conventional-changelog-conventionalcommits'
 import { createIcebreakerCommitlintConfig } from '@/index'
 
 type LintRules = Parameters<typeof lint>[1]
+type LintOptions = NonNullable<Parameters<typeof lint>[2]>
 type CommitlintRules = ReturnType<typeof createIcebreakerCommitlintConfig>['rules']
 
 async function lintMessage(
@@ -16,6 +19,35 @@ async function lintMessage(
 }
 
 describe('commitlint integration', () => {
+  it('loads the published preset shape through the commitlint loader', async () => {
+    const config = await loadCommitlintConfig(
+      {
+        extends: ['@icebreakers/commitlint-config'],
+      },
+      {
+        cwd: path.resolve(__dirname, '..'),
+      },
+    )
+
+    expect(config.parserPreset?.name).toBe(
+      'conventional-changelog-conventionalcommits',
+    )
+    expect(config.parserPreset?.parserOpts).toEqual(expect.objectContaining({
+      headerPattern: expect.any(RegExp),
+      headerCorrespondence: ['type', 'scope', 'subject'],
+    }))
+    expect(config.prompt?.questions?.type?.enum?.['feat']).toMatchObject({
+      title: 'Features',
+    })
+
+    const parserOpts = config.parserPreset?.parserOpts as LintOptions['parserOpts']
+    expect(parserOpts).toBeDefined()
+    const result = await lint('feat: load shared preset', config.rules as LintRules, {
+      parserOpts: parserOpts!,
+    })
+    expect(result.valid).toBe(true)
+  })
+
   it('validates default type enum rules', async () => {
     const config = createIcebreakerCommitlintConfig()
 

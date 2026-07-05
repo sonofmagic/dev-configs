@@ -1,6 +1,7 @@
 import type { TypedFlatConfigItem } from '@/types'
 import { nestjsTypeScriptRules } from '@/defaults'
 import {
+  __resolveDefaultTailwindCssConfigPath,
   __resolveStylelintConfigLoader,
   resolveAccessibilityPresets,
   resolveBetterTailwindPresets,
@@ -230,6 +231,11 @@ describe('resolveTailwindPresets', () => {
 
     await expect(tailwindPreset).resolves.toMatchObject({ name: 'tailwind-flat' })
     expect(overrides).toEqual({
+      settings: {
+        tailwindcss: {
+          cssConfigPath: __resolveDefaultTailwindCssConfigPath(),
+        },
+      },
       rules: {
         'tailwindcss/no-custom-classname': 'off',
       },

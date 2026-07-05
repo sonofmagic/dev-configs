@@ -5,13 +5,14 @@ import type {
   UserConfigItem,
   UserDefinedOptions,
 } from './types'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { interopDefault } from './antfu'
 import { nestjsTypeScriptRules } from './defaults'
 import { hasAllPackages } from './utils'
 
 const BETTER_TAILWIND_PACKAGES = ['eslint-plugin-better-tailwindcss']
-const TAILWIND_PACKAGES = ['eslint-plugin-tailwindcss']
+const TAILWIND_PACKAGES = ['eslint-plugin-tailwindcss', 'tailwindcss']
 const STYLELINT_BRIDGE_PACKAGES = ['eslint-plugin-better-stylelint']
 const MDX_PACKAGES = ['eslint-plugin-mdx']
 const VUE_A11Y_PACKAGES = ['eslint-plugin-vuejs-accessibility']
@@ -56,10 +57,21 @@ interface BetterTailwindPluginModule {
   }
 }
 
+const require = createRequire(import.meta.url)
+
 function resolveStylelintConfigLoader(moduleUrl = import.meta.url) {
   return moduleUrl.endsWith('.ts')
     ? new URL('./stylelint.ts', moduleUrl).href
     : new URL('./stylelint.js', moduleUrl).href
+}
+
+function resolveDefaultTailwindCssConfigPath() {
+  try {
+    return require.resolve('tailwindcss/index.css')
+  }
+  catch {
+    return undefined
+  }
 }
 
 function normalizeGlobPath(filePath: string) {
@@ -149,6 +161,8 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
     return []
   }
 
+  const cssConfigPath = resolveDefaultTailwindCssConfigPath()
+
   return [
     interopDefault(
       import('eslint-plugin-tailwindcss'),
@@ -159,6 +173,15 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
         ?? []
     }),
     {
+      ...(cssConfigPath
+        ? {
+            settings: {
+              tailwindcss: {
+                cssConfigPath,
+              },
+            },
+          }
+        : {}),
       rules: {
         'tailwindcss/no-custom-classname': 'off',
       },
@@ -319,3 +342,4 @@ export function resolveQueryPresets(isEnabled: UserDefinedOptions['query']): Use
 }
 
 export { resolveStylelintConfigLoader as __resolveStylelintConfigLoader }
+export { resolveDefaultTailwindCssConfigPath as __resolveDefaultTailwindCssConfigPath }

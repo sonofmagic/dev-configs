@@ -712,6 +712,42 @@ describe('eslint integration fixtures', () => {
 })
 
 describe('tailwind integration', () => {
+  it('uses a resolvable default cssConfigPath for eslint-plugin-tailwindcss', async () => {
+    const tempDir = path.join(ROOT_DIR, `.tmp-tailwindcss-default-${crypto.randomUUID()}`)
+    const filePath = path.join(tempDir, 'src', 'App.jsx')
+
+    await fs.rm(tempDir, { recursive: true, force: true })
+    await fs.mkdir(path.dirname(filePath), { recursive: true })
+    await fs.writeFile(
+      filePath,
+      'export function App() { return <div className="text-red-500 flex" /> }\n',
+      'utf8',
+    )
+
+    try {
+      const eslint = new ESLint({
+        cwd: tempDir,
+        overrideConfig: await icebreaker({
+          react: true,
+          tailwindcss: true,
+        }).toConfigs(),
+        overrideConfigFile: true,
+      })
+
+      const config = await eslint.calculateConfigForFile(filePath)
+      expect(config.rules?.['tailwindcss/classnames-order']).toBeDefined()
+      expect(config.settings?.tailwindcss).toMatchObject({
+        cssConfigPath: expect.stringContaining('tailwindcss'),
+      })
+
+      const [result] = await eslint.lintFiles([filePath])
+      expect(result?.messages.filter(message => message.fatal)).toEqual([])
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+
   it('does not apply better-tailwindcss rules to package.json when enabled', async () => {
     const tempDir = path.join(ROOT_DIR, `.tmp-tailwind-package-json-${crypto.randomUUID()}`)
     const entryPoint = path.join(tempDir, 'src', 'style.css')
