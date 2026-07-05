@@ -1,5 +1,13 @@
 # postcss-tailwindcss
 
+## 3.0.1
+
+### Patch Changes
+
+- 🐛 **Upgrade linting runtime dependencies and keep the Tailwind CSS ESLint preset** [`b2d1012`](https://github.com/sonofmagic/dev-configs/commit/b2d1012639aeae3253a6ee0d2ac612dce14e593e) by @sonofmagic
+  - usable with eslint-plugin-tailwindcss v4 by providing a resolvable default CSS
+  - config path.
+
 ## 3.0.0
 
 ### Major Changes

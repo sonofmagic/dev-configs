@@ -1,5 +1,12 @@
 # @icebreakers/mock
 
+## 0.0.46
+
+### Patch Changes
+
+- 📦 **Dependencies**
+  → `@icebreakers/stylelint-config@5.0.1`
+
 ## 0.0.45
 
 ### Patch Changes
