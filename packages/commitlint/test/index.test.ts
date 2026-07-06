@@ -1,3 +1,4 @@
+import type { ParserPreset } from '@commitlint/types'
 import conventionalConfig from '@commitlint/config-conventional'
 import { describe, expect, it } from 'vitest'
 import {
@@ -11,12 +12,22 @@ describe('createIcebreakerCommitlintConfig', () => {
     const config = createIcebreakerCommitlintConfig()
 
     expect(config.extends).toBeUndefined()
-    expect(config.parserPreset).toBe(
-      conventionalConfig.parserPreset ?? 'conventional-changelog-conventionalcommits',
-    )
+    expect(config.parserPreset).toMatchObject({
+      name: conventionalConfig.parserPreset,
+    })
 
     expect(config.rules).toEqual(conventionalConfig.rules)
     expect(config.prompt).toEqual(conventionalConfig.prompt)
+  })
+
+  it('resolves parser options without exposing an ESM-only preset string', async () => {
+    const config = createIcebreakerCommitlintConfig()
+    const parserPreset = config.parserPreset as ParserPreset
+
+    await expect(parserPreset.parserOpts).resolves.toEqual(expect.objectContaining({
+      headerPattern: expect.any(RegExp),
+      headerCorrespondence: ['type', 'scope', 'subject'],
+    }))
   })
 
   it('allows extending commit types with prompt metadata', () => {

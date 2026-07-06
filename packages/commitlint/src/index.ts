@@ -8,7 +8,8 @@ import {
   buildSubjectRules,
   buildTypesConfig,
 } from './builders'
-import { DEFAULT_EXTENDS, DEFAULT_PARSER_PRESET } from './constants'
+import { DEFAULT_EXTENDS } from './constants'
+import { createConventionalParserPreset } from './parser-preset'
 import { mergePrompts } from './prompt'
 import { asArray, mergeUnique } from './utils'
 
@@ -60,7 +61,7 @@ export function createIcebreakerCommitlintConfig(
 
   return {
     ...(extendsList.length > 0 ? { extends: extendsList } : {}),
-    parserPreset: conventionalConfig.parserPreset ?? DEFAULT_PARSER_PRESET,
+    parserPreset: createConventionalParserPreset(),
     ...(Object.keys(mergedRules).length > 0 ? { rules: mergedRules } : {}),
     ...(prompt ? { prompt } : {}),
   }
@@ -71,3 +72,5 @@ export function icebreaker(options?: IcebreakerCommitlintOptions): UserConfig {
 }
 
 export type IcebreakerCommitlintConfig = ReturnType<typeof icebreaker>
+
+export default icebreaker()

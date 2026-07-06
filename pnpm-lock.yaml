@@ -238,6 +238,13 @@ importers:
       conventional-changelog-conventionalcommits:
         specifier: ^10.2.1
         version: 10.2.1
+    devDependencies:
+      '@commitlint/lint':
+        specifier: ^21.2.0
+        version: 21.2.0
+      '@commitlint/load':
+        specifier: ^21.2.0
+        version: 21.2.0(@types/node@26.1.0)(typescript@6.0.3)
 
   packages/eslint:
     dependencies:

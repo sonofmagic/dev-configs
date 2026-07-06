@@ -2,11 +2,12 @@ import path from 'node:path'
 import lint from '@commitlint/lint'
 import loadCommitlintConfig from '@commitlint/load'
 import createPreset from 'conventional-changelog-conventionalcommits'
-import { createIcebreakerCommitlintConfig } from '@/index'
+import { createIcebreakerCommitlintConfig, icebreaker } from '@/index'
 
 type LintRules = Parameters<typeof lint>[1]
 type LintOptions = NonNullable<Parameters<typeof lint>[2]>
 type CommitlintRules = ReturnType<typeof createIcebreakerCommitlintConfig>['rules']
+type LintError = Awaited<ReturnType<typeof lint>>['errors'][number]
 
 async function lintMessage(
   message: string,
@@ -48,6 +49,20 @@ describe('commitlint integration', () => {
     expect(result.valid).toBe(true)
   })
 
+  it('loads the factory config without resolving the ESM-only parser preset string', async () => {
+    const config = await loadCommitlintConfig(icebreaker(), {
+      cwd: path.resolve(__dirname, '..'),
+    })
+
+    expect(config.parserPreset?.name).toBe(
+      'conventional-changelog-conventionalcommits',
+    )
+    expect(config.parserPreset?.parserOpts).toEqual(expect.objectContaining({
+      headerPattern: expect.any(RegExp),
+      headerCorrespondence: ['type', 'scope', 'subject'],
+    }))
+  })
+
   it('validates default type enum rules', async () => {
     const config = createIcebreakerCommitlintConfig()
 
@@ -56,7 +71,7 @@ describe('commitlint integration', () => {
 
     expect(valid.valid).toBe(true)
     expect(invalid.valid).toBe(false)
-    expect(invalid.errors.some(error => error.name === 'type-enum')).toBe(true)
+    expect(invalid.errors.some((error: LintError) => error.name === 'type-enum')).toBe(true)
   })
 
   it('accepts added commit types', async () => {
@@ -99,13 +114,13 @@ describe('commitlint integration', () => {
     const emptySubject = await lintMessage('feat(core): ', config.rules)
 
     expect(missingScope.valid).toBe(false)
-    expect(missingScope.errors.some(error => error.name === 'scope-empty'))
+    expect(missingScope.errors.some((error: LintError) => error.name === 'scope-empty'))
       .toBe(true)
-    expect(wrongCase.errors.some(error => error.name === 'scope-case'))
+    expect(wrongCase.errors.some((error: LintError) => error.name === 'scope-case'))
       .toBe(true)
-    expect(longHeader.errors.some(error => error.name === 'header-max-length'))
+    expect(longHeader.errors.some((error: LintError) => error.name === 'header-max-length'))
       .toBe(true)
-    expect(emptySubject.errors.some(error => error.name === 'subject-empty'))
+    expect(emptySubject.errors.some((error: LintError) => error.name === 'subject-empty'))
       .toBe(true)
   })
 })
