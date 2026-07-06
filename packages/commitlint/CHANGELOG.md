@@ -1,5 +1,11 @@
 # @icebreakers/commitlint-config
 
+## 4.0.2
+
+### Patch Changes
+
+- 🐛 **修复 commitlint 在加载 conventional parser preset 时触发 ESM-only 包的 CJS 解析错误。** [`cbdb5f9`](https://github.com/sonofmagic/dev-configs/commit/cbdb5f9cb3ab671e0b759eb136887be5bc8ef51f) by @sonofmagic
+
 ## 4.0.1
 
 ### Patch Changes
