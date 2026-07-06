@@ -1,5 +1,13 @@
 # @icebreakers/eslint-config
 
+## 7.0.1
+
+### Patch Changes
+
+- 🐛 **Fix CI typecheck compatibility with ESLint 10.6, declare the direct PostCSS dependency used by the Tailwind stylelint plugin, and keep Tailwind runtime and type tests resolvable.** [`e3bf5c6`](https://github.com/sonofmagic/dev-configs/commit/e3bf5c684bcc85cd35cb3826341f4a9c0975cbba) by @sonofmagic
+- 📦 **Dependencies** [`e3bf5c6`](https://github.com/sonofmagic/dev-configs/commit/e3bf5c684bcc85cd35cb3826341f4a9c0975cbba)
+  → `@icebreakers/stylelint-config@5.0.2`, `eslint-plugin-better-stylelint@2.0.1`
+
 ## 7.0.0
 
 ### Major Changes
