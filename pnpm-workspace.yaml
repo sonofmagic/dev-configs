@@ -9,3 +9,6 @@ onlyBuiltDependencies:
   - sharp
   - workerd
 minimumReleaseAge: 0
+allowBuilds:
+  esbuild: true
+  msgpackr-extract: true
