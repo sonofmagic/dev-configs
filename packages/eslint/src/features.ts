@@ -1,5 +1,10 @@
 import type { Linter } from 'eslint'
 import type {
+  BetterStylelintProcessor,
+  BetterStylelintRuleOptions,
+} from 'eslint-plugin-better-stylelint'
+import type {
+  ResolvableUserConfig,
   StylelintBridgeOption,
   TypedFlatConfigItem,
   UserConfigItem,
@@ -44,20 +49,61 @@ const BETTER_TAILWIND_SYNTAX_RULES: Linter.RulesRecord = {
   'better-tailwindcss/no-unnecessary-whitespace': 'warn',
 }
 
+type ConfigPreset = TypedFlatConfigItem | TypedFlatConfigItem[]
+type FlatConfigPlugin = NonNullable<TypedFlatConfigItem['plugins']>[string]
+
 interface TailwindPluginModule {
   configs: {
-    'recommended'?: Linter.Config | Linter.Config[]
-    'flat/recommended'?: Linter.Config | Linter.Config[]
+    'recommended'?: ConfigPreset
+    'flat/recommended'?: ConfigPreset
   }
 }
 
 interface BetterTailwindPluginModule {
   configs: {
-    recommended?: Linter.Config
+    recommended?: {
+      rules?: Linter.RulesRecord
+    }
+  }
+}
+
+interface StylelintBridgePluginModule {
+  default: FlatConfigPlugin
+  createStylelintProcessor: (options: BetterStylelintRuleOptions) => BetterStylelintProcessor
+}
+
+interface MdxPluginModule {
+  flat: TypedFlatConfigItem
+  flatCodeBlocks: TypedFlatConfigItem
+  createRemarkProcessor: (options: {
+    lintCodeBlocks: boolean
+    languageMapper: Record<string, string>
+  }) => Linter.Processor
+}
+
+interface VueAccessibilityPluginModule {
+  configs: {
+    'flat/recommended': ConfigPreset
+  }
+}
+
+interface JsxA11yPluginModule {
+  flatConfigs: {
+    recommended: ConfigPreset
+  }
+}
+
+interface QueryPluginModule {
+  configs: {
+    'flat/recommended': ConfigPreset
   }
 }
 
 const require = createRequire(import.meta.url)
+
+function interopPluginDefault<T>(modulePromise: Promise<unknown>): Promise<T> {
+  return interopDefault(modulePromise) as Promise<T>
+}
 
 function resolveStylelintConfigLoader(moduleUrl = import.meta.url) {
   return moduleUrl.endsWith('.ts')
@@ -124,7 +170,7 @@ export function resolveBetterTailwindPresets(option: UserDefinedOptions['betterT
     : {}
 
   return [
-    interopDefault(
+    interopPluginDefault<BetterTailwindPluginModule>(
       import('eslint-plugin-better-tailwindcss'),
     ).then((eslintPluginBetterTailwindcss) => {
       const betterTailwindcssRules = resolveBetterTailwindRules(
@@ -147,8 +193,8 @@ export function resolveBetterTailwindPresets(option: UserDefinedOptions['betterT
             tailwindConfig: betterTailwindcssOption.tailwindConfig,
           },
         },
-      } satisfies TypedFlatConfigItem
-    }),
+      } as TypedFlatConfigItem
+    }) as Promise<ResolvableUserConfig>,
   ]
 }
 
@@ -164,14 +210,14 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
   const cssConfigPath = resolveDefaultTailwindCssConfigPath()
 
   return [
-    interopDefault(
+    interopPluginDefault<TailwindPluginModule>(
       import('eslint-plugin-tailwindcss'),
     ).then((tailwind) => {
       const tailwindPlugin = tailwind as TailwindPluginModule
       return tailwindPlugin.configs['flat/recommended']
         ?? tailwindPlugin.configs.recommended
         ?? []
-    }),
+    }) as Promise<ResolvableUserConfig>,
     {
       ...(cssConfigPath
         ? {
@@ -200,7 +246,7 @@ function resolveStylelintBridgeOptions(
   return {
     ...(cwd ? { cwd } : {}),
     configLoader: resolveStylelintConfigLoader(),
-    configOptions: stylelintConfigOptions as unknown as Record<string, unknown>,
+    configOptions: stylelintConfigOptions,
   }
 }
 
@@ -213,7 +259,7 @@ export function resolveStylelintBridgePresets(option: UserDefinedOptions['stylel
     return []
   }
 
-  const pluginModulePromise = import('eslint-plugin-better-stylelint')
+  const pluginModulePromise: Promise<StylelintBridgePluginModule> = import('eslint-plugin-better-stylelint')
   const stylelintOptions = resolveStylelintBridgeOptions(option)
 
   return [
@@ -223,18 +269,18 @@ export function resolveStylelintBridgePresets(option: UserDefinedOptions['stylel
         plugins: {
           stylelint: pluginModule.default,
         },
-        processor: pluginModule.createStylelintProcessor(stylelintOptions) as any,
+        processor: pluginModule.createStylelintProcessor(stylelintOptions),
       } satisfies TypedFlatConfigItem
-    }),
+    }) as Promise<ResolvableUserConfig>,
     pluginModulePromise.then((pluginModule) => {
       return {
         files: ['**/*.{scss,sass}'],
         plugins: {
           stylelint: pluginModule.default,
         },
-        processor: pluginModule.createStylelintProcessor(stylelintOptions) as any,
+        processor: pluginModule.createStylelintProcessor(stylelintOptions),
       } satisfies TypedFlatConfigItem
-    }),
+    }) as Promise<ResolvableUserConfig>,
     pluginModulePromise.then((pluginModule) => {
       return {
         files: ['**/*.vue'],
@@ -245,7 +291,7 @@ export function resolveStylelintBridgePresets(option: UserDefinedOptions['stylel
           'stylelint/stylelint': ['error', stylelintOptions],
         },
       } satisfies TypedFlatConfigItem
-    }),
+    }) as Promise<ResolvableUserConfig>,
   ]
 }
 
@@ -259,7 +305,7 @@ export function resolveMdxPresets(isEnabled: UserDefinedOptions['mdx']): UserCon
   }
 
   return [
-    interopDefault(import('eslint-plugin-mdx')).then((mdx) => {
+    interopPluginDefault<MdxPluginModule>(import('eslint-plugin-mdx')).then((mdx) => {
       return [
         {
           ...mdx.flat,
@@ -274,8 +320,8 @@ export function resolveMdxPresets(isEnabled: UserDefinedOptions['mdx']): UserCon
             ...mdx.flatCodeBlocks.rules,
           },
         },
-      ]
-    }),
+      ] satisfies TypedFlatConfigItem[]
+    }) as Promise<ResolvableUserConfig>,
   ]
 }
 
@@ -292,22 +338,23 @@ export function resolveAccessibilityPresets(
 
   if (vueOption && hasAllPackages(VUE_A11Y_PACKAGES)) {
     presets.push(
-      interopDefault(
+      (interopDefault(
+        // @ts-expect-error optional dependency shape
         import('eslint-plugin-vuejs-accessibility'),
-      ).then((pluginVueA11y) => {
+      ) as Promise<VueAccessibilityPluginModule>).then((pluginVueA11y) => {
         return pluginVueA11y.configs['flat/recommended']
-      }),
+      }) as Promise<ResolvableUserConfig>,
     )
   }
 
   if (reactOption && hasAllPackages(REACT_A11Y_PACKAGES)) {
     presets.push(
-      interopDefault(
-        // @ts-ignore optional dependency shape
+      (interopDefault(
+        // @ts-expect-error optional dependency shape
         import('eslint-plugin-jsx-a11y'),
-      ).then((jsxA11y) => {
+      ) as Promise<JsxA11yPluginModule>).then((jsxA11y) => {
         return jsxA11y.flatConfigs.recommended
-      }),
+      }) as Promise<ResolvableUserConfig>,
     )
   }
 
@@ -335,9 +382,11 @@ export function resolveQueryPresets(isEnabled: UserDefinedOptions['query']): Use
   }
 
   return [
-    interopDefault(
+    interopPluginDefault<QueryPluginModule>(
       import('@tanstack/eslint-plugin-query'),
-    ).then(pluginQuery => pluginQuery.configs['flat/recommended']),
+    ).then(
+      pluginQuery => pluginQuery.configs['flat/recommended'],
+    ) as Promise<ResolvableUserConfig>,
   ]
 }
 

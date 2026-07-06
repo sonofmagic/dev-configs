@@ -195,10 +195,12 @@ function isComposer(
 function normalizeUserConfig(
   userConfig: UserConfigItem,
 ): ResolvableUserConfig | Promise<ResolvableUserConfig> {
-  if (typeof (userConfig as PromiseLike<Awaited<UserConfigItem>>)?.then === 'function') {
-    return Promise.resolve(userConfig).then((resolved) => {
-      return isComposer(resolved) ? resolved : normalizeResolvedUserConfig(resolved)
-    })
+  if (typeof (userConfig as PromiseLike<unknown>)?.then === 'function') {
+    return (userConfig as PromiseLike<unknown>).then((resolved) => {
+      return isComposer(resolved)
+        ? resolved as unknown as TypedFlatConfigItem
+        : normalizeResolvedUserConfig(resolved as NormalizableUserConfig)
+    }) as Promise<ResolvableUserConfig>
   }
 
   const resolvedUserConfig = userConfig as ResolvableUserConfig

@@ -17,7 +17,7 @@ export interface BetterStylelintMessage {
   endLine?: number
   endColumn?: number
   severity: 1 | 2
-  fatal?: boolean
+  fatal?: true
 }
 
 export interface BetterStylelintProcessor {

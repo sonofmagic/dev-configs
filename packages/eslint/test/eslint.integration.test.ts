@@ -11,6 +11,7 @@ const ROOT_DIR = path.resolve(__dirname, '..')
 const INPUT_ROOT = path.join(ROOT_DIR, 'fixtures', 'input')
 const OUTPUT_ROOT = path.join(ROOT_DIR, 'fixtures', 'output')
 const TEMP_ROOT = path.join(os.tmpdir(), 'icebreaker-eslint')
+const TAILWIND_RUNTIME_DIR = path.join(ROOT_DIR, 'node_modules', 'tailwindcss')
 
 const CASES = [
   'all',
@@ -103,8 +104,14 @@ const BASE_EXTENSIONS = [
   'toml',
 ]
 
-function stripUnsupportedRules(configs: Linter.Config[]): Linter.Config[] {
-  return configs.map((config) => {
+type EslintOverrideConfig = NonNullable<ConstructorParameters<typeof ESLint>[0]>['overrideConfig']
+
+function asOverrideConfig(configs: unknown): EslintOverrideConfig {
+  return configs as EslintOverrideConfig
+}
+
+function stripUnsupportedRules(configs: unknown[]): Linter.Config[] {
+  return (configs as Linter.Config[]).map((config) => {
     if (!config.rules) {
       return config
     }
@@ -227,7 +234,7 @@ describe('eslint integration fixtures', () => {
     const eslint = new ESLint({
       cwd: tempDir,
       fix: true,
-      overrideConfig: configs,
+      overrideConfig: asOverrideConfig(configs),
       overrideConfigFile: true,
     })
 
@@ -243,13 +250,13 @@ describe('eslint integration fixtures', () => {
     const tempDir = await prepareFixture('all')
     const eslint = new ESLint({
       cwd: tempDir,
-      overrideConfig: await icebreaker({
+      overrideConfig: asOverrideConfig(await icebreaker({
         stylelint: {
           rules: {
             'color-named': 'never',
           },
         },
-      }).toConfigs(),
+      }).toConfigs()),
       overrideConfigFile: true,
     })
 
@@ -291,9 +298,9 @@ describe('eslint integration fixtures', () => {
       const eslint = new ESLint({
         cwd: ROOT_DIR,
         fix: true,
-        overrideConfig: await icebreaker({
+        overrideConfig: asOverrideConfig(await icebreaker({
           formatters: testCase.formatters,
-        }).toConfigs(),
+        }).toConfigs()),
         overrideConfigFile: true,
       })
 
@@ -310,11 +317,11 @@ describe('eslint integration fixtures', () => {
     const eslint = new ESLint({
       cwd: ROOT_DIR,
       fix: true,
-      overrideConfig: await icebreaker({
+      overrideConfig: asOverrideConfig(await icebreaker({
         formatters: {
           graphql: 'oxfmt',
         },
-      }).toConfigs(),
+      }).toConfigs()),
       overrideConfigFile: true,
     })
 
@@ -349,7 +356,7 @@ describe('eslint integration fixtures', () => {
     const eslint = new ESLint({
       cwd: ROOT_DIR,
       fix: true,
-      overrideConfig: configs,
+      overrideConfig: asOverrideConfig(configs),
       overrideConfigFile: true,
     })
 
@@ -391,7 +398,7 @@ describe('eslint integration fixtures', () => {
     const eslint = new ESLint({
       cwd: ROOT_DIR,
       fix: true,
-      overrideConfig: configs,
+      overrideConfig: asOverrideConfig(configs),
       overrideConfigFile: true,
     })
 
@@ -422,7 +429,7 @@ describe('eslint integration fixtures', () => {
 
     const eslint = new ESLint({
       cwd: tempDir,
-      overrideConfig: await icebreaker(
+      overrideConfig: asOverrideConfig(await icebreaker(
         {},
         {
           ignores: ['.agents/**'],
@@ -433,7 +440,7 @@ describe('eslint integration fixtures', () => {
             ],
           },
         },
-      ).toConfigs(),
+      ).toConfigs()),
       overrideConfigFile: true,
     })
 
@@ -476,7 +483,7 @@ describe('eslint integration fixtures', () => {
 
     const eslint = new ESLint({
       cwd: tempDir,
-      overrideConfig: await icebreaker(
+      overrideConfig: asOverrideConfig(await icebreaker(
         {},
         {
           files: ['src/**/*.js'],
@@ -488,7 +495,7 @@ describe('eslint integration fixtures', () => {
             ],
           },
         },
-      ).toConfigs(),
+      ).toConfigs()),
       overrideConfigFile: true,
     })
 
@@ -520,7 +527,7 @@ describe('eslint integration fixtures', () => {
 
     const eslint = new ESLint({
       cwd: tempDir,
-      overrideConfig: await icebreaker(
+      overrideConfig: asOverrideConfig(await icebreaker(
         {},
         {
           files: ['**/*.js'],
@@ -533,7 +540,7 @@ describe('eslint integration fixtures', () => {
             reportUnusedDisableDirectives: 'error',
           },
         },
-      ).toConfigs(),
+      ).toConfigs()),
       overrideConfigFile: true,
     })
 
@@ -551,10 +558,10 @@ describe('eslint integration fixtures', () => {
   it('allows mini program native slot projection in Vue templates', async () => {
     const eslint = new ESLint({
       cwd: ROOT_DIR,
-      overrideConfig: stripUnsupportedRules(await icebreaker({
+      overrideConfig: asOverrideConfig(stripUnsupportedRules(await icebreaker({
         vue: true,
         miniProgram: true,
-      }).toConfigs()),
+      }).toConfigs())),
       overrideConfigFile: true,
     })
 
@@ -579,10 +586,10 @@ describe('eslint integration fixtures', () => {
   it('warns mini program Vue props named id, class, and slot without blocking readable props', async () => {
     const eslint = new ESLint({
       cwd: ROOT_DIR,
-      overrideConfig: stripUnsupportedRules(await icebreaker({
+      overrideConfig: asOverrideConfig(stripUnsupportedRules(await icebreaker({
         vue: true,
         miniProgram: true,
-      }).toConfigs()),
+      }).toConfigs())),
       overrideConfigFile: true,
     })
 
@@ -642,11 +649,11 @@ describe('eslint integration fixtures', () => {
 
     const eslint = new ESLint({
       cwd: tempDir,
-      overrideConfig: await icebreaker({
+      overrideConfig: asOverrideConfig(await icebreaker({
         unocss: {
           strict: true,
         },
-      }).toConfigs(),
+      }).toConfigs()),
       overrideConfigFile: true,
     })
 
@@ -685,12 +692,12 @@ describe('eslint integration fixtures', () => {
 
     const eslint = new ESLint({
       cwd: tempDir,
-      overrideConfig: await icebreaker({
+      overrideConfig: asOverrideConfig(await icebreaker({
         unocss: {
           strict: true,
           configPath: customConfigPath,
         },
-      }).toConfigs(),
+      }).toConfigs()),
       overrideConfigFile: true,
     })
 
@@ -718,6 +725,12 @@ describe('tailwind integration', () => {
 
     await fs.rm(tempDir, { recursive: true, force: true })
     await fs.mkdir(path.dirname(filePath), { recursive: true })
+    await fs.mkdir(path.join(tempDir, 'node_modules'), { recursive: true })
+    await fs.symlink(
+      TAILWIND_RUNTIME_DIR,
+      path.join(tempDir, 'node_modules', 'tailwindcss'),
+      'dir',
+    )
     await fs.writeFile(
       filePath,
       'export function App() { return <div className="text-red-500 flex" /> }\n',
@@ -727,10 +740,10 @@ describe('tailwind integration', () => {
     try {
       const eslint = new ESLint({
         cwd: tempDir,
-        overrideConfig: await icebreaker({
+        overrideConfig: asOverrideConfig(await icebreaker({
           react: true,
           tailwindcss: true,
-        }).toConfigs(),
+        }).toConfigs()),
         overrideConfigFile: true,
       })
 
@@ -767,12 +780,12 @@ describe('tailwind integration', () => {
     try {
       const eslint = new ESLint({
         cwd: tempDir,
-        overrideConfig: await icebreaker({
+        overrideConfig: asOverrideConfig(await icebreaker({
           vue: true,
           betterTailwindcss: {
             entryPoint,
           },
-        }).toConfigs(),
+        }).toConfigs()),
         overrideConfigFile: true,
       })
 

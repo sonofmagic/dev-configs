@@ -1,3 +1,4 @@
+import path from 'node:path'
 import {
   analyzeTailwindCss,
   collectApplyCandidates,
@@ -9,6 +10,8 @@ import {
   parseTailwindCss,
   resolveTailwindRuntime,
 } from '@/index'
+
+const PACKAGE_DIR = path.resolve(__dirname, '..')
 
 describe('postcss-tailwindcss', () => {
   it('parses CSS strings into PostCSS roots', () => {
@@ -161,7 +164,7 @@ describe('postcss-tailwindcss', () => {
 
   it('resolves Tailwind runtime details from the current workspace', () => {
     const runtime = resolveTailwindRuntime({
-      cwd: process.cwd(),
+      cwd: PACKAGE_DIR,
     })
 
     expect(runtime.packageJsonPath).toContain('tailwindcss')
@@ -171,7 +174,7 @@ describe('postcss-tailwindcss', () => {
 
   it('detects the installed Tailwind major version from the current workspace', () => {
     expect([3, 4]).toContain(detectInstalledTailwindVersion({
-      cwd: process.cwd(),
+      cwd: PACKAGE_DIR,
     }))
   })
 })

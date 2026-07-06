@@ -1,10 +1,8 @@
 import type {
-  Awaitable,
   OptionsConfig,
   TypedFlatConfigItem,
 } from '@antfu/eslint-config'
 import type { IcebreakerStylelintOptions } from '@icebreakers/stylelint-config'
-import type { Linter } from 'eslint'
 import type { FlatConfigComposer } from 'eslint-flat-config-utils'
 
 export interface BetterTailwindcssOption {
@@ -64,7 +62,6 @@ export type ResolvableUserConfig
   = | TypedFlatConfigItem
     | TypedFlatConfigItem[]
     | FlatConfigComposer<any, any>
-    | Linter.Config[]
 
 export type NormalizableUserConfig = Exclude<
   ResolvableUserConfig,
@@ -167,7 +164,7 @@ export type UserDefinedOptions = Omit<OptionsConfig, 'formatters' | 'unocss'> & 
   weapp?: boolean
 }
 
-export type UserConfigItem = Awaitable<ResolvableUserConfig>
+export type UserConfigItem = ResolvableUserConfig | Promise<ResolvableUserConfig>
 
 export type {
   OptionsConfig,

@@ -11,6 +11,12 @@ const BUNDLED_REACT_PACKAGES = [
   'eslint-plugin-react-refresh',
 ] as const
 
+type EslintOverrideConfig = NonNullable<ConstructorParameters<typeof ESLint>[0]>['overrideConfig']
+
+function asOverrideConfig(configs: unknown): EslintOverrideConfig {
+  return configs as EslintOverrideConfig
+}
+
 describe('react consumer smoke test', () => {
   it('resolves bundled react core plugins from the package itself', async () => {
     const originalCwd = process.cwd()
@@ -41,9 +47,9 @@ describe('react consumer smoke test', () => {
 
       const eslint = new ESLint({
         cwd: tempDir,
-        overrideConfig: await icebreaker({
+        overrideConfig: asOverrideConfig(await icebreaker({
           react: true,
-        }).toConfigs(),
+        }).toConfigs()),
         overrideConfigFile: true,
       })
 

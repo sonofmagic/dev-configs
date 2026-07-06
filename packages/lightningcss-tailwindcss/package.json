@@ -59,6 +59,7 @@
   "tsd": {
     "directory": "test-d",
     "compilerOptions": {
+      "module": "node16",
       "skipLibCheck": true
     }
   }

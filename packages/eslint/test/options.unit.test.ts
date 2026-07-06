@@ -15,11 +15,11 @@ function toFormatterOptions(value: unknown) {
 }
 
 function getFormatterRuleOptions(
-  configs: Linter.Config[],
+  configs: unknown[],
   name: string,
   ruleId?: 'format/prettier' | 'format/oxfmt',
 ): Record<string, unknown> {
-  const config = configs.find(item => item.name === name)
+  const config = (configs as Linter.Config[]).find(item => item.name === name)
 
   expect(config).toBeDefined()
   const resolvedRuleId = ruleId

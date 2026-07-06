@@ -272,6 +272,30 @@ describe('stylelint-plugin-tailwindcss', () => {
     expect(result.results[0]?.warnings ?? []).toEqual([])
   })
 
+  it('ignores compound selectors that include utility-like class names', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.page-shell[data-state=open] {',
+        '  display: grid;',
+        '}',
+        '',
+        '.flex:hover {',
+        '  display: flex;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: {
+        plugins: [noAtomicClassPlugin],
+        rules: {
+          [noAtomicClassRuleName]: true,
+        },
+      },
+    })
+
+    expect(result.errored).toBe(false)
+    expect(result.results[0]?.warnings ?? []).toEqual([])
+  })
+
   it('falls back to heuristic detection when tailwindcss is not installed', async () => {
     const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'stylelint-tailwindcss-'))
     const cssFile = path.join(tempDir, 'sample.css')

@@ -7,8 +7,14 @@ import { icebreaker } from '@/index'
 const ROOT_DIR = path.resolve(__dirname, '..')
 let tempDir = ''
 
-function stripUnsupportedRules(configs: Linter.Config[]): Linter.Config[] {
-  return configs.map((config) => {
+type EslintOverrideConfig = NonNullable<ConstructorParameters<typeof ESLint>[0]>['overrideConfig']
+
+function asOverrideConfig(configs: unknown): EslintOverrideConfig {
+  return configs as EslintOverrideConfig
+}
+
+function stripUnsupportedRules(configs: unknown[]): Linter.Config[] {
+  return (configs as Linter.Config[]).map((config) => {
     if (!config.rules) {
       return config
     }
@@ -64,7 +70,7 @@ describe('eslint branch config behavior', () => {
 
     eslint = new ESLint({
       cwd: tempDir,
-      overrideConfig: stripUnsupportedRules(configs),
+      overrideConfig: asOverrideConfig(stripUnsupportedRules(configs)),
       overrideConfigFile: true,
     })
   })
@@ -94,7 +100,7 @@ describe('eslint branch config behavior', () => {
     }).toConfigs()
     const miniProgramEslint = new ESLint({
       cwd: tempDir,
-      overrideConfig: stripUnsupportedRules(configs),
+      overrideConfig: asOverrideConfig(stripUnsupportedRules(configs)),
       overrideConfigFile: true,
     })
     const config = await miniProgramEslint.calculateConfigForFile(

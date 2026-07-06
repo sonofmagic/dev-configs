@@ -74,5 +74,8 @@
       "module": "node16",
       "skipLibCheck": true
     }
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.2.1"
   }
 }
