@@ -58,7 +58,7 @@
     }
   },
   "dependencies": {
-    "stylelint": "^17.14.0"
+    "stylelint": "^17.14.1"
   },
   "publishConfig": {
     "access": "public",

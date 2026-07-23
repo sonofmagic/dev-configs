@@ -59,7 +59,7 @@
     }
   },
   "dependencies": {
-    "postcss": "^8.5.16",
+    "postcss": "^8.5.22",
     "postcss-tailwindcss": "workspace:*"
   },
   "publishConfig": {
