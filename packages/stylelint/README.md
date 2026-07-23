@@ -70,6 +70,37 @@ export default createStylelintConfig({
 })
 ```
 
+### Override Or Disable Rules
+
+Rules passed through `rules` are merged after the bundled presets, so a rule
+with the same name replaces the built-in value. Use `null` to disable a rule:
+
+```ts
+// stylelint.config.ts
+import { createStylelintConfig } from '@icebreakers/stylelint-config'
+
+export default createStylelintConfig({
+  rules: {
+    // Override the built-in warning and report it as an error.
+    'property-no-vendor-prefix': true,
+
+    // Replace the default BEM/OOCSS class-name pattern.
+    'selector-class-pattern': [
+      '^[a-z][a-zA-Z0-9]+$',
+      { resolveNestedSelectors: true },
+    ],
+
+    // Disable the four utility guards enabled by the default `base` preset.
+    'tailwindcss/no-atomic-class': null,
+    'tailwindcss/no-invalid-apply': null,
+    'unocss/no-atomic-class': null,
+    'unocss/no-invalid-apply': null,
+  },
+})
+```
+
+The same `rules` option also works with `icebreaker({ rules: { ... } })`.
+
 ### Option Reference
 
 - `miniProgram` – ignore Mini Program build outputs by default: `dist/**`, `.weapp-vite/**`, `node_modules/**`, `miniprogram_npm/**`
