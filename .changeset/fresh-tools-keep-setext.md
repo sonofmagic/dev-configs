@@ -7,4 +7,4 @@
 'stylelint-plugin-tailwindcss': patch
 ---
 
-升级运行时与开发依赖，并让 Markdown 格式化结果与新版格式器保持一致，保留合法的 Setext 标题写法。
+升级运行时与开发依赖，让 Markdown 格式化结果与新版格式器保持一致，并修复 utility 规则把 `table-and-form` 等语义类名误判为 Tailwind/UnoCSS 原子类的问题。

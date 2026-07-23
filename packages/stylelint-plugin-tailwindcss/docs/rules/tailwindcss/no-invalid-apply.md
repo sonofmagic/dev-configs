@@ -12,8 +12,9 @@ Reports examples like:
 
 - `@apply bg-rd-500`
 
-This rule uses the resolved Tailwind runtime when available, so validation is
-based on the consuming project's actual Tailwind version and config.
+This rule uses the resolved Tailwind runtime, so validation is based on the
+consuming project's actual Tailwind version and config. If Tailwind cannot be
+resolved from the linted file, the rule skips validation instead of guessing.
 
 ## Why
 

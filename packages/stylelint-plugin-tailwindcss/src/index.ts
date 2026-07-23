@@ -69,6 +69,7 @@ import {
   createNoVariantGroupRuleFunction,
 } from './no-variant-group-rule'
 import { createRuleFunction, ruleFunction } from './rule'
+import { hasUnoCssRuntime, isUnoCssUtilityClass } from './unocss-runtime'
 
 interface StylelintPluginConfig {
   plugins: Plugin[]
@@ -92,15 +93,25 @@ function createPluginBundle(names: {
   noAtomicClass: string
   noInvalidApply: string
   noVariantGroup?: string
+}, detection: {
+  hasRuntime: (fromFile?: string) => Promise<boolean>
+  isUtilityClass: (className: string, fromFile?: string) => Promise<boolean>
 }) {
-  const noAtomicClassRuleFunction = createRuleFunction(names.noAtomicClass)
+  const noAtomicClassRuleFunction = createRuleFunction(
+    names.noAtomicClass,
+    detection.isUtilityClass,
+  )
   noAtomicClassRuleFunction.ruleName = names.noAtomicClass
   noAtomicClassRuleFunction.messages = createMessages(names.noAtomicClass) as Rule['messages']
   noAtomicClassRuleFunction.meta = {
     url: getRuleDocUrl(names.noAtomicClass),
   }
 
-  const noInvalidApplyRule = createNoInvalidApplyRuleFunction(names.noInvalidApply)
+  const noInvalidApplyRule = createNoInvalidApplyRuleFunction(
+    names.noInvalidApply,
+    detection.isUtilityClass,
+    detection.hasRuntime,
+  )
   noInvalidApplyRule.ruleName = names.noInvalidApply
   noInvalidApplyRule.messages = createNoInvalidApplyMessages(names.noInvalidApply) as Rule['messages']
   noInvalidApplyRule.meta = {
@@ -230,6 +241,7 @@ export { noThemeFunctionRuleFunction } from './no-theme-function-rule'
 export { noVariantGroupRuleFunction } from './no-variant-group-rule'
 export { ruleFunction } from './rule'
 export { isTailwindUtilityClass } from './runtime'
+export { isUnoCssUtilityClass } from './unocss-runtime'
 
 ruleFunction.ruleName = NO_ATOMIC_CLASS_RULE_NAME
 ruleFunction.messages = messages as Rule['messages']
@@ -347,6 +359,9 @@ const unocssBundle = createPluginBundle({
   noAtomicClass: UNOCSS_NO_ATOMIC_CLASS_RULE_NAME,
   noInvalidApply: UNOCSS_NO_INVALID_APPLY_RULE_NAME,
   noVariantGroup: UNOCSS_NO_VARIANT_GROUP_RULE_NAME,
+}, {
+  hasRuntime: hasUnoCssRuntime,
+  isUtilityClass: isUnoCssUtilityClass,
 })
 
 const base: StylelintPluginConfig = {

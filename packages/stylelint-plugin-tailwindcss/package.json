@@ -59,6 +59,8 @@
     }
   },
   "dependencies": {
+    "@unocss/config": "66.7.5",
+    "@unocss/core": "66.7.5",
     "postcss": "^8.5.22",
     "postcss-tailwindcss": "workspace:*"
   },

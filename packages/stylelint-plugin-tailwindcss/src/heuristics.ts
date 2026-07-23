@@ -1,4 +1,4 @@
-const UTILITY_PREFIXES = [
+const STATIC_UTILITY_CLASSES = [
   'absolute',
   'relative',
   'fixed',
@@ -14,9 +14,32 @@ const UTILITY_PREFIXES = [
   'hidden',
   'contents',
   'table',
+  'table-caption',
+  'table-cell',
+  'table-column',
+  'table-column-group',
+  'table-footer-group',
+  'table-header-group',
+  'table-row',
+  'table-row-group',
   'sr-only',
   'not-sr-only',
   'container',
+  'rounded',
+  'shadow',
+  'ring',
+  'truncate',
+  'transition',
+  'transform',
+  'filter',
+  'grow',
+  'shrink',
+] as const
+
+const VALUE_UTILITY_PREFIXES = [
+  'flex-',
+  'grid-cols-',
+  'grid-rows-',
   'items-',
   'justify-',
   'content-',
@@ -61,9 +84,9 @@ const UTILITY_PREFIXES = [
   'via-',
   'to-',
   'border-',
-  'rounded',
-  'shadow',
-  'ring',
+  'rounded-',
+  'shadow-',
+  'ring-',
   'opacity-',
   'overflow-',
   'object-',
@@ -80,14 +103,12 @@ const UTILITY_PREFIXES = [
   'align-',
   'whitespace-',
   'break-',
-  'truncate',
   'line-clamp-',
-  'transition',
+  'transition-',
   'duration-',
   'ease-',
   'delay-',
   'animate-',
-  'transform',
   'scale-',
   'scale-x-',
   'scale-y-',
@@ -98,7 +119,7 @@ const UTILITY_PREFIXES = [
   'skew-',
   'origin-',
   'outline-',
-  'filter',
+  'filter-',
   'backdrop-',
   'pointer-events-',
   'appearance-',
@@ -108,14 +129,16 @@ const UTILITY_PREFIXES = [
   'stroke-',
 ] as const
 
-const ARBITRARY_VALUE_RE = /\[[^\]]+\]/
-const FRACTIONAL_VALUE_RE = /^\d+\/\d+$/
-const NEGATIVE_UTILITY_RE = /^-[a-z]/
-const IMPORTANT_UTILITY_RE = /^![a-z]/
+const UTILITY_PREFIXES = [
+  ...STATIC_UTILITY_CLASSES,
+  ...VALUE_UTILITY_PREFIXES,
+] as const
+
 const IMPORTANT_PREFIX_RE = /^!/
 const BARE_ARBITRARY_VALUE_RE = /^(?:-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|rpx|rem|em|%|vh|vw|vmin|vmax|dvh|dvw|deg|rad|turn|ms|s|fr|ch|ex|pt|pc|cm|mm|in)|#[0-9a-fA-F]{3,8}|\$[A-Za-z_][\w-]*|(?:calc|min|max|clamp|rgb|rgba|hsl|hsla|color|url|var)\(.+\))$/
 const LEADING_NEGATIVE_SIGN_RE = /^-/
 const SORTED_UTILITY_PREFIXES = [...UTILITY_PREFIXES].sort((left, right) => right.length - left.length)
+const STATIC_UTILITY_CLASS_SET = new Set<string>(STATIC_UTILITY_CLASSES)
 const UNOCSS_VARIANT_GROUP_RE = /[^\s:()]+:\([^)]*\)/
 
 const heuristicCandidateCache = new Map<string, boolean>()
@@ -237,11 +260,10 @@ export function isHeuristicUtilityClass(className: string): boolean {
 
   const normalized = normalizeUtilityCandidate(className)
   const matched = (
-    ARBITRARY_VALUE_RE.test(className)
-    || FRACTIONAL_VALUE_RE.test(normalized)
-    || NEGATIVE_UTILITY_RE.test(className)
-    || IMPORTANT_UTILITY_RE.test(className)
-    || UTILITY_PREFIXES.some(prefix => normalized === prefix || normalized.startsWith(prefix))
+    isTailwindArbitraryValueUtilityClass(className)
+    || isUnoCssArbitraryValueUtilityClass(className)
+    || STATIC_UTILITY_CLASS_SET.has(normalized)
+    || VALUE_UTILITY_PREFIXES.some(prefix => normalized.startsWith(prefix))
   )
 
   heuristicCandidateCache.set(className, matched)

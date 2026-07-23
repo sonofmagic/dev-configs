@@ -8,6 +8,9 @@ import { createMessages } from './messages'
 import { isTailwindUtilityClass } from './runtime'
 
 type RuleResult = stylelint.PostcssResult
+type UtilityClassDetector = (className: string, fromFile?: string) => Promise<boolean>
+
+const reportedSelectors = new WeakMap<object, Set<string>>()
 
 const ESCAPED_BACKSLASH_RE = /\\\\/g
 const ESCAPED_CHAR_RE = /\\([^0-9a-f\r\n])/gi
@@ -54,7 +57,29 @@ function isSimpleClassSelector(selector: string, className: string): boolean {
   return rawClassName.length > 0 && unescapeCssIdentifier(rawClassName) === className
 }
 
-export function createRuleFunction(ruleName: string) {
+function createReportKey(entry: {
+  className: string
+  rule: { source?: { start?: { column?: number, line?: number } } }
+}): string {
+  const start = entry.rule.source?.start
+  return `${start?.line ?? 0}:${start?.column ?? 0}:${entry.className}`
+}
+
+function shouldReport(result: RuleResult, key: string): boolean {
+  const reported = reportedSelectors.get(result as object) ?? new Set<string>()
+  if (reported.has(key)) {
+    return false
+  }
+
+  reported.add(key)
+  reportedSelectors.set(result as object, reported)
+  return true
+}
+
+export function createRuleFunction(
+  ruleName: string,
+  isUtilityClass: UtilityClassDetector = isTailwindUtilityClass,
+) {
   const ruleMessages = createMessages(ruleName)
   return ((primary: unknown) => {
     return async (root: PostcssRoot, result: RuleResult) => {
@@ -84,7 +109,11 @@ export function createRuleFunction(ruleName: string) {
         })
 
       for (const entry of classEntries) {
-        if (!await isTailwindUtilityClass(entry.className, filePath)) {
+        if (!await isUtilityClass(entry.className, filePath)) {
+          continue
+        }
+
+        if (!shouldReport(result, createReportKey(entry))) {
           continue
         }
 
