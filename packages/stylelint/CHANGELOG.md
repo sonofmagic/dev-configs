@@ -1,5 +1,11 @@
 # @icebreakers/stylelint-config
 
+## 4.0.4
+
+### Patch Changes
+
+- 🐛 **在中英文 README 中补充覆盖内置规则和使用 `null` 禁用规则的完整配置示例。** [`a48718e`](https://github.com/sonofmagic/dev-configs/commit/a48718ed5886981796f81da464244289dab4b20e) by @sonofmagic
+
 ## 4.0.3
 
 ### Patch Changes
