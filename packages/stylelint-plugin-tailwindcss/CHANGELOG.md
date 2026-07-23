@@ -1,5 +1,11 @@
 # stylelint-plugin-tailwindcss
 
+## 2.0.7
+
+### Patch Changes
+
+- 🐛 **修复 `table-and-form`、`flex-layout` 等语义类名被误判为 Tailwind 或 UnoCSS 原子类的问题，并改为使用项目实际的 Tailwind runtime 与 UnoCSS 配置校验 utility。** [`52609c1`](https://github.com/sonofmagic/dev-configs/commit/52609c1345bd3f779e6275a2b9ec1bc76f12fcaf) by @sonofmagic
+
 ## 2.0.6
 
 ### Patch Changes
