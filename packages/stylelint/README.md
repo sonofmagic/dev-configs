@@ -57,9 +57,7 @@ export default createStylelintConfig({
     units: ['upx'], // replace default list
     addAtRules: ['tailwind'],
   },
-  extends: [
-    '@acme/stylelint-config',
-  ],
+  extends: ['@acme/stylelint-config'],
   overrides: [
     {
       files: ['**/*.html'],
@@ -205,7 +203,7 @@ That adds these Tailwind-only rules on top of the default policy:
 - `tailwindcss/no-import-directive`
 - `tailwindcss/no-css-layer`
 
-The underlying plugin supports both Tailwind CSS v3 and v4, and switches automatically based on the installed `tailwindcss` major version in the consuming project.
+The underlying plugin supports both Tailwind CSS v3 and v4, and switches automatically based on the installed `tailwindcss` major version in the consuming project. UnoCSS rules discover the nearest `uno.config.*` or `unocss.config.*` and validate with the official generator. Runtime-dependent rules do not guess from class-name prefixes when the corresponding Tailwind runtime or UnoCSS config is unavailable, so semantic names such as `.table-and-form` and `.flex-layout` remain valid. If both runtimes recognize the same selector, the combined preset reports it once.
 
 ## Recommended Scripts
 

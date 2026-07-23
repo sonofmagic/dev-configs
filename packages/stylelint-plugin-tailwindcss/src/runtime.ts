@@ -14,7 +14,6 @@ import {
   detectInstalledTailwindVersion,
   resolveTailwindRuntime,
 } from 'postcss-tailwindcss'
-import { isHeuristicUtilityClass } from './heuristics'
 
 const tailwindV3ContextCache = new Map<string, Promise<TailwindRuntimeContextV3>>()
 const tailwindV3CandidateCache = new Map<string, Map<string, boolean>>()
@@ -238,12 +237,16 @@ async function isTailwindUtilityClassV4(className: string, fromFile?: string): P
 export async function isTailwindUtilityClass(className: string, fromFile?: string): Promise<boolean> {
   const majorVersion = await detectTailwindMajorVersion(fromFile)
   if (majorVersion === 'heuristic') {
-    return isHeuristicUtilityClass(className)
+    return false
   }
 
   return majorVersion === 4
     ? isTailwindUtilityClassV4(className, fromFile)
     : isTailwindUtilityClassV3(className, fromFile)
+}
+
+export async function hasTailwindRuntime(fromFile?: string): Promise<boolean> {
+  return await detectTailwindMajorVersion(fromFile) !== 'heuristic'
 }
 
 function splitThemePath(path: string): string[] {

@@ -6,11 +6,17 @@ import stylelintModule from 'stylelint'
 import { NO_INVALID_APPLY_RULE_NAME } from './constants'
 import { isLikelyUtilityClass } from './heuristics'
 import { createNoInvalidApplyMessages } from './messages'
-import { isTailwindUtilityClass } from './runtime'
+import { hasTailwindRuntime, isTailwindUtilityClass } from './runtime'
 
 type RuleResult = stylelint.PostcssResult
+type UtilityClassDetector = (className: string, fromFile?: string) => Promise<boolean>
+type UtilityRuntimeDetector = (fromFile?: string) => Promise<boolean>
 
-export function createNoInvalidApplyRuleFunction(ruleName: string) {
+export function createNoInvalidApplyRuleFunction(
+  ruleName: string,
+  isUtilityClass: UtilityClassDetector = isTailwindUtilityClass,
+  hasUtilityRuntime: UtilityRuntimeDetector = hasTailwindRuntime,
+) {
   const ruleMessages = createNoInvalidApplyMessages(ruleName)
   return ((primary: unknown) => {
     return async (root: PostcssRoot, result: RuleResult) => {
@@ -31,7 +37,11 @@ export function createNoInvalidApplyRuleFunction(ruleName: string) {
           continue
         }
 
-        if (await isTailwindUtilityClass(entry.candidate, filePath)) {
+        if (!await hasUtilityRuntime(filePath)) {
+          continue
+        }
+
+        if (await isUtilityClass(entry.candidate, filePath)) {
           continue
         }
 

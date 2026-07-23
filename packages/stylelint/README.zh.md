@@ -55,9 +55,7 @@ export default createStylelintConfig({
     units: ['upx'], // 覆盖默认单位白名单
     addAtRules: ['tailwind'],
   },
-  extends: [
-    '@acme/stylelint-config',
-  ],
+  extends: ['@acme/stylelint-config'],
   overrides: [
     {
       files: ['**/*.html'],
@@ -201,7 +199,7 @@ export default createStylelintConfig({
 - `tailwindcss/no-import-directive`
 - `tailwindcss/no-css-layer`
 
-底层插件同时兼容 Tailwind CSS v3 和 v4，会根据使用方项目实际安装的 `tailwindcss` 主版本自动切换检测逻辑。
+底层插件同时兼容 Tailwind CSS v3 和 v4，会根据使用方项目实际安装的 `tailwindcss` 主版本自动切换检测逻辑。UnoCSS 规则会查找最近的 `uno.config.*` 或 `unocss.config.*`，并通过官方 generator 校验。缺少对应 Tailwind runtime 或 UnoCSS 配置时，依赖运行时的规则不会根据类名前缀猜测，因此 `.table-and-form`、`.flex-layout` 等语义类名可以正常使用；两个 runtime 同时识别同一选择器时，双开 preset 也只报告一次。
 
 ## 推荐脚本
 

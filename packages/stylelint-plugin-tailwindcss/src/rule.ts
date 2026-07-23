@@ -8,8 +8,78 @@ import { createMessages } from './messages'
 import { isTailwindUtilityClass } from './runtime'
 
 type RuleResult = stylelint.PostcssResult
+type UtilityClassDetector = (className: string, fromFile?: string) => Promise<boolean>
 
-export function createRuleFunction(ruleName: string) {
+const reportedSelectors = new WeakMap<object, Set<string>>()
+
+const ESCAPED_BACKSLASH_RE = /\\\\/g
+const ESCAPED_CHAR_RE = /\\([^0-9a-f\r\n])/gi
+
+function unescapeCssIdentifier(value: string): string {
+  return value
+    .replace(ESCAPED_BACKSLASH_RE, '\\')
+    .replace(ESCAPED_CHAR_RE, '$1')
+}
+
+function isSimpleClassSelector(selector: string, className: string): boolean {
+  const trimmed = selector.trim()
+  if (!trimmed.startsWith('.')) {
+    return false
+  }
+
+  let cursor = 1
+  let rawClassName = ''
+  while (cursor < trimmed.length) {
+    const char = trimmed[cursor]
+    if (char === undefined) {
+      return false
+    }
+
+    if (char === '\\') {
+      rawClassName += char
+      cursor += 1
+      const escapedChar = trimmed[cursor]
+      if (escapedChar !== undefined) {
+        rawClassName += escapedChar
+        cursor += 1
+      }
+      continue
+    }
+
+    if (/[\s>+~#[.:]/.test(char)) {
+      return false
+    }
+
+    rawClassName += char
+    cursor += 1
+  }
+
+  return rawClassName.length > 0 && unescapeCssIdentifier(rawClassName) === className
+}
+
+function createReportKey(entry: {
+  className: string
+  rule: { source?: { start?: { column?: number, line?: number } } }
+}): string {
+  const start = entry.rule.source?.start
+  return `${start?.line ?? 0}:${start?.column ?? 0}:${entry.className}`
+}
+
+function shouldReport(result: RuleResult, key: string): boolean {
+  const reported = reportedSelectors.get(result as object) ?? new Set<string>()
+  if (reported.has(key)) {
+    return false
+  }
+
+  reported.add(key)
+  reportedSelectors.set(result as object, reported)
+  return true
+}
+
+export function createRuleFunction(
+  ruleName: string,
+  isUtilityClass: UtilityClassDetector = isTailwindUtilityClass,
+) {
   const ruleMessages = createMessages(ruleName)
   return ((primary: unknown) => {
     return async (root: PostcssRoot, result: RuleResult) => {
@@ -23,21 +93,27 @@ export function createRuleFunction(ruleName: string) {
       }
 
       const filePath = root.source?.input.file
-      const classEntries = collectUtilitySelectors(root as unknown as PostcssRoot).map((entry) => {
-        const selectorIndex = entry.selector.indexOf(`.${entry.className}`)
+      const classEntries = collectUtilitySelectors(root as unknown as PostcssRoot)
+        .filter(entry => isSimpleClassSelector(entry.selector, entry.className))
+        .map((entry) => {
+          const selectorIndex = entry.selector.indexOf(`.${entry.className}`)
 
-        return {
-          className: entry.className,
-          endIndex: selectorIndex === -1
-            ? undefined
-            : selectorIndex + entry.className.length + 1,
-          index: selectorIndex === -1 ? undefined : selectorIndex,
-          rule: entry.rule,
-        }
-      })
+          return {
+            className: entry.className,
+            endIndex: selectorIndex === -1
+              ? undefined
+              : selectorIndex + entry.className.length + 1,
+            index: selectorIndex === -1 ? undefined : selectorIndex,
+            rule: entry.rule,
+          }
+        })
 
       for (const entry of classEntries) {
-        if (!await isTailwindUtilityClass(entry.className, filePath)) {
+        if (!await isUtilityClass(entry.className, filePath)) {
+          continue
+        }
+
+        if (!shouldReport(result, createReportKey(entry))) {
           continue
         }
 

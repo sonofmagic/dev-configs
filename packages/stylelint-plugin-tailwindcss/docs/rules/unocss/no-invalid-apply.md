@@ -15,6 +15,8 @@ Reports examples like:
 - `@apply justify-betwen items-cneter`
 
 This rule focuses on candidate validity rather than banning `@apply` itself.
+It discovers the nearest `uno.config.*` or `unocss.config.*` and validates with
+the official UnoCSS generator. If no config is available, it skips validation.
 
 It only reports tokens that still look utility-like.
 

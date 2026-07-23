@@ -18,6 +18,12 @@ Allows semantic selectors such as:
 
 - `.page-shell`
 - `.card__body`
+- `.table-and-form`
+- `.flex-layout`
+
+The rule resolves the consuming project's Tailwind v3 or v4 runtime and only
+reports selectors accepted by that runtime. If Tailwind cannot be resolved from
+the linted file, the rule produces no match instead of guessing from prefixes.
 
 Use this rule when utility classes should stay in template or markup code.
 

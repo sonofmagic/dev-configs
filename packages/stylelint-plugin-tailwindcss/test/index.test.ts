@@ -5,6 +5,7 @@ import stylelint from 'stylelint'
 import defaultConfig, {
   base,
   isTailwindUtilityClass,
+  isUnoCssUtilityClass,
   noApplyPlugin,
   noApplyRuleName,
   noArbitraryValuePlugin,
@@ -272,22 +273,127 @@ describe('stylelint-plugin-tailwindcss', () => {
     expect(result.results[0]?.warnings ?? []).toEqual([])
   })
 
-  it('falls back to heuristic detection when tailwindcss is not installed', async () => {
+  it('allows semantic selectors that begin with static utility names', async () => {
+    const semanticClassNames = [
+      'absolute-layout',
+      'relative-panel',
+      'fixed-header',
+      'block-editor',
+      'inline-help',
+      'flex-layout',
+      'grid-panel',
+      'hidden-field',
+      'table-and-form',
+      'container-main',
+      'rounded-card',
+      'shadow-panel',
+      'ring-chart',
+      'transition-state',
+      'transform-box',
+      'filter-panel',
+    ]
+    const result = await stylelint.lint({
+      code: semanticClassNames
+        .map(className => `.${className} { display: block; }`)
+        .join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: recommended,
+    })
+
+    expect(result.errored).toBe(false)
+    expect(result.results[0]?.warnings ?? []).toEqual([])
+  })
+
+  it('ignores compound selectors that include utility-like class names', async () => {
+    const result = await stylelint.lint({
+      code: [
+        '.page-shell[data-state=open] {',
+        '  display: grid;',
+        '}',
+        '',
+        '.flex:hover {',
+        '  display: flex;',
+        '}',
+      ].join('\n'),
+      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      config: {
+        plugins: [noAtomicClassPlugin],
+        rules: {
+          [noAtomicClassRuleName]: true,
+        },
+      },
+    })
+
+    expect(result.errored).toBe(false)
+    expect(result.results[0]?.warnings ?? []).toEqual([])
+  })
+
+  it('does not guess utility classes when tailwindcss is not installed', async () => {
     const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'stylelint-tailwindcss-'))
     const cssFile = path.join(tempDir, 'sample.css')
     await fs.writeFile(cssFile, '.demo {}', 'utf8')
 
     try {
-      await expect(isTailwindUtilityClass('flex', cssFile)).resolves.toBe(true)
-      await expect(isTailwindUtilityClass('hover:bg-red-500', cssFile)).resolves.toBe(true)
-      await expect(isTailwindUtilityClass('w-[10px]', cssFile)).resolves.toBe(true)
-      await expect(isTailwindUtilityClass('w-10px', cssFile)).resolves.toBe(true)
-      await expect(isTailwindUtilityClass('top--10px', cssFile)).resolves.toBe(true)
-      await expect(isTailwindUtilityClass('bg-$brand', cssFile)).resolves.toBe(true)
-      await expect(isTailwindUtilityClass('text-rgb(255,0,0)', cssFile)).resolves.toBe(true)
-      await expect(isTailwindUtilityClass('translate-x-50%', cssFile)).resolves.toBe(true)
-      await expect(isTailwindUtilityClass('[&>*]:w-10px', cssFile)).resolves.toBe(true)
+      await expect(isTailwindUtilityClass('flex', cssFile)).resolves.toBe(false)
+      await expect(isTailwindUtilityClass('hover:bg-red-500', cssFile)).resolves.toBe(false)
+      await expect(isTailwindUtilityClass('w-[10px]', cssFile)).resolves.toBe(false)
       await expect(isTailwindUtilityClass('card__body', cssFile)).resolves.toBe(false)
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+
+  it('detects UnoCSS utilities from the consuming project config', async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'stylelint-unocss-'))
+    const cssFile = path.join(tempDir, 'styles', 'sample.css')
+    await fs.mkdir(path.dirname(cssFile), { recursive: true })
+    await fs.writeFile(
+      path.join(tempDir, 'uno.config.mjs'),
+      [
+        'export default {',
+        '  rules: [[/^custom-utility$/, () => ({ display: "block" })]],',
+        '}',
+      ].join('\n'),
+      'utf8',
+    )
+    await fs.writeFile(cssFile, '.demo {}', 'utf8')
+
+    try {
+      await expect(isUnoCssUtilityClass('custom-utility', cssFile)).resolves.toBe(true)
+      await expect(isUnoCssUtilityClass('table-and-form', cssFile)).resolves.toBe(false)
+    }
+    finally {
+      await fs.rm(tempDir, { recursive: true, force: true })
+    }
+  })
+
+  it('reports a utility selector once when both runtimes recognize it', async () => {
+    const tempDir = await fs.mkdtemp(
+      path.join(path.resolve(__dirname, '..'), '.tmp-unocss-'),
+    )
+    const cssFile = path.join(tempDir, 'sample.css')
+    await fs.writeFile(
+      path.join(tempDir, 'uno.config.mjs'),
+      [
+        'export default {',
+        '  rules: [[/^flex$/, () => ({ display: "flex" })]],',
+        '}',
+      ].join('\n'),
+      'utf8',
+    )
+
+    try {
+      const result = await stylelint.lint({
+        code: '.flex { display: flex; }',
+        codeFilename: cssFile,
+        config: base,
+      })
+      const warnings = result.results[0]?.warnings ?? []
+
+      expect(result.errored).toBe(true)
+      expect(warnings).toHaveLength(1)
+      expect(warnings[0]?.text).toContain('.flex')
     }
     finally {
       await fs.rm(tempDir, { recursive: true, force: true })

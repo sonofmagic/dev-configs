@@ -18,8 +18,10 @@ UnoCSS 风格项目里也能复用同一套 Stylelint 工作流。
 pnpm add -D stylelint stylelint-plugin-tailwindcss
 ```
 
-如果使用方项目安装了 `tailwindcss`，插件会尽量基于真实 Tailwind runtime
-做判断；如果没有安装，则自动退化成启发式 utility 检测。
+依赖运行时的规则会基于使用方项目做真实校验，而不是根据类名前缀猜测。
+Tailwind 规则解析项目安装的 `tailwindcss` v3 或 v4 runtime；UnoCSS 规则
+查找最近的 `uno.config.*` 或 `unocss.config.*`，并使用官方 UnoCSS generator。
+缺少对应 runtime 或配置时，这些规则会保守地判定为不匹配。
 
 ## 快速开始
 
@@ -178,21 +180,28 @@ UnoCSS 规则：
 - `.page-shell`
 - `.card__body`
 - `.hero-banner--primary`
+- `.table-and-form`
+- `.flex-layout`
+- `.rounded-card`
 
 ## 检测模式
 
-### Tailwind 感知模式
+### Tailwind runtime
 
 如果使用方项目安装了 Tailwind，插件会解析该项目真实安装的
-`tailwindcss`，并尽量基于真实 runtime 做判断。
+`tailwindcss`，并基于真实 runtime 做判断。
 
-### 启发式模式
+如果无法从被检查文件解析到 Tailwind，`tailwindcss/no-atomic-class`、
+`tailwindcss/no-invalid-apply` 等依赖 runtime 的规则不会根据 utility 风格
+前缀继续猜测。
 
-如果项目没有安装 Tailwind，插件不会直接失效，而是退化成 utility-first
-启发式检测，依然能拦下大量常见的 utility 选择器和 utility 风格的
-`@apply` candidate。
+### UnoCSS runtime
 
-这也是它在 UnoCSS 风格项目里依然有价值的原因。
+UnoCSS 规则会从被检查文件所在目录向上查找 `uno.config.*` 或
+`unocss.config.*`，再通过 `@unocss/core` 校验 candidate。找不到配置时，
+依赖 runtime 的 UnoCSS 规则不会产生匹配结果。
+
+当两个命名空间都识别出同一个手写选择器时，双开 preset 只会报告一次。
 
 ## 规则说明
 
@@ -229,8 +238,8 @@ UnoCSS 规则：
 - `unocss/no-atomic-class`
   检查手写的 utility 选择器。
 - `unocss/no-invalid-apply`
-  检查那些“看起来像 utility、但又没通过插件 runtime / 启发式校验”的
-  `@apply` candidate。
+  检查那些“看起来像 utility、但又没通过当前 UnoCSS 配置与官方 generator
+  校验”的 `@apply` candidate。
   它比 `unocss/no-apply` 更窄：像 `button-base` 这种语义 token 不会报，
   但 `bg-rd-500` 这类拼错、又明显长得像 utility 的 token 会报。
   `w-10px`、`text-rgb(255,0,0)` 这类 bare-value 形式在校验失败时也可能同

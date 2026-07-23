@@ -226,7 +226,8 @@ describe('stylelint integration', () => {
     expect(warnings[0]?.text).toContain('.flex')
   })
 
-  it('reports UnoCSS utility selector declarations by default', async () => {
+  it('wires UnoCSS utility selector validation by default', async () => {
+    const config = icebreaker() as StylelintConfig
     const result = await stylelint.lint({
       code: [
         '.page-shell {',
@@ -237,8 +238,14 @@ describe('stylelint integration', () => {
         '  display: flex;',
         '}',
       ].join('\n'),
-      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
-      config: icebreaker() as StylelintConfig,
+      codeFilename: path.join(FIXTURE_DIR, 'unocss', 'sample.css'),
+      config: {
+        ...config,
+        rules: {
+          ...config.rules,
+          [noAtomicClassRuleName]: false,
+        },
+      },
     })
 
     const warnings = (result.results[0]?.warnings ?? []).filter(
@@ -279,7 +286,7 @@ describe('stylelint integration', () => {
         '  @apply bg-rd-500 rounded-lg;',
         '}',
       ].join('\n'),
-      codeFilename: path.join(FIXTURE_DIR, 'sample.css'),
+      codeFilename: path.join(FIXTURE_DIR, 'unocss', 'sample.css'),
       config: createStylelintConfig({
         tailwindcssPreset: 'base',
       }) as StylelintConfig,

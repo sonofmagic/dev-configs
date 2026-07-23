@@ -21,9 +21,11 @@ UnoCSS-style projects.
 pnpm add -D stylelint stylelint-plugin-tailwindcss
 ```
 
-If the consuming project installs `tailwindcss`, validation can use the real
-Tailwind runtime. Without Tailwind installed, the plugin falls back to
-heuristic utility detection.
+Runtime-aware rules validate against the consuming project instead of guessing
+from class-name prefixes. Tailwind rules resolve the installed `tailwindcss`
+v3 or v4 runtime. UnoCSS rules discover the nearest `uno.config.*` or
+`unocss.config.*` and use the official UnoCSS generator. If the corresponding
+runtime or config is absent, those rules conservatively produce no match.
 
 ## Quick Start
 
@@ -182,21 +184,29 @@ Semantic selectors such as these are not treated as utility selectors:
 - `.page-shell`
 - `.card__body`
 - `.hero-banner--primary`
+- `.table-and-form`
+- `.flex-layout`
+- `.rounded-card`
 
 ## Detection Modes
 
-### Tailwind-aware mode
+### Tailwind runtime
 
 When the consuming project installs Tailwind, the plugin resolves that project’s
 own `tailwindcss` package and validates against the real runtime.
 
-### Heuristic mode
+If Tailwind cannot be resolved from the linted file, runtime-dependent rules
+such as `tailwindcss/no-atomic-class` and `tailwindcss/no-invalid-apply` do not
+guess from utility-like prefixes.
 
-When Tailwind is not installed, the plugin does not fail closed. It falls back
-to utility-first heuristics that still catch many common utility selectors and
-utility-like `@apply` candidates.
+### UnoCSS runtime
 
-This is why the package remains useful in UnoCSS-style projects.
+UnoCSS rules search upward from the linted file for `uno.config.*` or
+`unocss.config.*`, then validate candidates with `@unocss/core`. Without a
+config, runtime-dependent UnoCSS rules produce no match.
+
+When both namespaces recognize the same authored selector, the combined presets
+report it once.
 
 ## Rule Reference
 
@@ -237,7 +247,7 @@ This is why the package remains useful in UnoCSS-style projects.
   Reports authored utility selectors.
 - `unocss/no-invalid-apply`
   Reports `@apply` candidates that look utility-like but are not recognized as
-  valid candidates by the plugin’s runtime and heuristic checks.
+  valid candidates by the discovered UnoCSS config and official generator.
   It is intentionally narrower than `unocss/no-apply`: semantic tokens such as
   `button-base` are ignored, while misspelled utility-like tokens such as
   `bg-rd-500` are reported.

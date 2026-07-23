@@ -14,6 +14,13 @@ Reports examples like:
 - `.grid`
 - `.hover\:bg-red-500`
 
+Allows semantic selectors such as `.table-and-form`, `.flex-layout`, and
+`.rounded-card`.
+
+The rule discovers the nearest `uno.config.*` or `unocss.config.*` from the
+linted file and validates selectors with the official UnoCSS generator. Without
+a config, it produces no match instead of guessing from prefixes.
+
 Use this rule when utility selectors should stay in templates or markup.
 
 ## Why
