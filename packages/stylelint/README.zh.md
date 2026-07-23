@@ -68,6 +68,37 @@ export default createStylelintConfig({
 })
 ```
 
+### 覆盖或禁用规则
+
+通过 `rules` 传入的规则会在内置 preset 和默认规则之后合并，因此同名规则会
+覆盖内置值。需要禁用某条规则时，将它设置为 `null`：
+
+```ts
+// stylelint.config.ts
+import { createStylelintConfig } from '@icebreakers/stylelint-config'
+
+export default createStylelintConfig({
+  rules: {
+    // 覆盖内置 warning，改为 error。
+    'property-no-vendor-prefix': true,
+
+    // 替换默认的 BEM/OOCSS 类名规则。
+    'selector-class-pattern': [
+      '^[a-z][a-zA-Z0-9]+$',
+      { resolveNestedSelectors: true },
+    ],
+
+    // 禁用默认 `base` preset 启用的四条 utility guard。
+    'tailwindcss/no-atomic-class': null,
+    'tailwindcss/no-invalid-apply': null,
+    'unocss/no-atomic-class': null,
+    'unocss/no-invalid-apply': null,
+  },
+})
+```
+
+使用 `icebreaker({ rules: { ... } })` 时，`rules` 的覆盖行为完全相同。
+
 ### 配置说明
 
 - `miniProgram`：默认忽略小程序常见产物目录：`dist/**`、`.weapp-vite/**`、`node_modules/**`、`miniprogram_npm/**`
