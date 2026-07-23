@@ -1,12 +1,5 @@
 # @icebreakers/eslint-config
 
-## 4.0.13
-
-### Patch Changes
-
-- 📦 **Dependencies** [`a48718e`](https://github.com/sonofmagic/dev-configs/commit/a48718ed5886981796f81da464244289dab4b20e)
-  → `@icebreakers/stylelint-config@4.0.4`
-
 ## 4.0.12
 
 ### Patch Changes
