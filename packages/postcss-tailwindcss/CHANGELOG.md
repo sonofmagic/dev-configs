@@ -1,5 +1,11 @@
 # postcss-tailwindcss
 
+## 3.0.3
+
+### Patch Changes
+
+- 🐛 **升级运行时与开发依赖，让 Markdown 格式化结果与新版格式器保持一致，并修复 utility 规则把 `table-and-form` 等语义类名误判为 Tailwind/UnoCSS 原子类的问题。** [`bafe948`](https://github.com/sonofmagic/dev-configs/commit/bafe9482c00d11c8e93d4417ced26dc0d36a5fc6) by @sonofmagic
+
 ## 3.0.2
 
 ### Patch Changes
