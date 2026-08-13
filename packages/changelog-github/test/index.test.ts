@@ -1,8 +1,8 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   getInfo,
   getInfoFromPullRequest,
-} from '@changesets/get-github-info'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+} from '@/github-info'
 import {
   formatHeadline,
   getDependencyReleaseLine,
@@ -10,7 +10,7 @@ import {
   parseConventionalHeadline,
 } from '@/index'
 
-vi.mock('@changesets/get-github-info', () => ({
+vi.mock('@/github-info', () => ({
   getInfo: vi.fn(),
   getInfoFromPullRequest: vi.fn(),
 }))

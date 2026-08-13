@@ -1,8 +1,8 @@
-import { getInfo } from '@changesets/get-github-info'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { getInfo } from '@/github-info'
 import { getDependencyReleaseLine, getReleaseLine } from '@/index'
 
-vi.mock('@changesets/get-github-info', () => ({
+vi.mock('@/github-info', () => ({
   getInfo: vi.fn(),
   getInfoFromPullRequest: vi.fn(),
 }))
