@@ -9,6 +9,8 @@ onlyBuiltDependencies:
   - sharp
   - workerd
 minimumReleaseAge: 0
+overrides:
+  typescript: 6.0.3
 allowBuilds:
   esbuild: true
   msgpackr-extract: true
