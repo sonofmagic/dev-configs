@@ -42,7 +42,7 @@ export function collectChangedPackages({
   )
 }
 
-export function createChangesetMarkdown(packageNames, summary) {
+export function createChangeIntentMarkdown(packageNames, summary) {
   return [
     '---',
     ...packageNames.map(packageName => `'${packageName}': patch`),
