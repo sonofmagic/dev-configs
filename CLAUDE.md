@@ -120,16 +120,17 @@ pnpm --filter @icebreakers/eslint-config test --debug
 
 ## Package Publishing
 
-**Using Changesets**:
+**Using pnpm native releases**:
 
 ```bash
-# Add a changeset (interactive prompts for version bump type)
+# Add a release intent (interactive prompts for version bump type)
 pnpm release
 
-# Version packages (consumes changeset files)
+# Preview or consume release intents
+pnpm release:status
 pnpm cv
 
-# Publish (builds, lints, tests, then publishes)
+# Publish (builds, lints, tests, then publishes bumped packages)
 pnpm publish-packages
 ```
 

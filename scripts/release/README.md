@@ -13,10 +13,10 @@ This folder keeps the package dependency release logic used by:
   - Purpose: compare `packages/*/package.json` dependency changes between
     `BASE_SHA..HEAD`
 
-- `create-temp-changeset.mjs`
+- `create-temp-change.mjs`
   - Input: `CHANGED_MATRIX`, optional `GITHUB_RUN_ID`
   - Output: a temporary `.changeset/packages-deps-<id>.md` file
-  - Purpose: create patch release entries for changed packages
+  - Purpose: create patch release intents for changed packages
 
 - `publish-changed-packages.mjs`
   - Input: `CHANGED_MATRIX`

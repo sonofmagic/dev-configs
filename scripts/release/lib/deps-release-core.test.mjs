@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { it } from 'vitest'
 import {
   collectChangedPackages,
-  createChangesetMarkdown,
+  createChangeIntentMarkdown,
   normalizeDeps,
 } from './deps-release-core.mjs'
 
@@ -78,8 +78,8 @@ it('collectChangedPackages returns sorted unique changed packages', () => {
   ])
 })
 
-it('createChangesetMarkdown renders patch entries', () => {
-  const markdown = createChangesetMarkdown(
+it('createChangeIntentMarkdown renders patch entries', () => {
+  const markdown = createChangeIntentMarkdown(
     ['@icebreakers/eslint-config', '@icebreakers/stylelint-config'],
     'chore(deps): update package dependencies',
   )

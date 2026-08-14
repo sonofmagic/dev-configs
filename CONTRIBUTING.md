@@ -2,15 +2,16 @@
 
 ## Release Flow
 
-This repository uses Changesets for package releases.
+This repository uses pnpm's native workspace release management.
 
-- Add a `.changeset/*.md` file in every pull request that changes a published
-  package under `packages/`.
-- Merging a PR with a changeset into `main` creates or updates the release PR.
+- Run `pnpm change` and commit the generated `.changeset/*.md` release intent in
+  every pull request that changes a published workspace package.
+- Merging a PR with a release intent into `main` creates or updates the pnpm
+  Version Packages PR.
 - Merging the generated release PR publishes the versioned packages to npm.
 
-Pull requests that touch publishable package files without a changeset will fail
-the `Changeset Check` workflow.
+Pull requests that touch publishable package files without a release intent will
+fail the `Release Intent Check` workflow.
 
 ## Build Artifacts
 

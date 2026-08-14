@@ -37,3 +37,5 @@ dist
 vite.config.ts.timestamp-*.mjs
 config.ts.timestamp-*.mjs
 .vite-inspect
+pnpm-publish-summary.json
+workspace-packages.json

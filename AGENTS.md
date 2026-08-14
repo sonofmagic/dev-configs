@@ -6,7 +6,7 @@ Workspaces live under `apps/` and `packages/`. `packages/icebreaker` houses the 
 
 ## Build, Test, and Development Commands
 
-Install dependencies with `pnpm install` (enforced via `only-allow`). `pnpm build` runs `turbo run build` across all workspaces and must succeed before publishing. Use `pnpm dev` for parallel local development, and `pnpm sync` when workspace templates drift. Run `pnpm lint` to execute each package's lint targets, `pnpm test` for the Vitest suite, and `pnpm test:dev` to watch tests while iterating. Release flows go through `pnpm publish-packages` or ad-hoc `pnpm release` for managing Changesets.
+Install dependencies with `pnpm install` (enforced via `only-allow`). `pnpm build` runs `turbo run build` across all workspaces and must succeed before publishing. Use `pnpm dev` for parallel local development, and `pnpm sync` when workspace templates drift. Run `pnpm lint` to execute each package's lint targets, `pnpm test` for the Vitest suite, and `pnpm test:dev` to watch tests while iterating. Release flows use pnpm native release intents: `pnpm release` creates an intent, `pnpm cv` consumes intents with `pnpm version -r`, and `pnpm publish-packages` publishes bumped workspace packages.
 
 ## Coding Style & Naming Conventions
 
@@ -18,7 +18,7 @@ Vitest powers tests, configured via `vitest.config.ts` to cover every workspace.
 
 ## Commit & Pull Request Guidelines
 
-Commits follow Conventional Commits (`@commitlint/config-conventional`); run `pnpm commit` to trigger the interactive prompt. Group multiple package changes within a single logical commit when possible. Pull requests should describe the affected configs, reference related issues, and call out new rules or breaking defaults. Include relevant test or lint output, and add a Changeset (`pnpm release`) for anything user-facing. Tag reviewers when altering shared presets so downstream packages can prepare.
+Commits follow Conventional Commits (`@commitlint/config-conventional`); run `pnpm commit` to trigger the interactive prompt. Group multiple package changes within a single logical commit when possible. Pull requests should describe the affected configs, reference related issues, and call out new rules or breaking defaults. Include relevant test or lint output, and add a release intent (`pnpm release`) for anything user-facing. Tag reviewers when altering shared presets so downstream packages can prepare.
 
 ## Tooling & Environment Notes
 
