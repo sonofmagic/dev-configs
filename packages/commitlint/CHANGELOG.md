@@ -1,5 +1,11 @@
 # @icebreakers/commitlint-config
 
+## 4.0.4
+
+### Patch Changes
+
+- 迁移到基于 pnpm 原生版本意图和 repoctl 的统一发版流程，并同步升级已验证兼容的工程依赖。
+
 ## 4.0.3
 
 ### Patch Changes

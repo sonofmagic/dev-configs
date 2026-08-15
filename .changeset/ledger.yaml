@@ -1,0 +1,36 @@
+"@icebreakers/changelog-github@2.0.2":
+  dir: packages/changelog-github
+  intents:
+    - repoctl-release-migration
+"@icebreakers/commitlint-config@4.0.4":
+  dir: packages/commitlint
+  intents:
+    - repoctl-release-migration
+"@icebreakers/eslint-config@7.0.4":
+  dir: packages/eslint
+  intents:
+    - repoctl-release-migration
+"@icebreakers/mock@0.0.50":
+  dir: apps/mock
+  intents:
+    - repoctl-release-migration
+"@icebreakers/stylelint-config@5.0.5":
+  dir: packages/stylelint
+  intents:
+    - repoctl-release-migration
+eslint-plugin-better-stylelint@2.0.3:
+  dir: packages/eslint-plugin-better-stylelint
+  intents:
+    - repoctl-release-migration
+lightningcss-tailwindcss@2.0.3:
+  dir: packages/lightningcss-tailwindcss
+  intents:
+    - repoctl-release-migration
+postcss-tailwindcss@3.0.5:
+  dir: packages/postcss-tailwindcss
+  intents:
+    - repoctl-release-migration
+stylelint-plugin-tailwindcss@3.0.5:
+  dir: packages/stylelint-plugin-tailwindcss
+  intents:
+    - repoctl-release-migration
