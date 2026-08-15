@@ -2,13 +2,18 @@
 
 ## Release Flow
 
-This repository uses pnpm's native workspace release management.
+This repository uses pnpm's native workspace release management orchestrated by
+repoctl.
 
 - Run `pnpm change` and commit the generated `.changeset/*.md` release intent in
   every pull request that changes a published workspace package.
 - Merging a PR with a release intent into `main` creates or updates the pnpm
   Version Packages PR.
 - Merging the generated release PR publishes the versioned packages to npm.
+
+The main release workflow uses npm Trusted Publishing through GitHub Actions
+OIDC. The legacy `v4` branch keeps its independent Changesets workflow and is
+not handled by the main-branch repoctl workflow.
 
 Pull requests that touch publishable package files without a release intent will
 fail the `Release Intent Check` workflow.
@@ -22,10 +27,6 @@ verify publish output locally, and rely on the package `files` field plus
 
 ## Publishing Auth
 
-The release workflow supports two npm authentication modes:
-
-- Preferred: npm Trusted Publishing with GitHub Actions OIDC
-- Fallback: repository secret `NPM_TOKEN`
-
-If Trusted Publishing is not configured for the published packages in npm, set
-`NPM_TOKEN` in the repository secrets before merging a release PR.
+The main release workflow requires npm Trusted Publishing to be configured for
+each published package with the repository's GitHub Actions workflow as its
+OIDC publisher.

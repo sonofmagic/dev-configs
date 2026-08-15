@@ -1,30 +1,41 @@
+# repoctl-managed: release/v2
 name: Release
 
 on:
   push:
     branches:
       - main
-      - v3
-      - v4
       - alpha
       - beta
       - rc
-      - legacy
-      - v3-alpha
-      - v3-beta
-      - v3-rc
-      - v3-legacy
-      - v4-alpha
-      - v4-beta
-      - v4-rc
-      - v4-legacy
-      - 'v3/**'
-      - 'v4/**'
+      - next
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Release operation
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - prepare
+          - publish
+          - publish-unpublished
+      package:
+        description: Package used for unpublished-version recovery
+        required: false
+        type: string
+      version:
+        description: Version used for unpublished-version recovery
+        required: false
+        type: string
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 env:
   HUSKY: 0
+  NPM_CONFIG_PROVENANCE: true
+  npm_config_registry: https://registry.npmjs.org
 
 permissions:
   contents: write
@@ -32,44 +43,9 @@ permissions:
   id-token: write
 
 jobs:
-  verify-supported-node:
-    name: Verify on Node ${{ matrix.node-version }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [22.13.0]
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v7
-
-      - uses: pnpm/action-setup@v6
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Build
-        run: pnpm build
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Test
-        run: pnpm test
-
   release:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     name: Release
-    needs: verify-supported-node
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -82,158 +58,15 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
           registry-url: https://registry.npmjs.org
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Configure npm authentication fallback
+      - name: Run repo release CI
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          if [ -n "${NPM_TOKEN:-}" ]; then
-            printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" > "$HOME/.npmrc"
-          else
-            echo "NPM_TOKEN is not set; relying on npm trusted publishing via OIDC"
-          fi
-
-      - name: Resolve release channel
-        id: release-channel
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          branch="${GITHUB_REF_NAME}"
-          npm_tag="latest"
-          pre_tag=""
-
-          case "$branch" in
-            main)
-              ;;
-            v3|v4|legacy)
-              npm_tag="$branch"
-              ;;
-            alpha|beta|rc)
-              npm_tag="$branch"
-              pre_tag="$branch"
-              ;;
-            v3-alpha|v3/alpha|v4-alpha|v4/alpha)
-              npm_tag="${branch//\//-}"
-              pre_tag="alpha"
-              ;;
-            v3-beta|v3/beta|v4-beta|v4/beta)
-              npm_tag="${branch//\//-}"
-              pre_tag="beta"
-              ;;
-            v3-rc|v3/rc|v4-rc|v4/rc)
-              npm_tag="${branch//\//-}"
-              pre_tag="rc"
-              ;;
-            v3-legacy|v3/legacy|v4-legacy|v4/legacy)
-              npm_tag="${branch//\//-}"
-              ;;
-            *)
-              echo "Unsupported release branch: $branch" >&2
-              exit 1
-              ;;
-          esac
-
-          echo "npm_tag=$npm_tag" >> "$GITHUB_OUTPUT"
-          echo "lane=$pre_tag" >> "$GITHUB_OUTPUT"
-          echo "Resolved npm dist-tag: $npm_tag"
-          if [ -n "$pre_tag" ]; then
-            echo "Resolved pnpm release lane: $pre_tag"
-          fi
-
-      - name: Detect pending release intents
-        id: release-intents
-        shell: bash
-        run: |
-          if [ -d .changeset ] && find .changeset -maxdepth 1 -type f -name '*.md' -print -quit | grep -q .; then
-            echo "pending=true" >> "$GITHUB_OUTPUT"
-            echo "Pending release intents detected"
-          else
-            echo "pending=false" >> "$GITHUB_OUTPUT"
-            echo "No pending release intents"
-          fi
-
-      - name: Configure prerelease lane
-        if: steps.release-intents.outputs.pending == 'true' && steps.release-channel.outputs.lane != ''
-        run: pnpm lane "${{ steps.release-channel.outputs.lane }}" --filter '*'
-
-      - name: Version packages
-        if: steps.release-intents.outputs.pending == 'true'
-        run: |
-          pnpm version -r --no-git-checks
-          pnpm install --lockfile-only
-
-      - name: Create or update version pull request
-        if: steps.release-intents.outputs.pending == 'true'
-        uses: peter-evans/create-pull-request@v8
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: pnpm-release/${{ github.ref_name }}
-          base: ${{ github.ref_name }}
-          delete-branch: true
-          commit-message: 'chore(release): version packages'
-          title: 'Version Packages (${{ github.ref_name }})'
-          body: |
-            Applies the pending pnpm release intents for `${{ github.ref_name }}`.
-
-            Generated by `pnpm version -r`.
-
-      - name: Publish packages
-        if: steps.release-intents.outputs.pending == 'false'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          npm_config_registry: https://registry.npmjs.org
-          NPM_CONFIG_PROVENANCE: true
-        run: |
-          pnpm list -r --depth -1 --json > workspace-packages.json
-          pnpm publish -r \
-            --access public \
-            --no-git-checks \
-            --tag "${{ steps.release-channel.outputs.npm_tag }}" \
-            --report-summary
-
-      - name: Create or update GitHub releases
-        if: steps.release-intents.outputs.pending == 'false'
-        uses: actions/github-script@v9
-        with:
-          script: |
-            const fs = require('node:fs')
-            const packages = JSON.parse(
-              fs.readFileSync('workspace-packages.json', 'utf8'),
-            ).filter(({ private: isPrivate }) => !isPrivate)
-
-            for (const { name, version } of packages) {
-              const tag = `${name}@${version}`
-
-              try {
-                await github.rest.repos.getReleaseByTag({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  tag,
-                })
-                core.info(`GitHub release ${tag} already exists`)
-              } catch (error) {
-                if (error.status !== 404) throw error
-
-                await github.rest.repos.createRelease({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  tag_name: tag,
-                  target_commitish: context.sha,
-                  name: tag,
-                  generate_release_notes: true,
-                  prerelease: version.includes('-'),
-                })
-                core.info(`Created GitHub release ${tag}`)
-              }
-            }
-
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v7
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+          REPO_RELEASE_MODE: ${{ inputs.mode || 'auto' }}
+          REPO_RELEASE_PACKAGE: ${{ inputs.package }}
+          REPO_RELEASE_VERSION: ${{ inputs.version }}
+        run: pnpm exec repo release ci

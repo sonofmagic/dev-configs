@@ -1,6 +1,6 @@
-import { defineMonorepoConfig } from '@icebreakers/monorepo'
+import type { MonorepoConfig } from 'repoctl'
 
-export default defineMonorepoConfig({
+export default {
   commands: {
     create: {
       defaultTemplate: 'unbuild',
@@ -10,13 +10,9 @@ export default defineMonorepoConfig({
       autoConfirm: false,
       includePrivate: true,
     },
-    sync: {
-      concurrency: 4,
-      command: 'cnpm sync {name}',
-    },
     upgrade: {
       skipOverwrite: false,
       mergeTargets: true,
     },
   },
-})
+} satisfies MonorepoConfig

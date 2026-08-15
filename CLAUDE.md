@@ -126,12 +126,14 @@ pnpm --filter @icebreakers/eslint-config test --debug
 # Add a release intent (interactive prompts for version bump type)
 pnpm release
 
-# Preview or consume release intents
-pnpm release:status
-pnpm cv
+# Consume release intents locally when preparing a version PR
+pnpm version-packages
 
-# Publish (builds, lints, tests, then publishes bumped packages)
+# Publish stable packages through repoctl
 pnpm publish-packages
+
+# Publish prereleases from alpha/beta/rc/next lanes
+pnpm release:pre
 ```
 
 **Manual release** (single package):

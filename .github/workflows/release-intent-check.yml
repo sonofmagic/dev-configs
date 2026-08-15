@@ -19,11 +19,11 @@ jobs:
           fetch-depth: 0
 
       - name: Skip generated release PRs
-        if: startsWith(github.head_ref, 'pnpm-release/')
+        if: startsWith(github.head_ref, 'pnpm-release/') || startsWith(github.head_ref, 'release/pnpm-version')
         run: echo "Generated pnpm release PR detected; skipping validation"
 
       - name: Validate release intent presence
-        if: ${{ !startsWith(github.head_ref, 'pnpm-release/') }}
+        if: ${{ !startsWith(github.head_ref, 'pnpm-release/') && !startsWith(github.head_ref, 'release/pnpm-version') }}
         shell: bash
         run: |
           set -euo pipefail

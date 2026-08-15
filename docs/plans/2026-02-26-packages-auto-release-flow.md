@@ -1,5 +1,7 @@
 # Packages Auto Release Flow (Current)
 
+> 状态：已由 `repoctl` 的 `repo release ci` 发版流程取代。本文保留为历史设计记录，文中 `scripts/release/` 和依赖自动发布 workflow 已不再存在。
+
 ## 1) 总览
 
 当前仓库的自动发包链路由 4 个 workflow 组成：
