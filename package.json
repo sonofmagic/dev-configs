@@ -26,6 +26,7 @@
   "scripts": {
     "build": "turbo run build",
     "check:no-tracked-build-artifacts": "node ./scripts/check-no-tracked-build-artifacts.mjs",
+    "check:workflows": "node ./scripts/check-workflows.mjs",
     "dev": "turbo run dev --parallel",
     "test": "node -e \"require('node:fs').mkdirSync('coverage/.tmp', { recursive: true })\" && pnpm check:no-tracked-build-artifacts && vitest run && pnpm test:types",
     "test:dev": "node -e \"require('node:fs').mkdirSync('coverage/.tmp', { recursive: true })\" && pnpm check:no-tracked-build-artifacts && vitest",

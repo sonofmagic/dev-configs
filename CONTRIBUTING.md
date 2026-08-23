@@ -15,6 +15,11 @@ The main release workflow uses npm Trusted Publishing through GitHub Actions
 OIDC. The legacy `v4` branch keeps its independent Changesets workflow and is
 not handled by the main-branch repoctl workflow.
 
+The repoctl-managed workflow is validated with `pnpm check:workflows`. Keep the
+workflow on the `release/v2` contract when upgrading repoctl: full Git history,
+SHA-pinned actions, stable and prerelease branch triggers, and the
+`REPOCTL_RELEASE_TOKEN` / `CHANGESETS_RELEASE_TOKEN` / `github.token` fallback.
+
 Pull requests that touch publishable package files without a release intent will
 fail the `Release Intent Check` workflow.
 
