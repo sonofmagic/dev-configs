@@ -16,7 +16,9 @@ function githubExpression(body) {
 }
 
 function readWorkflow(filename) {
-  const source = fs.readFileSync(path.join(workflowDir, filename), 'utf8')
+  const source = fs
+    .readFileSync(path.join(workflowDir, filename), 'utf8')
+    .replaceAll('\r\n', '\n')
   return {
     source,
     workflow: YAML.parse(source),
@@ -95,7 +97,7 @@ function checkReleaseWorkflow() {
 function checkCiWorkflow() {
   const { workflow } = readWorkflow('ci.yml')
   const steps = getSteps(workflow, 'build')
-  const commands = steps.flatMap(step => step.run ? [step.run] : [])
+  const commands = steps.flatMap(step => (step.run ? [step.run] : []))
 
   assert.deepEqual(workflow.on?.pull_request?.types, ['opened', 'synchronize'])
   assert.ok(Object.hasOwn(workflow.on ?? {}, 'workflow_dispatch'))
