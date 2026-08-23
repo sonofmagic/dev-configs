@@ -37,7 +37,7 @@ export default icebreaker({
 - Node.js 22 或更高版本
 - 支持 Flat Config 的 ESLint 9
 - React 核心插件已随当前包一起分发。Next.js、Query、无障碍等生态预设仍保持可选，缺失时会自动跳过对应配置，而不是在解析时直接报错。
-- 如需启用 Tailwind、MDX、UnoCSS、无障碍等，可安装对应的可选依赖：`eslint-plugin-tailwindcss` / `eslint-plugin-better-tailwindcss`、`eslint-plugin-mdx`、`@unocss/eslint-plugin`、React 无障碍的 `eslint-plugin-jsx-a11y`，以及 Vue 无障碍的 `eslint-plugin-vuejs-accessibility` 和它的 `globals` peer。
+- Wevu 兼容检查已内置，无需额外安装。如需启用 Tailwind、MDX、UnoCSS 或无障碍，可安装对应的可选依赖：`eslint-plugin-tailwindcss` / `eslint-plugin-better-tailwindcss`、`eslint-plugin-mdx`、`@unocss/eslint-plugin`、React 无障碍的 `eslint-plugin-jsx-a11y`，以及 Vue 无障碍的 `eslint-plugin-vuejs-accessibility` 和它的 `globals` peer。
 
 ## 安装
 
@@ -90,7 +90,7 @@ export default icebreaker({
 })
 ```
 
-- `miniProgram`：启用小程序预设，注入全局变量、忽略常见产物/配置文件，并在 `vue: true` 时补充小程序模板兼容调整。
+- `miniProgram`：启用小程序预设，注入全局变量、忽略常见产物/配置文件，在 `vue: true` 时补充小程序模板兼容调整，并加载内置的 `@weapp-vite/eslint` 兼容检查。
 - `vue`：启用 Vue 规则，可根据 Vue 2/3 自动切换，并在 `ionic`、`miniProgram` 选项开启时追加对应覆盖。
 - `react`：复用上游 React 预设；React 核心 lint 插件已内置在当前包里，配合 `a11y` 使用的 React 无障碍插件仍需按需安装。
 - `query`：按需启用 TanStack Query 插件（`@tanstack/eslint-plugin-query`）及其推荐规则；缺少插件时按 no-op 处理。
@@ -149,6 +149,7 @@ export default icebreaker({
 - 注入 `wx`、`Page`、`App`、`Component`、`getApp`、`getCurrentPages`、`requirePlugin`、`WechatMiniprogram` 全局变量
 - 忽略 `dist/**`、`.weapp-vite/**`、`miniprogram_npm/**`、`node_modules/**`、`project.config.json`、`project.private.config.json`
 - 当同时开启 `vue: true` 时，关闭 `vue/no-deprecated-slot-attribute`、`vue/no-useless-template-attributes` 与 `vue/singleline-html-element-content-newline`，允许小程序原生 slot 投影和编译器专用的 slot 属性；同时对命名为 `id`、`class` 或 `slot` 的 Vue props 给出 warning，因为小程序 `properties` 可能无法稳定接收到这些值
+- 通过内置的 `@weapp-vite/eslint` 将不支持的 Vue、Pinia、Vue Router API 报告为 error，将存在语义差异的 API 报告为 warning，并将可追溯的 `RouterLink` 模板用法报告为 error
 
 #### 原生小程序最小配置
 
@@ -180,14 +181,12 @@ export default icebreaker({
   miniProgram: true,
   vue: true,
   tailwindcss: true,
-  ignores: [
-    'coverage/**',
-  ],
+  ignores: ['coverage/**'],
 })
 ```
 
-`miniProgram` 只负责追加平台默认项；你自己的 `ignores`、`extends`、`rules`
-以及额外 flat config 仍按原有方式继续组合。
+`miniProgram` 会追加平台默认项和内置的 Wevu 兼容配置；你自己的 `ignores`、
+`extends`、`rules` 以及额外 flat config 仍按原有方式继续组合，并可覆盖推荐的规则级别。
 
 ### Stylelint 桥接
 

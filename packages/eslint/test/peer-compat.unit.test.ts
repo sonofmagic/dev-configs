@@ -10,6 +10,7 @@ const packageJson = JSON.parse(
 ) as {
   dependencies?: Record<string, string>
   optionalDependencies?: Record<string, string>
+  peerDependencies?: Record<string, string>
 }
 
 const antfuPackageJson = require('@antfu/eslint-config/package.json') as {
@@ -24,6 +25,7 @@ const BUNDLED_REACT_PACKAGES = [
 
 const BUNDLED_RUNTIME_PACKAGES = [
   '@typescript-eslint/utils',
+  '@weapp-vite/eslint',
 ] as const
 
 const ANTFU_PEER_CHECK_PACKAGES = [
@@ -98,5 +100,10 @@ describe('peer compatibility', () => {
 
   it.each(ANTFU_OPTIONAL_PEER_PACKAGES)('documents %s as an @antfu optional peer', (name) => {
     expect(antfuPackageJson.peerDependencies?.[name]).toBeTruthy()
+  })
+
+  it('installs @weapp-vite/eslint with the config package', () => {
+    expect(packageJson.dependencies?.['@weapp-vite/eslint']).toBe('^0.1.0')
+    expect(packageJson.peerDependencies?.['@weapp-vite/eslint']).toBeUndefined()
   })
 })

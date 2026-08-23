@@ -16,4 +16,14 @@ describe('runtime dependency contract', () => {
 
     expect(() => pluginRequire.resolve('@typescript-eslint/utils')).not.toThrow()
   })
+
+  it('loads the ESM-only Wevu compatibility package through dynamic import', async () => {
+    const module = await import('@weapp-vite/eslint')
+
+    expect(module.wevuCompatibilityRecommended.rules).toMatchObject({
+      'wevu/no-unsupported-api': 'error',
+      'wevu/no-risky-api': 'warn',
+      'wevu/no-unsupported-template-feature': 'error',
+    })
+  })
 })

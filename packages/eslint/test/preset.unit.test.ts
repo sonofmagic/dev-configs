@@ -2,6 +2,7 @@ import {
   resolveAccessibilityPresets,
   resolveBetterTailwindPresets,
   resolveMdxPresets,
+  resolveMiniProgramCompatibilityPresets,
   resolveNestPresets,
   resolveQueryPresets,
   resolveStylelintBridgePresets,
@@ -15,6 +16,7 @@ vi.mock('@/features', () => {
     resolveTailwindPresets: vi.fn(() => [{ name: 'tailwind' }]),
     resolveBetterTailwindPresets: vi.fn(() => [{ name: 'better-tailwind' }]),
     resolveMdxPresets: vi.fn(() => [{ name: 'mdx' }]),
+    resolveMiniProgramCompatibilityPresets: vi.fn(() => [{ name: 'wevu-compatibility' }]),
     resolveNestPresets: vi.fn(() => [{ name: 'nestjs' }]),
     resolveQueryPresets: vi.fn(() => [{ name: 'query' }]),
     resolveAccessibilityPresets: vi.fn(() => [{ name: 'a11y' }]),
@@ -25,6 +27,7 @@ const resolveStylelintBridgePresetsMock = vi.mocked(resolveStylelintBridgePreset
 const resolveTailwindPresetsMock = vi.mocked(resolveTailwindPresets)
 const resolveBetterTailwindPresetsMock = vi.mocked(resolveBetterTailwindPresets)
 const resolveMdxPresetsMock = vi.mocked(resolveMdxPresets)
+const resolveMiniProgramCompatibilityPresetsMock = vi.mocked(resolveMiniProgramCompatibilityPresets)
 const resolveNestPresetsMock = vi.mocked(resolveNestPresets)
 const resolveQueryPresetsMock = vi.mocked(resolveQueryPresets)
 const resolveAccessibilityPresetsMock = vi.mocked(resolveAccessibilityPresets)
@@ -57,7 +60,7 @@ describe('getPresets', () => {
   })
 
   it('appends feature presets in the expected order', () => {
-    const [, baseConfig, ...presets] = getPresets({
+    const [, ...presets] = getPresets({
       tailwindcss: true,
       betterTailwindcss: true,
       mdx: true,
@@ -66,14 +69,18 @@ describe('getPresets', () => {
       a11y: true,
       vue: true,
       react: true,
+      miniProgram: true,
     })
-    const base = toConfigObject(baseConfig)
+    const base = presets
+      .map(preset => toConfigObject(preset))
+      .find(config => config.rules?.['unicorn/prefer-number-properties']) ?? {}
 
     expect(base.rules?.['unicorn/prefer-number-properties']).toBe('warn')
     expect(resolveStylelintBridgePresetsMock).toHaveBeenCalledWith(undefined)
     expect(resolveTailwindPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveBetterTailwindPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveMdxPresetsMock).toHaveBeenCalledWith(true)
+    expect(resolveMiniProgramCompatibilityPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveNestPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveQueryPresetsMock).toHaveBeenCalledWith(true)
     expect(resolveAccessibilityPresetsMock).toHaveBeenCalledWith(true, expect.any(Object), true)
@@ -84,6 +91,7 @@ describe('getPresets', () => {
 
     expect(presetNames).toEqual([
       'icebreaker/vue-style-blocks-parser',
+      'wevu-compatibility',
       'stylelint',
       'tailwind',
       'better-tailwind',
@@ -119,6 +127,15 @@ describe('getPresets', () => {
         }),
       },
     })
+    expect(resolveMiniProgramCompatibilityPresetsMock).toHaveBeenCalledWith(true)
+  })
+
+  it('enables compatibility presets through the legacy weapp alias', () => {
+    getPresets({
+      weapp: true,
+    })
+
+    expect(resolveMiniProgramCompatibilityPresetsMock).toHaveBeenCalledWith(true)
   })
 
   it('uses legacy rules when requested', () => {
