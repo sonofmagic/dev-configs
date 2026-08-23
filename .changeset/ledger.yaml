@@ -6,10 +6,18 @@
   dir: packages/commitlint
   intents:
     - repoctl-release-migration
+"@icebreakers/commitlint-config@4.0.5":
+  dir: packages/commitlint
+  intents:
+    - bright-wevu-upgrades
 "@icebreakers/eslint-config@7.0.4":
   dir: packages/eslint
   intents:
     - repoctl-release-migration
+"@icebreakers/eslint-config@7.1.0":
+  dir: packages/eslint
+  intents:
+    - bright-wevu-upgrades
 "@icebreakers/mock@0.0.50":
   dir: apps/mock
   intents:
@@ -30,7 +38,15 @@ postcss-tailwindcss@3.0.5:
   dir: packages/postcss-tailwindcss
   intents:
     - repoctl-release-migration
+postcss-tailwindcss@3.0.6:
+  dir: packages/postcss-tailwindcss
+  intents:
+    - bright-wevu-upgrades
 stylelint-plugin-tailwindcss@3.0.5:
   dir: packages/stylelint-plugin-tailwindcss
   intents:
     - repoctl-release-migration
+stylelint-plugin-tailwindcss@3.0.6:
+  dir: packages/stylelint-plugin-tailwindcss
+  intents:
+    - bright-wevu-upgrades
