@@ -6,6 +6,7 @@ import {
   resolveAccessibilityPresets,
   resolveBetterTailwindPresets,
   resolveMdxPresets,
+  resolveMiniProgramCompatibilityPresets,
   resolveNestPresets,
   resolveQueryPresets,
   resolveStylelintBridgePresets,
@@ -143,6 +144,23 @@ vi.mock('@tanstack/eslint-plugin-query', () => {
   return { default: plugin }
 })
 
+vi.mock('@weapp-vite/eslint', () => {
+  return {
+    wevuCompatibilityRecommended: {
+      files: ['**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,vue}'],
+      ignores: ['**/node_modules/**', '**/dist/**', '**/.weapp-vite/**'],
+      plugins: {
+        wevu: {},
+      },
+      rules: {
+        'wevu/no-unsupported-api': 'error',
+        'wevu/no-risky-api': 'warn',
+        'wevu/no-unsupported-template-feature': 'error',
+      },
+    },
+  }
+})
+
 describe('resolveBetterTailwindPresets', () => {
   beforeEach(() => {
     hasAllPackagesMock.mockReturnValue(true)
@@ -247,6 +265,35 @@ describe('resolveTailwindPresets', () => {
 
     expect(resolveTailwindPresets(true)).toEqual([])
     expect(resolveBetterTailwindPresets({ tailwindConfig: 'tailwind.config.js' })).toEqual([])
+  })
+})
+
+describe('resolveMiniProgramCompatibilityPresets', () => {
+  beforeEach(() => {
+    hasAllPackagesMock.mockReturnValue(true)
+  })
+
+  it('returns empty array when mini program support is disabled', () => {
+    expect(resolveMiniProgramCompatibilityPresets(false)).toEqual([])
+    expect(resolveMiniProgramCompatibilityPresets(undefined)).toEqual([])
+  })
+
+  it('loads and names the upstream recommended config when enabled', async () => {
+    const [preset] = resolveMiniProgramCompatibilityPresets(true)
+
+    await expect(preset).resolves.toMatchObject({
+      name: 'icebreaker/mini-program/wevu-compatibility',
+      files: ['**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,vue}'],
+      ignores: ['**/node_modules/**', '**/dist/**', '**/.weapp-vite/**'],
+      plugins: {
+        wevu: {},
+      },
+      rules: {
+        'wevu/no-unsupported-api': 'error',
+        'wevu/no-risky-api': 'warn',
+        'wevu/no-unsupported-template-feature': 'error',
+      },
+    })
   })
 })
 

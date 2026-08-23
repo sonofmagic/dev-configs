@@ -1,6 +1,6 @@
 import type { UserConfigItem, UserDefinedOptions } from './types'
 import { parserPlain } from './antfu'
-import { resolveAccessibilityPresets, resolveBetterTailwindPresets, resolveMdxPresets, resolveNestPresets, resolveQueryPresets, resolveStylelintBridgePresets, resolveTailwindPresets } from './features'
+import { resolveAccessibilityPresets, resolveBetterTailwindPresets, resolveMdxPresets, resolveMiniProgramCompatibilityPresets, resolveNestPresets, resolveQueryPresets, resolveStylelintBridgePresets, resolveTailwindPresets } from './features'
 import { createBaseRuleSet, resolveUserOptions } from './options'
 
 const MINI_PROGRAM_IGNORES = [
@@ -73,6 +73,7 @@ export function getPresets(options?: UserDefinedOptions, mode?: 'legacy'): [User
   }
 
   presets.push(
+    ...resolveMiniProgramCompatibilityPresets(resolved.miniProgram),
     ...resolveStylelintBridgePresets(resolved.stylelint),
     ...resolveTailwindPresets(resolved.tailwindcss),
     ...resolveBetterTailwindPresets(resolved.betterTailwindcss),

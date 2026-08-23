@@ -108,6 +108,7 @@ export type UserDefinedOptions = Omit<OptionsConfig, 'formatters' | 'unocss'> & 
   formatters?: boolean | IcebreakerFormatterOptions
   /**
    * Enable Mini Program support.
+   * Automatically enables the bundled Wevu compatibility diagnostics.
    * @default false
    */
   miniProgram?: boolean

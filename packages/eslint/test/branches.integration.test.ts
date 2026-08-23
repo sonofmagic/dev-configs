@@ -59,6 +59,29 @@ describe('eslint branch config behavior', () => {
       '{}\n',
       'utf8',
     )
+    await fs.writeFile(
+      path.join(tempDir, 'unsupported.ts'),
+      'import { createSSRApp } from \'vue\'\ncreateSSRApp({})\n',
+      'utf8',
+    )
+    await fs.writeFile(
+      path.join(tempDir, 'risky.ts'),
+      'import { useRouter } from \'vue-router\'\nuseRouter()\n',
+      'utf8',
+    )
+    await fs.writeFile(
+      path.join(tempDir, 'router-link.vue'),
+      [
+        '<script setup lang="ts">',
+        'import { RouterLink } from \'vue-router\'',
+        '</script>',
+        '<template>',
+        '  <RouterLink to="/demo">Demo</RouterLink>',
+        '</template>',
+        '',
+      ].join('\n'),
+      'utf8',
+    )
 
     const configs = await icebreaker({
       vue: true,
@@ -190,6 +213,80 @@ describe('eslint branch config behavior', () => {
     ])
 
     expect(results[0]?.messages).toEqual([])
+  })
+
+  it('reports unsupported and risky upstream APIs for mini program projects', async () => {
+    const [unsupportedResult, riskyResult] = await eslint.lintFiles([
+      path.join(tempDir, 'unsupported.ts'),
+      path.join(tempDir, 'risky.ts'),
+    ])
+
+    expect(unsupportedResult?.messages).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        ruleId: 'wevu/no-unsupported-api',
+        severity: 2,
+      }),
+    ]))
+    expect(riskyResult?.messages).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        ruleId: 'wevu/no-risky-api',
+        severity: 1,
+      }),
+    ]))
+  })
+
+  it('reports unsupported RouterLink template usage', async () => {
+    const [result] = await eslint.lintFiles([
+      path.join(tempDir, 'router-link.vue'),
+    ])
+
+    expect(result?.messages).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        ruleId: 'wevu/no-unsupported-template-feature',
+        severity: 2,
+      }),
+    ]))
+  })
+
+  it('keeps compatibility rules disabled without mini program support', async () => {
+    const configs = await icebreaker({
+      vue: true,
+      miniProgram: false,
+    }).toConfigs()
+    const regularEslint = new ESLint({
+      cwd: tempDir,
+      overrideConfig: asOverrideConfig(stripUnsupportedRules(configs)),
+      overrideConfigFile: true,
+    })
+    const [result] = await regularEslint.lintFiles([
+      path.join(tempDir, 'unsupported.ts'),
+    ])
+
+    expect(result?.messages.some(message => message.ruleId?.startsWith('wevu/'))).toBe(false)
+  })
+
+  it('allows user configs to override compatibility rule severity', async () => {
+    const configs = await icebreaker(
+      {
+        vue: true,
+        miniProgram: true,
+      },
+      {
+        rules: {
+          'wevu/no-unsupported-api': 'off',
+        },
+      },
+    ).toConfigs()
+    const overriddenEslint = new ESLint({
+      cwd: tempDir,
+      overrideConfig: asOverrideConfig(stripUnsupportedRules(configs)),
+      overrideConfigFile: true,
+    })
+    const [result] = await overriddenEslint.lintFiles([
+      path.join(tempDir, 'unsupported.ts'),
+    ])
+
+    expect(result?.messages.some(message => message.ruleId === 'wevu/no-unsupported-api')).toBe(false)
   })
 
   it('ignores common mini program output paths', async () => {

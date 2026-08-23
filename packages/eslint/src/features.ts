@@ -99,6 +99,10 @@ interface QueryPluginModule {
   }
 }
 
+interface WevuCompatibilityModule {
+  wevuCompatibilityRecommended: TypedFlatConfigItem
+}
+
 const require = createRequire(import.meta.url)
 
 function interopPluginDefault<T>(modulePromise: Promise<unknown>): Promise<T> {
@@ -232,6 +236,23 @@ export function resolveTailwindPresets(option: UserDefinedOptions['tailwindcss']
         'tailwindcss/no-custom-classname': 'off',
       },
     },
+  ]
+}
+
+export function resolveMiniProgramCompatibilityPresets(
+  isEnabled: UserDefinedOptions['miniProgram'],
+): UserConfigItem[] {
+  if (!isEnabled) {
+    return []
+  }
+
+  return [
+    import('@weapp-vite/eslint').then((module: WevuCompatibilityModule) => {
+      return {
+        ...module.wevuCompatibilityRecommended,
+        name: 'icebreaker/mini-program/wevu-compatibility',
+      } satisfies TypedFlatConfigItem
+    }) as Promise<ResolvableUserConfig>,
   ]
 }
 
