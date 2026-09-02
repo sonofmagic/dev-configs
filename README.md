@@ -1,5 +1,10 @@
 # dev-configs
 
+> [!WARNING]
+> **This repository has moved to [sonofmagic/repoctl](https://github.com/sonofmagic/repoctl).**
+>
+> New development, issues, pull requests, and regular releases are now maintained in the new repository. The `v4` branch remains available here for compatible v4 releases only. Please use `repoctl` for all new work.
+
 ## Packages
 
 - [@icebreakers/changelog-github](packages/changelog-github) - tsup package template
