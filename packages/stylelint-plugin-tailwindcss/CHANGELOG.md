@@ -1,5 +1,11 @@
 # stylelint-plugin-tailwindcss
 
+## 3.0.7
+
+### Patch Changes
+
+- 升级 ESLint、TypeScript ESLint、UnoCSS、Weapp/Vue 及相关工具链依赖，并修复传递依赖中的已知安全漏洞。
+
 ## 3.0.6
 
 ### Patch Changes

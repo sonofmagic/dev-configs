@@ -1,5 +1,14 @@
 # @icebreakers/eslint-config
 
+## 7.1.1
+
+### Patch Changes
+
+- 升级 ESLint、TypeScript ESLint、UnoCSS、Weapp/Vue 及相关工具链依赖，并修复传递依赖中的已知安全漏洞。
+
+- Updated dependencies:
+  - @icebreakers/stylelint-config@5.0.7
+
 ## 7.1.0
 
 ### Minor Changes
